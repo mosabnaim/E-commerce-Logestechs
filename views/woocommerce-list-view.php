@@ -7,9 +7,9 @@
  * @subpackage Logestechs/views
  */
 
-if (!class_exists('Logestechs_WooCommerceListView')) {
+if (!class_exists('Logestechs_WooCommerceList_View')) {
 
-    class Logestechs_WooCommerceListView {
+    class Logestechs_WooCommerceList_View {
 
         /**
          * Initialize the class and set its properties.
@@ -49,4 +49,4 @@ if (!class_exists('Logestechs_WooCommerceListView')) {
     }
 }
 
-new Logestechs_WooCommerceListView();
+new Logestechs_WooCommerceList_View();

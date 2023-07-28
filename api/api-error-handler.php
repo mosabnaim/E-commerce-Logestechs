@@ -9,28 +9,33 @@
  * @subpackage Logestechs/api
  */
 
-if (!class_exists('Logestechs_API_Error_Handler')) {
+if ( ! class_exists( 'Logestechs_API_Error_Handler' ) ) {
+
+    // require_once 'path_to_your_plugin_directory/includes/error-handler.php';
 
     class Logestechs_API_Error_Handler {
 
-        /**
-         * Handle errors from the Logestechs API.
-         *
-         * @param object $response The response object from the API.
-         * @return void
-         */
-        public function handle_error($response) {
-            // Here you can handle the API errors. The $response parameter is
-            // the response from the API call.
+        protected $generalErrorHandler;
 
-            // Example of handling a WP_Error
-            // if (is_wp_error($response)) {
-            //     $error_message = $response->get_error_message();
-            //     echo "Something went wrong: $error_message";
-            // } else {
-            //     // Handle other types of errors
-            // }
+        public function __construct() {
+            // $this->generalErrorHandler = new Logestechs_Error_Handler();
+        }
+
+        /**
+         * Handle API specific errors.
+         *
+         * @param object $api_response
+         */
+        public function handle_api_error( $api_response ) {
+            // Here, you might check the API response for specific error codes/messages.
+            // The exact implementation will depend on how Logestechs' API structures its error responses.
+            /**
+            *if ( $api_response->error_code == 'SPECIFIC_ERROR_CODE' ) {
+            *    $this->generalErrorHandler->log_error( 'Specific error message', 'severity' );
+            *    $this->generalErrorHandler->display_error( 'Specific error message' );
+            *}
+            */
+            // Add additional error handling logic as needed, for other error codes/messages.
         }
     }
-
 }
