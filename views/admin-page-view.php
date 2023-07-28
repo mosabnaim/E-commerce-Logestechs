@@ -7,9 +7,9 @@
  * @subpackage Logestechs/views
  */
 
-if (!class_exists('Logestechs_AdminPage_View')) {
+if (!class_exists('Logestechs_Admin_Page_View')) {
 
-    class Logestechs_AdminPage_View {
+    class Logestechs_Admin_Page_View {
 
         /**
          * Initialize the class and set its properties.

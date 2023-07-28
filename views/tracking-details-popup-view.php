@@ -7,9 +7,9 @@
  * @subpackage Logestechs/views
  */
 
-if (!class_exists('Logestechs_TrackingDetailsPopup_View')) {
+if (!class_exists('Logestechs_Tracking_Details_Popup_View')) {
 
-    class Logestechs_TrackingDetailsPopup_View {
+    class Logestechs_Tracking_Details_Popup_View {
 
         /**
          * Initialize the class and set its properties.
