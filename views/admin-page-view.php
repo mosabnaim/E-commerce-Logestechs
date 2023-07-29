@@ -18,6 +18,7 @@ if (!class_exists('Logestechs_Admin_Page_View')) {
          */
         public function __construct() {
             // You might want to enqueue necessary scripts or styles related to this view here.
+            
         }
 
         /**
