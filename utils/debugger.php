@@ -43,7 +43,6 @@ class Logestechs_Debugger {
     
         if ( is_array( $msg ) ) {
             $msg = array_change_key_case( $msg, CASE_LOWER );
-            $msg = array_map('ucfirst', $msg);
             $msg = [
                 'Timestamp' => $timestamp,
                 'Type'      => $log_type,

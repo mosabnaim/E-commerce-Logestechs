@@ -9,11 +9,11 @@
  * @subpackage Logestechs/api
  */
 
-if ( ! class_exists( 'Logestechs_API_Error_Handler' ) ) {
+if ( ! class_exists( 'Logestechs_Api_Error_Handler' ) ) {
 
     // require_once 'path_to_your_plugin_directory/includes/error-handler.php';
 
-    class Logestechs_API_Error_Handler {
+    class Logestechs_Api_Error_Handler {
 
         protected $generalErrorHandler;
 

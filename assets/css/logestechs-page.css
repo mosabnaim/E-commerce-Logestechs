@@ -1,0 +1,184 @@
+.notice {
+    display: none;
+}
+
+#wpcontent {
+    padding-left: 0;
+}
+
+.logestechs-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+    width: 90px;
+    height: 70px;
+    z-index: 2;
+}
+
+.logestechs-header .logestechs-logo-wrapper {
+    display: flex;
+    align-items: end;
+    gap: 18px;
+}
+
+.logestechs-logo img {
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.logestechs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    padding: 16px 26px 22px 46px;
+    background: #FFF;
+    border-bottom: 1px solid #E1E3E6;
+    position: relative;
+}
+
+.logestechs-header .logestechs-primary-text {
+    font-family: var(--logestechs-font);
+    margin: 0;
+    color: #080000;
+    font-size: 24px;
+    font-weight: 400;
+}
+
+.logestechs-header .logestechs-secondary-text {
+    font-size: 15px;
+    font-family: var(--logestechs-font);
+    color: #fff;
+    margin: 0;
+}
+
+.logestechs-logo-background {
+    position: absolute;
+    top: 0;
+    inset-inline-start: 0;
+}
+
+.logestechs-flex {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.logestechs-flex span {
+    background: #F7685B;
+    color: #fff;
+    border-radius: 999px;
+    padding: 0 10px;
+}
+
+.logestechs-sync-btn {
+    width: 163px;
+    height: 37px;
+    background: #FFF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.logestechs-filter-input[type=text], .logestechs-filter-input[type=date] {
+    width: 243px;
+    height: 37px;
+    border: none !important;
+    padding: 0 20px;
+}
+.logestechs-filter-input[type=text] {
+    padding-inline-end: 35px;
+}
+.logestechs-table-head {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+}
+.logestechs-search-icon {
+    background: #fff;
+    position: absolute;
+    top: 10px;
+    inset-inline-end: 10px;
+}
+.logestechs-search-wrapper {
+    position: relative;
+}
+
+.logestechs-table-wrapper table {
+    width: 100%;
+    background-color: #fff;
+    padding-inline: 0;
+    box-sizing: border-box;
+    text-align: center;
+    font-family: var(--logestechs-font);
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #ededed;
+}
+.logestechs-table-wrapper {
+    padding: 0 40px;
+}
+#logestechs_orders_table th, #logestechs_orders_table td {
+    border: 1px solid #ededed;
+    padding: 15px;
+    border-right: none;
+    border-left: none;
+}
+
+#logestechs_orders_table th {
+    padding: 20px 0;
+    font-weight: 500;
+    font-size: 14px;
+    
+}
+
+.logestechs-dropdown {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    user-select: none;
+}
+
+.logestechs-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    z-index: 1;
+    inset-inline-end: 0;
+    border: 0.5px solid #eaeaea;
+    border-radius: 8px;
+    text-align: start;
+}
+
+.logestechs-dropdown:hover .logestechs-dropdown-content {
+    display: flex;
+    flex-direction: column;
+
+}
+.logestechs-dropdown-content div {
+    border: 1px solid #eaeaea;
+    background: #fff;
+    padding: 14px 20px;
+    font-size: 14px;
+    transition: all 300ms ease-in-out;
+}
+.logestechs-dropdown-content div:hover {
+    background: #f3f3f3;
+}
+.logestechs-cancelled {
+    border-radius: 4px;
+    background: #B3404A;
+    padding: 5px 20px;
+    color: #fff;
+}
+.logestechs-dropdown img {
+    height: 12px;
+    width: 12px;
+    padding: 5px;
+}

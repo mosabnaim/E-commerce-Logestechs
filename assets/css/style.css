@@ -1,4 +1,44 @@
-#logestechs-popup-template {
+.logestechs-primary-btn {
+    padding: 13px 40px;
+    background: var(--logestechs-btn-gradient);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.25);
+    font-size: 14px;
+    font-family: var(--logestechs-font);
+    cursor: pointer;
+    transition: all 200ms ease-in-out;
+    white-space: nowrap;
+}
+
+.logestechs-secondary-btn {
+    padding: 13px 28px;
+    border: none;
+    border-radius: 5px;
+    border: 1px solid #FC2A2A;
+    color: #ED1C1C;
+    background: none;
+    font-size: 14px;
+    font-family: var(--logestechs-font);
+    cursor: pointer;
+    transition: all 200ms ease-in-out;
+}
+
+.logestechs-btn-text {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #0066FF;
+    cursor: pointer;
+    transition: all 300ms ease-in-out;
+}
+
+.logestechs-btn-text:hover {
+    color: #0853c4;
+}
+
+.logestechs-popup {
     position: fixed;
     z-index: 10000;
     left: 0;
@@ -12,6 +52,7 @@
     width: 100%;
     height: 100%;
     position: absolute;
+    top: 0;
 }
 
 .logestechs-popup-content {
@@ -20,9 +61,362 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background: #fff;
-    padding: 20px;
-    width: 80%;
-    max-width: 600px;
-    border-radius: 8px;
+    padding: 0;
+    width: 75%;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
+    max-height: 90%;
+    border-radius: 5px;
+}
+
+.logestechs-form-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* adjust the gap as you like */
+}
+
+.logestechs-input-container {
+    position: relative;
+    flex-grow: 1;
+}
+
+.logestechs-input-container:nth-child(1) {
+    flex-grow: 2;
+}
+
+.logestechs-input-container input {
+    width: 100%;
+    height: 44px;
+    background: none;
+}
+
+.logestechs-input-container label {
+    position: absolute;
+    left: 0;
+    padding: 5px;
+    transition: all 0.3s;
+    background: #FFF6E9;
+    top: -14px;
+    inset-inline-start: 12px;
+}
+
+.logestechs-input-container input:placeholder-shown+label {
+    transform: translateY(2em);
+}
+
+.logestechs-popup-label {
+    color: #000;
+    font-family: var(--logestechs-font);
+    font-size: 20px;
+    font-weight: 400;
+    margin: 0;
+    padding-bottom: 25px;
+}
+
+.logestechs-popup .close-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0px 2px 5px 2px rgba(0, 0, 0, 0.1);
+}
+
+.logestechs-popup .close-btn .bar {
+    width: 60%;
+    height: 4px;
+    border-radius: 999px;
+    background: #868686;
+    position: absolute;
+}
+
+.logestechs-popup .close-btn .bar:nth-child(1) {
+    transform: rotate(45deg);
+}
+
+.logestechs-popup .close-btn .bar:nth-child(2) {
+    transform: rotate(-45deg);
+}
+
+.logestechs-close-btn-wrapper {
+    position: absolute;
+    z-index: 1;
+    top: -20px;
+    inset-inline-end: 20px;
+}
+
+.logestechs-popup-head {
+    position: relative;
+    padding: 22px 38px;
+    background: #FFF6E9;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.logestechs-popup .logestechs-primary-btn {
+    margin-inline-start: 20px;
+    padding-inline: 50px;
+}
+
+.logestechs-popup-main {
+    height: 58vh;
+    position: relative;
+}
+
+.logestechs-row-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.logestechs-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #e6e1e1;
+}
+
+.logestechs-delete-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 20px;
+}
+
+.logestechs-row {
+    display: flex;
+    padding: 10px 50px;
+}
+
+.logestechs-row-main img {
+    width: 40px;
+    margin-inline-end: 10px;
+}
+
+.logestechs-row-main {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.logestechs-popup-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 15px 28px;
+}
+
+.logestechs-row.selected {
+    border-inline-start: 4px solid var(--logestechs-primary-color);
+}
+
+.logestechs-row-main-text {
+    color: #1d2327;
+    font-size: 1.3em;
+    margin: 1em 0;
+    font-weight: 600;
+}
+
+.logestechs-row.selected .logestechs-row-main-text {
+    color: var(--logestechs-primary-color);
+}
+
+.logestechs-transfer-popup .logestechs-popup-tracker-head {
+    position: relative;
+    padding: 22px 38px;
+    background: var(--logestechs-font);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    color: #fff;
+    height: 153px;
+}
+
+.logestechs-transfer-popup .logestechs-popup-main .logestechs-details-flex {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 83%;
+    padding: 20px;
+    box-sizing: border-box;
+    border: 1px solid #cdcdcd;
+    margin: auto;
+    position: relative;
+    top: -32px;
+    background: #fff;
+    padding-inline-start: 16%;
+    padding-inline-end: 60px;
+}
+
+.logestechs-transfer-popup .logestechs-box-wrapper {
+    border: 1px solid #F90;
+    border-radius: 999px;
+    padding: 16px;
+    background: #fff;
+    position: relative;
+    top: 64px;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 62px;
+    height: 62px;
+}
+
+.logestechs-transfer-popup .logestechs-box-wrapper img {
+    width: 52px;
+}
+
+.logestechs-transfer-popup .logestechs-popup-label {
+    color: #fff;
+    font-size: 25px;
+}
+
+.logestechs-transfer-popup .logestechs-popup-label-wrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    margin: 0;
+    margin-inline-start: 177px;
+    padding-top: 21px;
+    font-size: 20px;
+    font-weight: 400;
+    padding-bottom: 25px;
+
+}
+
+.logestechs-transfer-popup .logestechs-popup-tracker-head {
+    background: linear-gradient(90deg, #F87E34 0%, #F90 100%);
+    height: 153px;
+    padding: 0;
+}
+
+.logestechs-transfer-popup p.logestechs-date {
+    color: #000;
+    font-size: 15px;
+    font-weight: 400;
+    margin: 0;
+}
+
+.logestechs-transfer-popup p.logestechs-time {
+    margin: 0;
+    padding-top: 2px;
+    margin-top: 2px;
+    border-top: 1px solid #cdcdcd;
+    padding-inline-end: 13px;
+    font-size: 12px;
+}
+
+.logestechs-transfer-popup .logestechs-date-wrapper {
+    width: 86px;
+    position: relative;
+    top: 8px;
+}
+
+.logestechs-transfer-popup .logestechs-tracking-circle span.logestechs-tracker-line {
+    position: absolute;
+    top: 27px;
+    height: 111px;
+    z-index: 1;
+}
+
+.logestechs-transfer-popup .logestechs-tracking-circle span {
+    width: 1px;
+    display: block;
+    height: 63px;
+    background: #c3c3c3;
+}
+
+.logestechs-transfer-popup .logestechs-tracking-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 23px;
+}
+
+.logestechs-transfer-popup .logestechs-circle {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    fill: #FFF;
+    stroke-width: 2px;
+    border: 2px solid #2ED47A;
+    border-radius: 999px;
+}
+
+.logestechs-transfer-popup .logestechs-scrollable-area {
+    padding-inline-start: 101px;
+    display: flex;
+    flex-direction: column;
+    margin-top: -33px;
+    height: 70%;
+    overflow-y: auto;
+    padding-bottom: 41px;
+    box-sizing: border-box;
+}
+
+.logestechs-transfer-popup .logestechs-tracking-circle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logestechs-transfer-popup .logestechs-tracking-data {
+    border-radius: 5px;
+    background: #2ED47A;
+    color: #fff;
+    padding: 7px 20px;
+}
+
+.logestechs-transfer-popup .logestechs-popup-main {
+    height: 68vh;
+}
+
+.logestechs-details-flex {
+    display: flex;
+    /* Make the container a flex container */
+    flex-wrap: wrap;
+    /* Allow the cells to wrap to the next line if needed */
+    justify-content: space-between;
+    /* Space out the cells evenly */
+    width: 100%;
+    /* Make the flex container span the entire width of its container */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+
+.logestechs-details-cell .key {
+    font-size: 14px;
+    color: #000;
+}
+
+.logestechs-details-cell .key,
+.logestechs-details-cell .value {
+    display: block;
+    /* Make the key and value stack vertically */
+    font-family: var(--logestechs-font);
+}
+
+.logestechs-details-cell {
+    padding: 7px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1;
+    width: 50%;
+    background-color: #fff;
+    /* Or choose your preferred color for the divider */
+}
+
+.logestechs-details-cell:nth-child(odd) {
+    border-inline-end: 1px solid #ccc;
+    /* Add right border to odd numbered cells */
+    padding-inline-end: 60px;
+}
+
+.logestechs-details-cell:nth-child(even) {
+    padding-inline-start: 60px;
 }

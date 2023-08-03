@@ -12,17 +12,6 @@ if (!class_exists('Logestechs_Woocommerce_List_View')) {
     class Logestechs_Woocommerce_List_View {
 
         /**
-         * Initialize the class and set its properties.
-         *
-         * @since    1.0.0
-         */
-        public function __construct() {
-            // Add action hook here to append the custom column to WooCommerce orders list
-            // add_filter('manage_edit-shop_order_columns', array($this, 'add_custom_column_header'), 20);
-            // add_action('manage_shop_order_posts_custom_column', array($this, 'add_custom_column_data'), 20, 2);
-        }
-
-        /**
          * Add custom column header to WooCommerce orders list
          *
          * @param array $columns Existing column headers
@@ -30,10 +19,19 @@ if (!class_exists('Logestechs_Woocommerce_List_View')) {
          */
         public function add_custom_column_header($columns) {
             // Define the column header for our custom column
-            // $columns['logestechs'] = __('Logestechs', 'logestechs');
-            // return $columns;
+            $new_columns = [];
+    
+            // Adds the custom column after the "Order" column.
+            foreach ( $columns as $column_name => $column_info ) {
+                $new_columns[$column_name] = $column_info;
+                if ( 'order_number' === $column_name ) {
+                    $new_columns['logestechs'] = __( 'Logestechs', 'logestechs' );
+                }
+            }
+        
+            return $new_columns;
         }
-
+    
         /**
          * Add custom column data to WooCommerce orders list
          *
@@ -41,12 +39,17 @@ if (!class_exists('Logestechs_Woocommerce_List_View')) {
          * @param int $post_id The post ID (order ID)
          */
         public function add_custom_column_data($column, $post_id) {
+
             // Check if it's our custom column and add the column data
-            // if ($column == 'logestechs') {
-            //     // Fetch data from Logestechs API and display in the column
-            // }
+            if ($column == 'logestechs') {
+                $logestechs_company = get_post_meta( $post_id, '_logestechs_company', true );
+                if(!empty($logestechs_company)) {
+                    echo '<p>' . $logestechs_company . '</p>';
+                }else {
+                    // Fetch data from Logestechs API and display in the column
+                    echo '<button class="js-open-transfer-popup logestechs-btn-text" data-order="' . $post_id . '">' . __( 'Assign Company', 'logestechs' ) . '</button>';
+                }
+            }
         }
     }
 }
-
-new Logestechs_WooCommerceList_View();

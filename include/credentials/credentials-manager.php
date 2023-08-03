@@ -23,9 +23,6 @@ if (!class_exists('Logestechs_Credentials_Manager')) {
         public function __construct() {
             // Initialize the credentials storage
             // $this->credentials_storage = new Logestechs_Credentials_Storage();
-            
-            $debugger = new Logestechs_Debugger();
-            $debugger->log('nice 1')->display();
         }
 
         /**

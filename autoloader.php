@@ -16,13 +16,12 @@ if ( ! class_exists( 'Logestechs_Autoloader' ) ) {
         private $classes_to_load = [
             // directory => [class names]
             'admin' => [
-                'Logestechs_Admin_Menu',
                 'Logestechs_Admin_Page',
                 'Logestechs_Enqueue'
             ],
             'api' => [
                 'Logestechs_Api_Error_Handler',
-                'Logestechs_Api'
+                'Logestechs_Api_Handler'
             ],
             'core' => [
                 'Logestechs_Plugin_Activator',
@@ -31,7 +30,7 @@ if ( ! class_exists( 'Logestechs_Autoloader' ) ) {
                 'Logestechs_Plugin_Uninstall'
             ],
             'include' => [
-                'Logestechs_Error_Handler'
+                'Logestechs_Config',
             ],
             'include/credentials' => [
                 'Logestechs_Credentials_Manager',
@@ -40,7 +39,8 @@ if ( ! class_exists( 'Logestechs_Autoloader' ) ) {
             'include/orders' => [
                 'Logestechs_Order_Handler',
                 'Logestechs_Order_Metabox',
-                'Logestechs_Order_Tracker'
+                'Logestechs_Order_Tracker',
+                'Logestechs_Popup_Handler'
             ],
             'security' => [
                 'Logestechs_Data_Encryption',
@@ -54,9 +54,10 @@ if ( ! class_exists( 'Logestechs_Autoloader' ) ) {
             ],
             'views' => [
                 'Logestechs_Admin_Page_View',
-                'Logestechs_Order_Transfer_Popup_View',
+                'Logestechs_Manage_Companies_Popup_View',
                 'Logestechs_Tracking_Details_Popup_View',
-                'Logestechs_Woocommerce_List_View'
+                'Logestechs_Woocommerce_List_View',
+                'Logestechs_Woocommerce_Metabox_View',
             ]
         ];
 
@@ -65,12 +66,17 @@ if ( ! class_exists( 'Logestechs_Autoloader' ) ) {
          *
          * @since    1.0.0
          */
-        public function __construct() {
+        public function init() {
             // Code that runs during plugin initialization
             spl_autoload_register( [$this, 'autoload'] );
         }
 
         public function autoload( $class_name ) {
+            $file_path = LOGESTECHS_PLUGIN_PATH . "utils/debugger.php";
+            if ( file_exists( $file_path ) ) {
+                require_once $file_path;
+            }
+            
             // Convert class name to file name. e.g., Logestechs_Logger => logger
             $file_name = strtolower( preg_replace( '/^Logestechs_/', '', $class_name ) ) . '.php';
             $file_name = str_replace( '_', '-', $file_name );

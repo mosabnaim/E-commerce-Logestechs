@@ -9,7 +9,7 @@
  * @subpackage Logestechs/utils
  */
 
-if (!function_exists('logestechs_get_option')) {
+if ( ! function_exists( 'logestechs_get_option' ) ) {
 
     /**
      * Get Logestechs option.
@@ -18,7 +18,7 @@ if (!function_exists('logestechs_get_option')) {
      * @param mixed $default The default value to return if the option doesn't exist.
      * @return mixed The option value.
      */
-    function logestechs_get_option($option, $default = null) {
+    function logestechs_get_option( $option, $default = null ) {
         // Implement option fetching
         // Get the option from the database
         // If it doesn't exist, return the default value
@@ -26,7 +26,7 @@ if (!function_exists('logestechs_get_option')) {
     }
 }
 
-if (!function_exists('logestechs_update_option')) {
+if ( ! function_exists( 'logestechs_update_option' ) ) {
 
     /**
      * Update Logestechs option.
@@ -34,10 +34,34 @@ if (!function_exists('logestechs_update_option')) {
      * @param string $option The option to update.
      * @param mixed $value The new value for the option.
      */
-    function logestechs_update_option($option, $value) {
+    function logestechs_update_option( $option, $value ) {
         // Implement option updating
         // Update the option in the database
         // update_option("logestechs_$option", $value);
+    }
+}
+if ( ! function_exists( 'logestechs_asset' ) ) {
+
+    /**
+     * Update Logestechs option.
+     *
+     * @param string $option The option to update.
+     * @param mixed $value The new value for the option.
+     */
+    function logestechs_asset( $asset ) {
+        return LOGESTECHS_PLUGIN_URL . 'assets/' . $asset;
+    }
+}
+if ( ! function_exists( 'logestechs_image' ) ) {
+
+    /**
+     * Update Logestechs option.
+     *
+     * @param string $option The option to update.
+     * @param mixed $value The new value for the option.
+     */
+    function logestechs_image( $asset ) {
+        return logestechs_asset( 'img/' . $asset );
     }
 }
 
