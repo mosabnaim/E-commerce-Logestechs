@@ -45,12 +45,12 @@ if (!class_exists('Logestechs_Admin_Page_View')) {
                 <div class="logestechs-table-head">
                     <div class="logestechs-flex">
                         <h3><?php _e( 'Manage Shipments', 'logestechs' )?></h3>
-                        <span>2</span>
+                        <span><?php echo count($this->orders) ?></span>
                     </div>
                     <div class="logestechs-flex">
                         <div class="logestechs-sync-btn">
                             <img src="<?php echo logestechs_image('sync.svg') ?>" alt="">
-                            <p>Sync Status</p>
+                            <p><?php _e( 'Sync Status', 'logestechs' )?></p>
                         </div>
                         <input class="logestechs-filter-input" type="date" name="" id="" placeholder="Date">
                         <div class="logestechs-search-wrapper">
@@ -73,48 +73,48 @@ if (!class_exists('Logestechs_Admin_Page_View')) {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>#18</td>
-                            <td>26/07/2023 08:41</td>
-                            <td>#130724024379</td>
-                            <td>KSA demo</td>
-                            <td>
-                                <span>
-                                    Shipped
-                                </span>
-                            </td>
-                            <td>
-                                <div class="logestechs-dropdown">
-                                <img src="<?php echo logestechs_image('dots.svg'); ?>" />
-                                <div class="logestechs-dropdown-content">
-                                        <div>Print Invoice</div>
-                                        <div class="js-open-details-popup">Track</div>
-                                        <div>Cancel</div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#19</td>
-                            <td>28/07/2023 09:30</td>
-                            <td>#160424324376</td>
-                            <td>KSA demo</td>
-                            <td>
-                                <span class="logestechs-cancelled">
-                                    Cancelled
-                                </span>
-                            </td>
-                            <td>
-                                <div class="logestechs-dropdown">
-                                    <img src="<?php echo logestechs_image('dots.svg'); ?>" />
-                                    <div class="logestechs-dropdown-content">
-                                        <div>Print Invoice</div>
-                                        <div class="js-open-details-popup">Track</div>
-                                        <div>Cancel</div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
+                        <?php 
+                        if (empty($this->orders)) { 
+                            ?>
+                            <tr>
+                                <td colspan="6"><?php _e('No orders found.', 'logestechs'); ?></td>
+                            </tr>
+                            <?php 
+                        } else {
+                            foreach ($this->orders as $order_post) {
+                                $order = wc_get_order($order_post);
+                                $order_id = $order->get_id();
+                                $order_barcode = get_post_meta($order_id, 'logestechs_order_barcode', true);
+                                $order_logestechs_id = get_post_meta($order_id, 'logestechs_order_id', true);
+                                $company_name = get_post_meta($order_id, 'logestechs_company_name', true);
+                                $date = get_post_meta($order_id, 'logestechs_date', true);
+                                $status = get_post_meta($order_id, 'logestechs_order_status', true);
+                                ?>
+                                <tr>
+                                    <td>#<?php echo esc_html($order_id); ?></td>
+                                    <td><?php echo esc_html($date); ?></td>
+                                    <td>#<?php echo esc_html($order_barcode); ?></td>
+                                    <td><?php echo esc_html($company_name); ?></td>
+                                    <td>
+                                        <span class="<?php echo 'logestechs-'. esc_html($status); ?>">
+                                            <?php echo ucfirst(esc_html($status)); ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="logestechs-dropdown">
+                                            <img src="<?php echo logestechs_image('dots.svg'); ?>" />
+                                            <div class="logestechs-dropdown-content">
+                                                <div class="js-logestechs-print" data-order-id="<?php echo $order_id; ?>">Print Invoice</div>
+                                                <div class="js-open-details-popup" data-order-id="<?php echo $order_id; ?>">Track</div>
+                                                <div class="js-logestechs-cancel" data-order-id="<?php echo $order_id; ?>">Cancel</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php 
+                            }
+                        }
+                        ?>
                     </tbody>
                 </table>
             </div>

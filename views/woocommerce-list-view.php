@@ -42,12 +42,12 @@ if (!class_exists('Logestechs_Woocommerce_List_View')) {
 
             // Check if it's our custom column and add the column data
             if ($column == 'logestechs') {
-                $logestechs_company = get_post_meta( $post_id, '_logestechs_company', true );
+                $logestechs_company = get_post_meta( $post_id, 'logestechs_company_name', true );
                 if(!empty($logestechs_company)) {
                     echo '<p>' . $logestechs_company . '</p>';
                 }else {
                     // Fetch data from Logestechs API and display in the column
-                    echo '<button class="js-open-transfer-popup logestechs-btn-text" data-order="' . $post_id . '">' . __( 'Assign Company', 'logestechs' ) . '</button>';
+                    echo '<button class="js-open-transfer-popup logestechs-btn-text" data-order-id="' . $post_id . '">' . __( 'Assign Company', 'logestechs' ) . '</button>';
                 }
             }
         }

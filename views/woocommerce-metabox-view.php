@@ -30,20 +30,19 @@ if ( ! class_exists( 'Logestechs_Woocommerce_Metabox_View' ) ) {
             // Ensure you escape all output!
             // Add metabox content here.
             // Make sure to properly sanitize all output!
-
             $logestechs_order_id = $this->order_details['logestechs_order_id'];
-            $display_details = empty($logestechs_order_id) ? 'none' : 'block'; // Inline CSS display value will be 'none' if $logestechs_order_id is empty, else 'block'
-            $display_assign_btn = empty($logestechs_order_id) ? 'block' : 'none'; // Inline CSS display value will be 'none' if $logestechs_order_id is empty, else 'block'
-            
-            $details_to_display = [
-                'Package Number' => '#130724024379',
-                'Price' => '20 SAR',
-                'Reservation Date' => '24/07/2023',
-                'Shipment Type' => 'Cod',
-                'Recipient' => 'Omar Sakr',
-                'Package Weight' => '0',
+            $is_assignable       = ! ( ! empty( $logestechs_order_id ) && $this->order_details['logestechs_order_status'] == 'transferred' );
+            $display_details     = $is_assignable ? 'none' : 'block'; // Inline CSS display value will be 'none' if $logestechs_order_id is empty, else 'block'
+            $display_assign_btn  = $is_assignable ? 'block' : 'none'; // Inline CSS display value will be 'none' if $logestechs_order_id is empty, else 'block'
+            $details_to_display  = [
+                'Package Number'         => '#130724024379',
+                'Price'                  => '20 SAR',
+                'Reservation Date'       => '24/07/2023',
+                'Shipment Type'          => 'Cod',
+                'Recipient'              => 'Omar Sakr',
+                'Package Weight'         => '0',
                 'Expected Delivery Date' => '26/07/2023',
-                'Phone Number' => '0595453476'
+                'Phone Number'           => '0595453476'
             ];
 
             ob_start();
@@ -55,23 +54,23 @@ if ( ! class_exists( 'Logestechs_Woocommerce_Metabox_View' ) ) {
                     </div>
                     <p class="logestechs-primary-text"><?php echo esc_html( Logestechs_Config::PLUGIN_NAME ) ?></p>
                 </div>
-                <button id="logestechs-transfer-order" class="js-open-transfer-popup logestechs-white-btn" style="display: <?php echo $display_assign_btn; ?>;"><?php _e( 'Assign Company', 'logestechs' )?></button>
+                <button id="logestechs-transfer-order" data-order-id="<?php echo $this->order_details['id'] ?>" class="js-open-transfer-popup logestechs-white-btn" style="display: <?php echo $display_assign_btn; ?>;"><?php _e( 'Assign Company', 'logestechs' )?></button>
             </div>
             <div class="logestechs-details" style="display: <?php echo $display_details; ?>;">
                 <div class="logestechs-details-flex">
                     <?php
                     $counter = 0;
-                    foreach ($details_to_display as $key => $value) {
+                    foreach ( $details_to_display as $key => $value ) {
                         echo '<div class="logestechs-details-cell">';
-                        echo '<span class="key">' . esc_html($key) . '</span><span class="value">' . esc_html($value) . '</span>';
+                        echo '<span class="key">' . esc_html( $key ) . '</span><span class="value">' . esc_html( $value ) . '</span>';
                         echo '</div>';
-                        $counter++;
+                        ++$counter;
                     }
                     ?>
                 </div>
                 <div class="logestechs-metabox-footer">
-                    <button id="logestechs-cancel-order" class="logestechs-secondary-btn">Cancel Shipping</button>
-                    <button id="logestechs-print-invoice" class="logestechs-primary-btn">Print Invoice</button>
+                    <button id="logestechs-cancel-order" data-order-id="<?php echo $this->order_details['id'] ?>" class="js-logestechs-cancel logestechs-secondary-btn">Cancel Shipping</button>
+                    <button id="logestechs-print-invoice" data-order-id="<?php echo $this->order_details['id'] ?>" class="js-logestechs-print logestechs-primary-btn">Print Invoice</button>
                     <button id="logestechs-show-tracking" class="js-open-details-popup logestechs-primary-btn">Track Package</button>
                 </div>
             </div>

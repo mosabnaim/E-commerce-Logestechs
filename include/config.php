@@ -11,8 +11,10 @@
 
 class Logestechs_Config {
     const PLUGIN_NAME = 'Logestechs';
+    const MENU_TITLE = 'Logestechs';
+    const MENU_SLUG = 'logestechs';
     const PLUGIN_LOGO = LOGESTECHS_PLUGIN_URL . 'assets/img/logo.jpeg';
-    const PLUGIN_ICON = 'path_to_your_icon.png';
+    const PLUGIN_ICON = LOGESTECHS_PLUGIN_URL . 'assets/img/logo.svg';
 
     const PLUGIN_STYLES = [
         '--logestechs-primary-color'     => '#F97F35',

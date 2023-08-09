@@ -84,6 +84,10 @@
     gap: 10px;
     cursor: pointer;
 }
+.logestechs-sync-btn img {
+    width: 20px;
+    color: #1e1e1e;
+}
 
 .logestechs-filter-input[type=text], .logestechs-filter-input[type=date] {
     width: 243px;
@@ -102,7 +106,7 @@
 .logestechs-search-icon {
     background: #fff;
     position: absolute;
-    top: 10px;
+    top: 7px;
     inset-inline-end: 10px;
 }
 .logestechs-search-wrapper {

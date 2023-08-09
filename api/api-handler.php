@@ -23,7 +23,7 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
          */
         public function __construct() {
             // Set the Logestechs API base URL
-            // $this->api_base_url = "https://logestechs-api.example.com/";
+            $this->api_base_url = 'https://apisv2.logestechs.com/api/';
 
             // Initialize the API error handler
             $this->api_error_handler = new Logestechs_Api_Error_Handler();
@@ -37,7 +37,7 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
          * @param array $body The request body parameters.
          * @return mixed The response from the API.
          */
-        public function request( $endpoint, $method = 'GET', $body = [] ) {
+        public function request( $endpoint, $method = 'GET', $body = [], $company_id = null ) {
             // Make a request to the Logestechs API and return the response
             // e.g. use wp_remote_get() or wp_remote_post() depending on the $method
             // Construct the full API URL:
@@ -52,9 +52,17 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
                 ]
             ];
 
+            if ( $company_id ) {
+                $args['headers']['company-id'] = $company_id;
+            }
+
             // If there's data in the $body parameter, add it to the $args array
             if ( ! empty( $body ) ) {
-                $args['body'] = json_encode( $body );
+                if ( $method === 'GET' ) {
+                    $url = add_query_arg( $body, $url );
+                } else {
+                    $args['body'] = json_encode( $body );
+                }
             }
 
             // Use the WordPress HTTP API to make the request:
@@ -89,37 +97,101 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
                 // Handle error according to your error handling practices
                 // This can include logging the error, displaying a user-friendly message, etc.
                 $this->api_error_handler->handle_api_error( $response );
+
                 return false;
             }
-        
+
             // If everything went well, return the response (or part of it)
+
             return $response;
         }
-        
 
-        public function create_order( $order_data ) {
-            // Call the 'request' method to create an order on Logestechs
-            // $response = $this->request( 'orders', 'POST', $order_data );
-            $response['order_id'] = 12;
-            if ( $response === false ) {
-                // Handle the error
-                return false;
-            } else {
-                // Return the Logestechs order ID
-                return $response['order_id'];
-            }
-        }
         public function cancel_order( $order_id ) {
+            $local_company_id = get_post_meta( $order_id, 'logestechs_local_company_id', true );
+
+            $credentials_storage = Logestechs_Credentials_Storage::get_instance();
+            $company             = $credentials_storage->get_company( $local_company_id );
+
+            $security_manager   = new Logestechs_Security_Manager();
+            $encryptor          = $security_manager->get_encryptor();
+            $decrypted_password = $encryptor->decrypt( $company->password ); // Encrypt the password
+            $logestechs_id      = get_post_meta( $order_id, 'logestechs_order_id', true );
+
             // Call the 'request' method to create an order on Logestechs
             // $response = $this->request( 'cancel_order', 'POST', [[ 'order_id' => $order_id ]] );
-            $response['order_id'] = $order_id;
-            if ( $response === false ) {
-                // Handle the error
+
+            $response = $this->request( "guests/{$company->company_id}/packages/{$logestechs_id}/cancel/", 'PUT', [
+                'email'    => $company->email,
+                'password' => $decrypted_password
+            ], $company->company_id );
+
+            return empty( $response );
+        }
+
+        public function print_order( $order_id ) {
+            $company_id    = get_post_meta( $order_id, 'logestechs_api_company_id', true );
+            $logestechs_id = get_post_meta( $order_id, 'logestechs_order_id', true );
+
+            // Call the 'request' method to create an order on Logestechs
+            // $response = $this->request( 'cancel_order', 'POST', [[ 'order_id' => $order_id ]] );
+
+            $response = $this->request( "guests/{$company_id}/packages/pdf", 'POST', [
+                'ids' => [
+                    $logestechs_id
+                ]
+            ], $company_id );
+
+            return $response;
+        }
+
+        public function get_company_by_domain( $domain ) {
+            $response = $this->request( 'guests/companies/info-by-domain/', 'GET', [
+                'domain' => $domain
+            ] );
+
+            $api_handler        = new Logestechs_Api_Handler();
+            $processed_response = $api_handler->handle_response( $response );
+            if ( ! $processed_response || ! isset( $processed_response['id'], $processed_response['logo'], $processed_response['name'] ) ) {
+                // Return or handle error case
                 return false;
-            } else {
-                // Return the Logestechs order ID
-                return $order_id;
             }
+            // Return the company_id and logo_url
+
+            return [
+                'company_id' => $processed_response['id'],
+                'logo_url'   => $processed_response['logo'],
+                'name'       => $processed_response['name']
+            ];
+        }
+
+        public function check_credentials( $company_id, $email, $password ) {
+            $response = $this->request( 'auth/customer/check', 'POST', [
+                'companyId' => $company_id,
+                'email'     => $email,
+                'password'  => $password
+            ], $company_id );
+
+            return ! isset( $response['error'] );
+        }
+
+        public function transfer_order_to_logestechs( $company, WC_Order $order ) {
+
+            $security_manager   = new Logestechs_Security_Manager();
+            $encryptor          = $security_manager->get_encryptor();
+            $decrypted_password = $encryptor->decrypt( $company->password ); // Encrypt the password
+
+            $order_handler = new Logestechs_Order_Handler();
+            $order_data    = $order_handler->get_order_data( $order );
+            $api_data      = [
+                'email'    => $company->email,
+                'password' => $decrypted_password
+            ];
+            $api_data = array_merge( $api_data, $order_data );
+            // Proceed with your API call here with the $api_data
+
+            $response = $this->request( 'ship/request/by-email', 'POST', $api_data, $company->company_id );
+
+            return $response;
         }
     }
 }

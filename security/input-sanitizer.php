@@ -31,7 +31,16 @@ if (!class_exists('Logestechs_Input_Sanitizer')) {
             // Implement input sanitization
             // Sanitize strings using a function like sanitize_text_field()
             // Sanitize arrays recursively
-            // return is_array($input) ? array_map(array($this, 'sanitize'), $input) : sanitize_text_field($input);
+            return is_array($input) ? array_map(array($this, 'sanitize'), $input) : sanitize_text_field($input);
+        }
+
+        public function sanitize_credentials($data) {
+            $credentials['domain']     = $this->sanitize( $data['domain'] );
+            $credentials['password']   = $this->sanitize( $data['password'] );
+            $credentials['email']      = $this->sanitize( $data['email'] );
+            $credentials['company_id'] = $data['company_id'] ? intval( $data['company_id'] ) : null;
+
+            return $credentials;
         }
     }
 }

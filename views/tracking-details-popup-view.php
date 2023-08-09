@@ -29,15 +29,48 @@ if (!class_exists('Logestechs_Tracking_Details_Popup_View')) {
             // Fetch any necessary data using $order_id
             // Render the popup HTML. Ensure you escape all output!
             $details_to_display = [
-                'Package Number' => '#130724024379',
-                'Price' => '20 SAR',
-                'Reservation Date' => '24/07/2023',
-                'Shipment Type' => 'Cod',
-                'Recipient' => 'Omar Sakr',
-                'Package Weight' => '0',
-                'Expected Delivery Date' => '26/07/2023',
-                'Phone Number' => '0595453476'
+                [
+                    'key' => 'package_number',
+                    'label' => 'Package Number',
+                    'value' => '#130724024379'
+                ],
+                [
+                    'key' => 'price',
+                    'label' => 'Price',
+                    'value' => '20 SAR'
+                ],
+                [
+                    'key' => 'reservation_date',
+                    'label' => 'Reservation Date',
+                    'value' => '24/07/2023'
+                ],
+                [
+                    'key' => 'shipment_type',
+                    'label' => 'Shipment Type',
+                    'value' => 'Cod'
+                ],
+                [
+                    'key' => 'recipient',
+                    'label' => 'Recipient',
+                    'value' => 'Omar Sakr'
+                ],
+                [
+                    'key' => 'package_weight',
+                    'label' => 'Package Weight',
+                    'value' => '0'
+                ],
+                [
+                    'key' => 'expected_delivery_date',
+                    'label' => 'Expected Delivery Date',
+                    'value' => '26/07/2023'
+                ],
+                [
+                    'key' => 'phone_number',
+                    'label' => 'Phone Number',
+                    'value' => '0595453476'
+                ]
             ];
+            
             
             ob_start();
             ?>
@@ -61,12 +94,10 @@ if (!class_exists('Logestechs_Tracking_Details_Popup_View')) {
                     <div class="logestechs-popup-main">
                         <div class="logestechs-details-flex">
                             <?php
-                            $counter = 0;
-                            foreach ($details_to_display as $key => $value) {
-                                echo '<div class="logestechs-details-cell">';
-                                echo '<span class="key">' . esc_html($key) . '</span><span class="value">' . esc_html($value) . '</span>';
+                            foreach ($details_to_display as $detail) {
+                                echo '<div class="logestechs-details-cell ' . esc_attr($detail['key']) . '">';
+                                echo '<span class="key">' . esc_html($detail['label']) . '</span><span class="js-logestechs-order-value value" data-key="'.esc_html($detail['key']).'">' . esc_html($detail['value']) . '</span>';
                                 echo '</div>';
-                                $counter++;
                             }
                             ?>
                         </div>

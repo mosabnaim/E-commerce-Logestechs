@@ -9,7 +9,7 @@
  * @subpackage Logestechs/security
  */
 
-if (!class_exists('Logestechs_Security_Manager')) {
+if ( ! class_exists( 'Logestechs_Security_Manager' ) ) {
 
     class Logestechs_Security_Manager {
 
@@ -24,9 +24,11 @@ if (!class_exists('Logestechs_Security_Manager')) {
          */
         public function __construct() {
             // Initialize validator, sanitizer and encryptor
-            // $this->validator = new Logestechs_Data_Validator();
-            // $this->sanitizer = new Logestechs_Input_Sanitizer();
-            // $this->encryptor = new Logestechs_Data_Encryption();
+            $this->validator = new Logestechs_Data_Validator();
+            $this->sanitizer = new Logestechs_Input_Sanitizer();
+            $encryption_key  = get_option( 'logestechs_encryption_key' );
+
+            $this->encryptor = new Logestechs_Data_Encryption( $encryption_key );
         }
 
         /**

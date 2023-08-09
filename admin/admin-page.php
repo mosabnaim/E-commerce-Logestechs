@@ -32,12 +32,12 @@ if (!class_exists('Logestechs_Admin_Page')) {
         public function create_plugin_menu() {
             // Creates a new top-level menu section
             add_menu_page(
-                __( 'Logestechs Page', 'logestechs' ), // page title
-                __( 'Logestechs', 'logestechs' ), // menu title
+                Logestechs_Config::PLUGIN_NAME, // page title
+                Logestechs_Config::MENU_TITLE, // menu title
                 'manage_options', // capability
-                'logestechs', // menu slug
+                Logestechs_Config::MENU_SLUG, // menu slug
                 [ $this, 'render_page' ],
-                logestechs_image('logo.svg'), // menu icon
+                Logestechs_Config::PLUGIN_ICON, // menu icon
                 55// position
             );
         }

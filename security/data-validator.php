@@ -9,40 +9,39 @@
  * @subpackage Logestechs/security
  */
 
-if (!class_exists('Logestechs_Data_Validator')) {
+if ( ! class_exists( 'Logestechs_Data_Validator' ) ) {
 
     class Logestechs_Data_Validator {
+        public function validate_credentials( $credentials ) {
+            $errors = [];
 
-        /**
-         * Initialize the class and set its properties.
-         *
-         * @since    1.0.0
-         */
-        public function __construct() {
+            if ( empty( $credentials['domain'] ) ) {
+                $errors[] = 'Domain is required.';
+            }
+
+            if ( empty( $credentials['email'] ) ) {
+                $errors[] = 'Email is required.';
+            }
+
+            if ( empty( $credentials['password'] ) ) {
+                $errors[] = 'Password is required.';
+            } elseif ( strlen( $credentials['password'] ) < 3 ) {
+                $errors[] = 'Password should be at least 3 characters long.';
+            }
+
+            if ( isset( $credentials['company_id'] ) && ! intval( $credentials['company_id'] ) ) {
+                $errors[] = 'Invalid company ID.';
+            }
+
+            return $errors;
         }
 
-        /**
-         * Validate Logestechs credentials.
-         *
-         * @param array $credentials The Logestechs credentials to validate.
-         * @return bool Whether the credentials are valid or not.
-         */
-        public function validate_credentials($credentials) {
-            // Implement credentials validation
-            // Check if all necessary fields are present and are in the correct format
-            // return isset($credentials['domain'], $credentials['email'], $credentials['password']);
-        }
+        public function validate_order( $order ) {
+            if ( ! $order->id ) {
+                $errors[] = 'Order Id is required';
+            }
 
-        /**
-         * Validate an order.
-         *
-         * @param array $order The order to validate.
-         * @return bool Whether the order is valid or not.
-         */
-        public function validate_order($order) {
-            // Implement order validation
-            // Check if all necessary fields are present and are in the correct format
-            // return isset($order['id'], $order['items'], $order['total']);
+            return $errors;
         }
     }
 }

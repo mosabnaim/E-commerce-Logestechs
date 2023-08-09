@@ -8,41 +8,25 @@
  * @package    Logestechs
  * @subpackage Logestechs/core
  */
-
-if (!class_exists('Logestechs_Plugin_Activator')) {
+if ( ! class_exists( 'Logestechs_Plugin_Activator' ) ) {
 
     class Logestechs_Plugin_Activator {
 
-        /**
-         * The method that runs during plugin activation
-         *
-         * This should include operations like creating database tables, 
-         * scheduling events (cron jobs), or setting default options.
-         *
-         * @since    1.0.0
-         */
         public static function activate() {
-            // Example: Create a database table
-            /*
-            global $wpdb;
-            $charset_collate = $wpdb->get_charset_collate();
-            $table_name = $wpdb->prefix . 'logestechs_table';
+            self::generate_encryption_key();
 
-            $sql = "CREATE TABLE $table_name (
-                id mediumint(9) NOT NULL AUTO_INCREMENT,
-                column_name varchar(255) NOT NULL,
-                PRIMARY KEY  (id)
-            ) $charset_collate;";
-
-            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-            dbDelta($sql);
-            */
-
-            // Example: Schedule a cron event
-            // if (!wp_next_scheduled('logestechs_scheduled_event')) {
-            //    wp_schedule_event(time(), 'daily', 'logestechs_scheduled_event');
-            // }
+            $credentials_storage = Logestechs_Credentials_Storage::get_instance();
+            $credentials_storage->create_table();
         }
 
+        private static function generate_encryption_key() {
+            // Check if the key is already set.
+            if ( ! get_option( 'logestechs_encryption_key' ) ) {
+                // Generate a secure random key with a length of 32.
+                $encryption_key = wp_generate_password( 32, true, true );
+                // Store the key in the options table.
+                update_option( 'logestechs_encryption_key', $encryption_key );
+            }
+        }
     }
 }

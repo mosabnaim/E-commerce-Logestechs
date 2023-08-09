@@ -22,13 +22,18 @@ if ( ! class_exists( 'Logestechs_Plugin_Core' ) ) {
             // Code that runs during plugin initialization
         }
 
+        public function run() {
+            add_action( 'init', [$this, 'init'] );
+        }
+
         /**
          * Runs the plugin.
          *
          * @since    1.0.0
          */
-        public function run() {
+        public function init() {
             if ( current_user_can( 'manage_options' ) ) {
+
                 // This is where you can hook into WordPress actions and filters,
                 // initialize your classes, or run any code needed for your plugin.
                 // function to automatically include class files as they're needed.
@@ -46,7 +51,13 @@ if ( ! class_exists( 'Logestechs_Plugin_Core' ) ) {
             new Logestechs_Popup_Handler();
             new Logestechs_Order_Metabox();
             new Logestechs_Order_Handler();
+
+            $custom_settings = new Logestechs_Woocommerce_Custom_Settings();
+            $custom_settings->init();
+            $check_for_woocommerce = new Logestechs_Missing_Woocommerce();
+            $check_for_woocommerce->init();
         }
+
         /**
          * Define the locale for this plugin for internationalization.
          *
@@ -54,8 +65,9 @@ if ( ! class_exists( 'Logestechs_Plugin_Core' ) ) {
          */
         private function set_locale() {
             // Load text domain for localization
-            load_plugin_textdomain('logestechs', false, LOGESTECHS_PLUGIN_BASENAME . '/languages/');
+            load_plugin_textdomain( 'logestechs', false, LOGESTECHS_PLUGIN_BASENAME . '/languages/' );
         }
+
         /**
          * Register all of the hooks related to the admin area functionality
          * of the plugin.
@@ -66,7 +78,6 @@ if ( ! class_exists( 'Logestechs_Plugin_Core' ) ) {
             // Hook into WordPress actions and filters here for the admin area
             // Example: add_action('admin_enqueue_scripts', 'enqueue_admin_scripts');
         }
-
     }
 
 }

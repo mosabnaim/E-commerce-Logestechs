@@ -1,6 +1,1 @@
-<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="search icon">
-<circle id="Ellipse 1" cx="7" cy="7" r="6.75" stroke="black" stroke-width="0.5"/>
-<line id="Line 2" x1="11.1768" y1="11.8232" x2="15.1768" y2="15.8232" stroke="black" stroke-width="0.5"/>
-</g>
-</svg>
+<?xml version="1.0" ?><svg class="feather feather-search" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></svg>

@@ -11,6 +11,12 @@
     transition: all 200ms ease-in-out;
     white-space: nowrap;
 }
+.logestechs-primary-btn.disabled {
+    background: #aeaeae;
+    color: #ffffff;
+    box-shadow: none;
+    cursor: auto;
+}
 
 .logestechs-secondary-btn {
     padding: 13px 28px;
@@ -181,13 +187,17 @@
     border-bottom: 1px solid #e6e1e1;
 }
 
-.logestechs-delete-icon {
+.logestechs-edit-icon, .logestechs-delete-icon {
     background: none;
     border: none;
     cursor: pointer;
     width: 20px;
 }
-
+.logestechs-icons-flex {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
 .logestechs-row {
     display: flex;
     padding: 10px 50px;
@@ -419,4 +429,35 @@
 
 .logestechs-details-cell:nth-child(even) {
     padding-inline-start: 60px;
+}
+
+.logestechs-text-center {
+    text-align: center;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.logestechs-company-details div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.logestechs-company-details p {
+    margin: 0;
+}
+.logestechs-feedback-error {
+    color: #d31818;
+}
+.logestechs-add-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+.logestechs-add-btn img {
+    width: 16px;
+    filter: invert(1);
+}
+#logestechs-order-transfer-popup .logestechs-row {
+    cursor: pointer;
+    user-select: none;
 }

@@ -8,36 +8,96 @@
  * @package    Logestechs
  * @subpackage Logestechs/include/credentials
  */
+require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
-if (!class_exists('Logestechs_Credentials_Storage')) {
-
+if ( ! class_exists( 'Logestechs_Credentials_Storage' ) ) {
     class Logestechs_Credentials_Storage {
+        private static $instance;
+        private $table_name;
+        private $wpdb;
 
-        /**
-         * Save Logestechs credentials.
-         *
-         * @param array $credentials The Logestechs credentials to save.
-         * @return bool True on success, false on failure.
-         */
-        public function save($credentials) {
-            // Use WordPress's built-in functions to interact with the database
-            // and save the credentials
-            // e.g. update_option(), add_option(), or direct wpdb usage
-
-            // This will depend on how you want to store the data
+        private function __construct() {
+            global $wpdb;
+            $this->wpdb       = $wpdb;
+            $this->table_name = $wpdb->prefix . 'logestechs_companies';
         }
 
-        /**
-         * Delete Logestechs credentials.
-         *
-         * @param string $id The ID of the credentials to delete.
-         * @return bool True on success, false on failure.
-         */
-        public function delete($id) {
-            // Use WordPress's built-in functions to interact with the database
-            // and delete the credentials
+        public static function get_instance() {
+            if ( null === self::$instance ) {
+                self::$instance = new self;
+            }
 
-            // This will depend on how you want to store the data
+            return self::$instance;
+        }
+
+        public function create_table() {
+            $charset_collate = $this->wpdb->get_charset_collate();
+
+            $sql = "CREATE TABLE {$this->table_name} (
+                id mediumint(9) NOT NULL AUTO_INCREMENT,
+                domain varchar(55) NOT NULL,
+                company_id varchar(55) NOT NULL,
+                company_name varchar(255) NOT NULL,
+                email varchar(55) NOT NULL,
+                password varchar(255) NOT NULL,
+                logo_url varchar(255) DEFAULT NULL,
+                feedback varchar(255) DEFAULT NULL,
+                created_at datetime DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY  (id),
+                UNIQUE KEY company_email (company_id, email)
+            ) {$charset_collate};";
+
+            dbDelta( $sql );
+        }
+
+        public function fetch_companies() {
+            return $this->wpdb->get_results( "SELECT id, company_id, domain, email, logo_url, feedback FROM {$this->table_name} ORDER BY created_at DESC", ARRAY_A );
+        }
+
+        public function email_exists_for_domain( $domain, $email ) {
+            $result = $this->wpdb->get_results(
+                $this->wpdb->prepare(
+                    "SELECT * FROM {$this->table_name} WHERE domain = %s AND email = %s",
+                    $domain,
+                    $email
+                )
+            );
+
+            // If the result is not empty, that means the email already exists for the domain
+            if ( ! empty( $result ) ) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        public function drop_table() {
+            $this->wpdb->query( "DROP TABLE IF EXISTS {$this->table_name}" );
+        }
+
+        public function insert_credentials( $data, $format ) {
+            $this->wpdb->insert( $this->table_name, $data, $format );
+
+            return $this->wpdb->insert_id;
+        }
+
+        public function get_company( $id ) {
+            return (object) $this->wpdb->get_row( $this->wpdb->prepare( "SELECT * FROM {$this->table_name} WHERE id = %s", $id ), ARRAY_A );
+        }
+        
+
+        public function update_credentials( $id, $data, $format ) {
+            global $wpdb;
+
+            // Where clause array
+            $where        = ['id' => $id];
+            $where_format = ['%d']; // Assuming that id is an integer
+
+            return $wpdb->update( $this->table_name, $data, $where, $format, $where_format );
+        }
+
+        public function delete_credentials( $id ) {
+            return $this->wpdb->delete( $this->table_name, [ 'id' => $id ], [ '%d' ] );
         }
     }
 }
