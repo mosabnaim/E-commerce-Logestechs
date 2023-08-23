@@ -52,8 +52,6 @@ if ( ! class_exists( 'Logestechs_Plugin_Core' ) ) {
             new Logestechs_Order_Metabox();
             new Logestechs_Order_Handler();
 
-            $custom_settings = new Logestechs_Woocommerce_Custom_Settings();
-            $custom_settings->init();
             $check_for_woocommerce = new Logestechs_Missing_Woocommerce();
             $check_for_woocommerce->init();
         }

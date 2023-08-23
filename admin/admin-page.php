@@ -2,7 +2,7 @@
 /**
  * The file that defines the plugin's admin page
  *
- * This is used to add a new page under the admin menu in WordPress and to define 
+ * This is used to add a new page under the admin menu in WordPress and to define
  * the form for the plugin settings.
  *
  * @since      1.0.0
@@ -10,7 +10,7 @@
  * @subpackage Logestechs/admin
  */
 
-if (!class_exists('Logestechs_Admin_Page')) {
+if ( ! class_exists( 'Logestechs_Admin_Page' ) ) {
 
     class Logestechs_Admin_Page {
         private $hook_suffix;
@@ -21,7 +21,7 @@ if (!class_exists('Logestechs_Admin_Page')) {
          * @since    1.0.0
          */
         public function __construct() {
-            add_action( 'admin_menu', [ $this, 'create_plugin_menu' ] );
+            add_action( 'admin_menu', [$this, 'create_plugin_menu'] );
         }
 
         /**
@@ -33,12 +33,12 @@ if (!class_exists('Logestechs_Admin_Page')) {
             // Creates a new top-level menu section
             add_menu_page(
                 Logestechs_Config::PLUGIN_NAME, // page title
-                Logestechs_Config::MENU_TITLE, // menu title
-                'manage_options', // capability
-                Logestechs_Config::MENU_SLUG, // menu slug
-                [ $this, 'render_page' ],
+                Logestechs_Config::MENU_TITLE,  // menu title
+                'manage_options',               // capability
+                Logestechs_Config::MENU_SLUG,   // menu slug
+                [$this, 'render_page'],
                 Logestechs_Config::PLUGIN_ICON, // menu icon
-                55// position
+                55                              // position
             );
         }
 
@@ -49,17 +49,24 @@ if (!class_exists('Logestechs_Admin_Page')) {
          */
         public function render_page() {
             // Check user capabilities
-            if (!current_user_can('manage_options')) {
-                wp_die(__('You do not have sufficient permissions to access this page.', 'logestechs'));
+            if ( ! current_user_can( 'manage_options' ) ) {
+                wp_die( __( 'You do not have sufficient permissions to access this page.', 'logestechs' ) );
             }
 
-            $order_handler = new Logestechs_Order_Handler();
-            $orders = $order_handler->get_transferred_orders();
-
-            $logestechs_page = new Logestechs_Admin_Page_View($orders);
+            $logestechs_page = new Logestechs_Admin_Page_View();
             $logestechs_page->render();
         }
-        
+
+        public function render_settings_page() {
+            // Check user capabilities
+            if ( ! current_user_can( 'manage_options' ) ) {
+                wp_die( __( 'You do not have sufficient permissions to access this page.', 'logestechs' ) );
+            }
+
+            // Rendering logic for the settings page
+            $logestechs_settings_page = new Logestechs_Settings_Page_View();
+            $logestechs_settings_page->render();
+        }
     }
 
 }

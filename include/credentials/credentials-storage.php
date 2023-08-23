@@ -99,5 +99,13 @@ if ( ! class_exists( 'Logestechs_Credentials_Storage' ) ) {
         public function delete_credentials( $id ) {
             return $this->wpdb->delete( $this->table_name, [ 'id' => $id ], [ '%d' ] );
         }
+
+        public function get_logestechs_company_id_by_local_id( $local_company_id ) {
+            global $wpdb;
+        
+            // Prepare the SQL statement and query the database
+            $query = $wpdb->prepare( "SELECT company_id FROM {$this->table_name} WHERE id = %d", $local_company_id );
+            return $wpdb->get_var( $query );
+        }
     }
 }

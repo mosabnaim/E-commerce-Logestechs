@@ -35,6 +35,7 @@ if ( ! class_exists( 'Logestechs_Popup_Handler' ) ) {
                 $transfer_popup = new Logestechs_Manage_Companies_Popup_View();
                 if ( 'toplevel_page_' . $slug === $screen->id ) {
                     $transfer_popup->render();
+                    $transfer_popup->render( false );
                 } else {
                     $transfer_popup->render( false );
                 }
@@ -66,8 +67,8 @@ if ( ! class_exists( 'Logestechs_Popup_Handler' ) ) {
             $credentials_manager = new Logestechs_Credentials_Manager();
             $response            = $credentials_manager->save_credentials( $credentials );
 
-            if ( is_wp_error( $response ) ) {
-                wp_send_json_error( ['message' => 'Error occurred!'] );
+            if ( isset($response['error']) ) {
+                wp_send_json_error( $response['error'] );
                 wp_die();
             }
 
@@ -83,17 +84,37 @@ if ( ! class_exists( 'Logestechs_Popup_Handler' ) ) {
                 wp_send_json_error( 'You do not have permission to perform this action.' );
             }
 
-            // Connect to Logestechs API and perform delete.
-            // Assume $api to be an instance of your API handler class.
             $company_id = $_POST['company_id'] ? intval( $_POST['company_id'] ) : null;
             if ( ! $company_id ) {
                 wp_send_json_error( 'Error while deleting this item!' );
                 wp_die();
-
             }
-
-            $credentials_manager = new Logestechs_Credentials_Manager();
-            $response            = $credentials_manager->delete_credentials( $company_id );
+            $credentials_manager   = new Logestechs_Credentials_Manager();
+            // Check if there are any WooCommerce orders that are using the logestechs_order_id with the given company_id
+            $args = [
+                'post_type'      => 'shop_order',
+                'meta_query'     => [
+                    [
+                        'key'     => '_logestechs_local_company_id',
+                        'value'   => $company_id,
+                        'compare' => '='
+                    ],
+                    [
+                        'key'     => '_logestechs_order_status',
+                        'value'   => 'Cancelled',
+                        'compare' => '!='
+                    ]
+                ],
+                'post_status'    => 'any',
+                'posts_per_page' => 1 // we only need to know if at least one exists
+            ];
+            $query = new WP_Query( $args );
+            if ( $query->have_posts() ) {
+                wp_send_json_error( 'Cannot delete this company as it is associated with existing orders!' );
+                wp_die();
+            }
+            // Connect to Logestechs API and perform delete.
+            $response = $credentials_manager->delete_credentials( $company_id );
 
             if ( is_wp_error( $response ) ) {
                 wp_send_json_error( 'Error while deleting this item!' );
@@ -101,7 +122,6 @@ if ( ! class_exists( 'Logestechs_Popup_Handler' ) ) {
             }
 
             wp_send_json_success();
-
             wp_die();
         }
 

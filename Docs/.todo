@@ -1,3 +1,6 @@
 In Progress:
-    ☐ moving order/orders to trash should canel it/them
-    ☐ Add animations while downloading invoice, adding company, assinging company
+    ✘ moving order/orders to trash should canel it/them @cancelled(23-08-17 16:24)
+    ✘ cancel logestechs if order is cancelled from anywhare @started(23-08-17 16:24) @cancelled(23-08-17 16:24) @wasted(26s)
+    ✔ Add animations while downloading invoice, adding company, assinging company @done(23-08-17 14:28)
+    ✔ add metabox only in edit @done(23-08-17 14:28)
+    ✔ avoid spaming click @done(23-08-22 08:27)

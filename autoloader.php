@@ -20,7 +20,6 @@ if ( ! class_exists( 'Logestechs_Autoloader' ) ) {
                 'Logestechs_Enqueue'
             ],
             'api' => [
-                'Logestechs_Api_Error_Handler',
                 'Logestechs_Api_Handler'
             ],
             'core' => [
@@ -31,7 +30,6 @@ if ( ! class_exists( 'Logestechs_Autoloader' ) ) {
             ],
             'include' => [
                 'Logestechs_Config',
-                'Logestechs_Woocommerce_Custom_Settings',
             ],
             'include/credentials' => [
                 'Logestechs_Credentials_Manager',
@@ -55,6 +53,7 @@ if ( ! class_exists( 'Logestechs_Autoloader' ) ) {
             ],
             'views' => [
                 'Logestechs_Admin_Page_View',
+                'Logestechs_Settings_Page_View',
                 'Logestechs_Manage_Companies_Popup_View',
                 'Logestechs_Tracking_Details_Popup_View',
                 'Logestechs_Woocommerce_List_View',

@@ -13,7 +13,7 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
 
     class Logestechs_Api_Handler {
 
-        private $api_base_url; // Set the Logestechs API base URL here
+        private $api_base_url;      // Set the Logestechs API base URL here
         private $api_error_handler; // instance of Logestechs_API_Error_Handler
 
         /**
@@ -25,8 +25,6 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
             // Set the Logestechs API base URL
             $this->api_base_url = 'https://apisv2.logestechs.com/api/';
 
-            // Initialize the API error handler
-            $this->api_error_handler = new Logestechs_Api_Error_Handler();
         }
 
         /**
@@ -47,7 +45,8 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
             $args = [
                 'method'  => $method,
                 'headers' => [
-                    'Content-Type' => 'application/json'
+                    'Content-Type' => 'application/json',
+                    'LanguageCode' => $this->get_current_language()
                     // Include any additional headers (e.g., API authentication)
                 ]
             ];
@@ -79,7 +78,17 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
 
             return json_decode( wp_remote_retrieve_body( $response ), true );
         }
-
+        function get_current_language() {
+            $locale = get_locale();
+        
+            // Check if the current locale is Arabic
+            if ($locale == 'ar') {
+                return 'ar';
+            }
+        
+            // Default to English for any other language
+            return 'en';
+        }
         /**
          * Handle the response from the Logestechs API.
          *
@@ -107,7 +116,7 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
         }
 
         public function cancel_order( $order_id ) {
-            $local_company_id = get_post_meta( $order_id, 'logestechs_local_company_id', true );
+            $local_company_id = get_post_meta( $order_id, '_logestechs_local_company_id', true );
 
             $credentials_storage = Logestechs_Credentials_Storage::get_instance();
             $company             = $credentials_storage->get_company( $local_company_id );
@@ -115,7 +124,7 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
             $security_manager   = new Logestechs_Security_Manager();
             $encryptor          = $security_manager->get_encryptor();
             $decrypted_password = $encryptor->decrypt( $company->password ); // Encrypt the password
-            $logestechs_id      = get_post_meta( $order_id, 'logestechs_order_id', true );
+            $logestechs_id      = get_post_meta( $order_id, '_logestechs_order_id', true );
 
             // Call the 'request' method to create an order on Logestechs
             // $response = $this->request( 'cancel_order', 'POST', [[ 'order_id' => $order_id ]] );
@@ -125,12 +134,12 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
                 'password' => $decrypted_password
             ], $company->company_id );
 
-            return empty( $response );
+            return $response;
         }
 
         public function print_order( $order_id ) {
-            $company_id    = get_post_meta( $order_id, 'logestechs_api_company_id', true );
-            $logestechs_id = get_post_meta( $order_id, 'logestechs_order_id', true );
+            $company_id    = get_post_meta( $order_id, '_logestechs_api_company_id', true );
+            $logestechs_id = get_post_meta( $order_id, '_logestechs_order_id', true );
 
             // Call the 'request' method to create an order on Logestechs
             // $response = $this->request( 'cancel_order', 'POST', [[ 'order_id' => $order_id ]] );
@@ -144,13 +153,25 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
             return $response;
         }
 
+        public function search_villages( $order_id, $query ) {
+            $company_id = get_post_meta( $order_id, '_logestechs_api_company_id', true );
+
+            // Call the 'request' method to create an order on Logestechs
+            // $response = $this->request( 'cancel_order', 'POST', [[ 'order_id' => $order_id ]] );
+
+            $response = $this->request( "addresses/villages", 'GET', [
+                'search' => $query
+            ], $company_id );
+            
+            return $response;
+        }
+
         public function get_company_by_domain( $domain ) {
             $response = $this->request( 'guests/companies/info-by-domain/', 'GET', [
                 'domain' => $domain
             ] );
 
-            $api_handler        = new Logestechs_Api_Handler();
-            $processed_response = $api_handler->handle_response( $response );
+            $processed_response = $this->handle_response( $response );
             if ( ! $processed_response || ! isset( $processed_response['id'], $processed_response['logo'], $processed_response['name'] ) ) {
                 // Return or handle error case
                 return false;
@@ -171,8 +192,69 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
                 'password'  => $password
             ], $company_id );
 
-            return ! isset( $response['error'] );
+            return $response['error'] ?? null;
         }
+
+        public function track_order( int $order_id ) {
+            $company_id          = get_post_meta( $order_id, '_logestechs_api_company_id', true );
+            $logestechs_order_id = get_post_meta( $order_id, '_logestechs_order_id', true );
+
+            $response = $this->request( 'guests/' . $company_id . '/packages/tracking', 'GET', [
+                'id'                => $logestechs_order_id,
+                'isShowFullHistory' => true
+            ], $company_id );
+
+            return $response;
+        }
+
+        public function get_orders_status( $order_ids = [] ) {
+            $response = $this->request( 'guests/packages/status/by-ids', 'POST', [
+                'ids' => $order_ids
+            ] );
+        
+            $statuses_mapping = [
+                'DRAFT' => __('Draft'),
+                'PENDING_CUSTOMER_CARE_APPROVAL' => __('Submitted'),
+                'APPROVED_BY_CUSTOMER_CARE_AND_WAITING_FOR_DISPATCHER' => __('Ready for dispatching'),
+                'CANCELLED' => __('Cancelled'),
+                'ASSIGNED_TO_DRIVER_AND_PENDING_APPROVAL' => __('Assigned to Drivers'),
+                'REJECTED_BY_DRIVER_AND_PENDING_MANGEMENT' => __('Rejected By Drivers'),
+                'ACCEPTED_BY_DRIVER_AND_PENDING_PICKUP' => __('Pending Pickup'),
+                'SCANNED_BY_DRIVER_AND_IN_CAR' => __('Picked'),
+                'SCANNED_BY_HANDLER_AND_UNLOADED' => __('Pending Sorting'),
+                'MOVED_TO_SHELF_AND_OUT_OF_HANDLER_CUSTODY' => __('Sorted on Shelves'),
+                'OPENED_ISSUE_AND_WAITING_FOR_MANAGEMENT' => __('Reported to Management'),
+                'DELIVERED_TO_RECIPIENT' => __('Delivered'),
+                'POSTPONED_DELIVERY' => __('Postponed delivery'),
+                'RETURNED_BY_RECIPIENT' => __('Returned by recipient'),
+                'COMPLETED' => __('Completed'),
+                'FAILED' => __('Failed'),
+                'RESOLVED_FAILURE' => __('Resolved Failure'),
+                'UNRESOLVED_FAILURE' => __('Unresolved Failure'),
+                'TRANSFERRED_OUT' => __('Transferred out'),
+                'PARTIALLY_DELIVERED' => __('Partially delivered'),
+                'SWAPPED' => __('Swapped'),
+                'BROUGHT' => __('Brought'),
+                'DELIVERED_TO_SENDER' => __('Delivered to sender')
+            ];
+        
+            $statuses = [];
+            
+            foreach ( $response as $item ) {
+                if ( ! is_array( $item ) || !isset($item['packageId'], $item['status']) ) {
+                    continue;
+                }
+        
+                $packageId = $item['packageId'];
+                $status_code = $item['status'];
+        
+                $status = isset($statuses_mapping[$status_code]) ? $statuses_mapping[$status_code] : $status_code;
+                $statuses[$packageId] = $status;
+            }
+        
+            return $statuses;
+        }
+        
 
         public function transfer_order_to_logestechs( $company, WC_Order $order ) {
 

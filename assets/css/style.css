@@ -11,6 +11,7 @@
     transition: all 200ms ease-in-out;
     white-space: nowrap;
 }
+
 .logestechs-primary-btn.disabled {
     background: #aeaeae;
     color: #ffffff;
@@ -72,6 +73,22 @@
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
     max-height: 90%;
     border-radius: 5px;
+}
+
+.logestechs-order-settings-popup {
+    z-index: 10001;
+}
+
+.logestechs-order-settings-popup .logestechs-popup-content {
+    width: 350px;
+}
+
+.logestechs-order-settings-popup .logestechs-popup-head {
+    background: #fff;
+}
+
+.logestechs-order-settings-popup .logestechs-popup-footer {
+    justify-content: center;
 }
 
 .logestechs-form-container {
@@ -159,6 +176,7 @@
 .logestechs-popup-head {
     position: relative;
     padding: 22px 38px;
+    padding-bottom: 0;
     background: #FFF6E9;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
@@ -187,17 +205,20 @@
     border-bottom: 1px solid #e6e1e1;
 }
 
-.logestechs-edit-icon, .logestechs-delete-icon {
+.logestechs-edit-icon,
+.logestechs-delete-icon {
     background: none;
     border: none;
     cursor: pointer;
     width: 20px;
 }
+
 .logestechs-icons-flex {
     display: flex;
     gap: 20px;
     align-items: center;
 }
+
 .logestechs-row {
     display: flex;
     padding: 10px 50px;
@@ -442,22 +463,165 @@
     align-items: center;
     gap: 10px;
 }
+
 .logestechs-company-details p {
     margin: 0;
 }
+
 .logestechs-feedback-error {
     color: #d31818;
 }
+
 .logestechs-add-btn {
     display: flex;
     align-items: center;
     gap: 7px;
 }
+
 .logestechs-add-btn img {
     width: 16px;
     filter: invert(1);
 }
+
 #logestechs-order-transfer-popup .logestechs-row {
     cursor: pointer;
     user-select: none;
+}
+
+div:where(.swal2-container) {
+    z-index: 90000 !important;
+}
+
+.js-loader-screen {
+    z-index: 10005 !important;
+}
+
+canvas {
+    pointer-events: none;
+}
+
+.logestechs-loader-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.logestechs-dropdown-results {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.logestechs-dropdown-item {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.logestechs-dropdown-item:hover {
+    background-color: #f0f0f0;
+}
+
+input[type=text].logestechs-dropdown-input {
+    width: 100%;
+    margin: 10px 0;
+    padding: 5px 15px;
+    border: 1px solid #d6d6d6;
+}
+
+.logestechs-village-results {
+    position: absolute;
+    width: 270px;
+    background: #fff;
+    border: 1px solid #dadada;
+    max-height: 135px;
+    overflow: auto;
+    padding: 10px 0;
+    cursor: pointer;
+    border-bottom: 1px solid #dadada;
+    width: 100%;
+}
+
+.logestechs-village-results div {
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: all 300ms ease-in-out;
+}
+
+.logestechs-village-results div:hover {
+    background: #dadada;
+}
+
+.logestechs-order-settings-popup .logestechs-primary-btn {
+    width: 100%;
+    margin: 0;
+}
+#logestechs-order-companies-popup .logestechs-popup-head,#logestechs-order-transfer-popup .logestechs-popup-head {
+    padding-bottom: 10px;
+}
+.js-logestechs-loading {
+    padding: 3px 24px;
+}
+
+.logestechs-destination-address-label {
+    font-size: 15px;
+    font-weight: 500;
+}
+.logestechs-settings {
+    display: flex;
+    flex-wrap: wrap;
+}
+.logestechs-settings-page .logestechs-header {
+    margin-bottom: 10px;
+}
+.logestechs-settings form {
+    width: 100%;
+}
+
+.logestechs-card {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    padding: 25px;
+    margin: 0 10px;
+    width: 100%;
+    gap: 0 10px;
+    box-sizing: border-box;
+}
+.logestechs-card p {
+    margin-top: 0;
+}
+.logestechs-card h2 {
+    margin: 0;
+    margin-bottom: 6px;
+}
+.logestechs-field {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0;
+    width: 100%; /* Set a specific width so that two fields can fit in one row */
+    box-sizing: border-box; /* Include padding and border in the element's total width */
+}
+
+.logestechs-field input[type=text].logestechs-dropdown-input {
+    margin: 0;
+    padding: 10px;
+}
+
+.logestechs-field label {
+    margin-bottom: 5px;
+    margin-top: 3px;
+}
+
+.logestechs-field input {
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+.logestechs-popup-details {
+    overflow: auto;
+    max-height: 500px;
+    padding: 0 33px;
 }

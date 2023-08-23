@@ -20,7 +20,6 @@ if ( ! class_exists( 'Logestechs_Order_Metabox' ) ) {
          */
         public function __construct() {
             add_action( 'add_meta_boxes', [$this, 'add_logestechs_metabox'], 10 );
-            add_action( 'save_post', [$this, 'save_logestechs_metabox'] );
         }
 
         /**
@@ -29,13 +28,19 @@ if ( ! class_exists( 'Logestechs_Order_Metabox' ) ) {
          * @since    1.0.0
          */
         public function add_logestechs_metabox() {
+            global $pagenow;
+
+            if ( 'post.php' !== $pagenow || 'shop_order' !== get_post_type() ) {
+                return; // Return early if it's not the edit page of shop_order post type
+            }
+
             add_meta_box(
-                'logestechs_order_metabox', // Unique ID
+                'logestechs_order_metabox',             // Unique ID
                 __( 'Logestechs Actions', 'logestechs' ), // Box title
-                [$this, 'logestechs_metabox_html'], // Content callback
-                'shop_order', // post type
-                'normal', // The context within the screen where the box should display.
-                'high' // The priority within the context where the box should show.
+                [$this, 'logestechs_metabox_html'],     // Content callback
+                'shop_order',                           // post type
+                'normal',                               // The context within the screen where the box should display.
+                'high'                                  // The priority within the context where the box should show.
             );
         }
 
@@ -46,27 +51,31 @@ if ( ! class_exists( 'Logestechs_Order_Metabox' ) ) {
          * @since    1.0.0
          */
         public function logestechs_metabox_html( $post ) {
-            $order          = wc_get_order( $post->ID );
-            $order_data     = $order->get_data(); // The Order's data
-            $order_meta     = get_post_meta( $post->ID, '', true );
-            $formatted_meta = $this->format_order_meta( $order_meta );
-        
-            $order_details = array_merge( $order_data, $formatted_meta );
-        
-            $keep_keys_order_data = array_flip( [
-                'id', 
-                'logestechs_order_id', 
-                'logestechs_order_status', 
-                'shipping_company',
-            ] );
-            
-            // Add non-existing keys with null value
-            $prepared_data = array_merge(array_fill_keys(array_flip($keep_keys_order_data), null), $order_details);
-            
-            // Use intersection to maintain the original order of keys in $keep_keys_order_data
-            $prepared_data = array_intersect_key($prepared_data, $keep_keys_order_data);
-        
-            $view = new Logestechs_Woocommerce_Metabox_View( $prepared_data );
+            $api             = new Logestechs_Api_Handler();
+            $response        = $api->track_order( $post->ID );
+            $currency_symbol = html_entity_decode( get_woocommerce_currency_symbol() );
+            $details_to_display = [
+                'id' => $post->ID
+            ];
+
+            if ( isset($response['id']) ) {
+                $details_to_display = [
+                    'id'                     => $post->ID,
+                    'order_id'               => $response['id'],
+                    'package_number'         => '#' . $response['barcode'],
+                    'cost'                  => $response['cost'] . ' ' . $currency_symbol, // Price from WooCommerce
+                    // 'price'                  => $order->get_total() . ' ' . $currency_symbol, // Price from WooCommerce
+                    'reservation_date' => ! empty( $response['createdDate'] ) ? date( 'd/m/Y', strtotime( $response['createdDate'] ) ) : 'N/A',
+                    'shipment_type'          => $response['shipmentType'],
+                    'recipient'              => $response['receiverFirstName'] . ' ' . $response['receiverLastName'],
+                    'package_weight'         => ! empty( $response['weight'] ) ? $response['weight'] : 'N/A',
+                    'expected_delivery_date' => ! empty( $response['expectedDeliveryDate'] ) ? date( 'd/m/Y', strtotime( $response['expectedDeliveryDate'] ) ) : 'N/A',
+                    'phone_number'           => $response['receiverPhone'],
+                    'status'                 => get_post_meta( $post->ID, '_logestechs_order_status', true )
+                ];
+            }
+
+            $view = new Logestechs_Woocommerce_Metabox_View( $details_to_display );
             $view->render();
         }
 
@@ -82,17 +91,6 @@ if ( ! class_exists( 'Logestechs_Order_Metabox' ) ) {
             }
 
             return $order_meta;
-        }
-
-        /**
-         * Save Logestechs metabox.
-         *
-         * @param int $post_id The ID of the post being saved.
-         * @since    1.0.0
-         */
-        public function save_logestechs_metabox( $post_id ) {
-            // Save the metabox data
-            // Do some operations related to saving metabox data
         }
     }
 }

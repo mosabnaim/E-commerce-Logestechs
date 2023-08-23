@@ -31,6 +31,7 @@ if (!class_exists('Logestechs_Woocommerce_List_View')) {
         
             return $new_columns;
         }
+        
     
         /**
          * Add custom column data to WooCommerce orders list
@@ -42,8 +43,9 @@ if (!class_exists('Logestechs_Woocommerce_List_View')) {
 
             // Check if it's our custom column and add the column data
             if ($column == 'logestechs') {
-                $logestechs_company = get_post_meta( $post_id, 'logestechs_company_name', true );
-                if(!empty($logestechs_company)) {
+                $logestechs_company = get_post_meta( $post_id, '_logestechs_company_name', true );
+                $logestechs_order_status = get_post_meta( $post_id, '_logestechs_order_status', true );
+                if(!empty($logestechs_company) && $logestechs_order_status != 'Cancelled') {
                     echo '<p>' . $logestechs_company . '</p>';
                 }else {
                     // Fetch data from Logestechs API and display in the column
