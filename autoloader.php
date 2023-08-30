@@ -13,14 +13,21 @@ if ( ! class_exists( 'Logestechs_Autoloader' ) ) {
 
     class Logestechs_Autoloader {
 
+        /**
+         * An array containing the mapping of directories and class names.
+         *
+         * @since    1.0.0
+         * @access   private
+         * @var      array $classes_to_load    Classes to be autoloaded.
+         */
         private $classes_to_load = [
-            // directory => [class names]
             'admin' => [
                 'Logestechs_Admin_Page',
                 'Logestechs_Enqueue'
             ],
             'api' => [
-                'Logestechs_Api_Handler'
+                'Logestechs_Api_Handler',
+                'Logestechs_Api_Error_Handler'
             ],
             'core' => [
                 'Logestechs_Plugin_Activator',
@@ -38,7 +45,6 @@ if ( ! class_exists( 'Logestechs_Autoloader' ) ) {
             'include/orders' => [
                 'Logestechs_Order_Handler',
                 'Logestechs_Order_Metabox',
-                'Logestechs_Order_Tracker',
                 'Logestechs_Popup_Handler'
             ],
             'security' => [
@@ -53,7 +59,6 @@ if ( ! class_exists( 'Logestechs_Autoloader' ) ) {
             ],
             'views' => [
                 'Logestechs_Admin_Page_View',
-                'Logestechs_Settings_Page_View',
                 'Logestechs_Manage_Companies_Popup_View',
                 'Logestechs_Tracking_Details_Popup_View',
                 'Logestechs_Woocommerce_List_View',
@@ -62,7 +67,7 @@ if ( ! class_exists( 'Logestechs_Autoloader' ) ) {
         ];
 
         /**
-         * Define the core functionality of the plugin.
+         * Initialize the autoloader.
          *
          * @since    1.0.0
          */
@@ -71,12 +76,18 @@ if ( ! class_exists( 'Logestechs_Autoloader' ) ) {
             spl_autoload_register( [$this, 'autoload'] );
         }
 
+        /**
+         * Autoloads classes based on the $classes_to_load array.
+         *
+         * @since    1.0.0
+         * @param    string $class_name    The name of the class to be loaded.
+         */
         public function autoload( $class_name ) {
             $file_path = LOGESTECHS_PLUGIN_PATH . "utils/debugger.php";
             if ( file_exists( $file_path ) ) {
                 require_once $file_path;
             }
-            
+
             // Convert class name to file name. e.g., Logestechs_Logger => logger
             $file_name = strtolower( preg_replace( '/^Logestechs_/', '', $class_name ) ) . '.php';
             $file_name = str_replace( '_', '-', $file_name );

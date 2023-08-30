@@ -21,12 +21,12 @@ jQuery(document).ready(function ($) {
 			var resultsDiv = wrapper.find('.logestechs-village-results');
 			var query = that.val().trim();
 			if (query.length < 2) {
-				resultsDiv.html('<p class="js-logestechs-loading">Please write at least 2 characters.</p>').show();
+				resultsDiv.html('<p class="js-logestechs-loading">' + logestechs_global_data.localization.length_error + '</p>').show();
 				return;
 			};
 	
-			var order_id = $('.logestechs-order-settings-popup').attr('data-order-id');
-			resultsDiv.html('<p class="js-logestechs-loading">loading...</p>').show();
+			var order_id = $('.logestechs-order-settings-popup').find('[name="order_id"]').val();
+			resultsDiv.html('<p class="js-logestechs-loading">' + logestechs_global_data.localization.loading + '</p>').show();
 	
 			if (is_sending_request) return;
 			is_sending_request = true;
@@ -62,7 +62,7 @@ jQuery(document).ready(function ($) {
 							resultsDiv.append(resultItem);
 						});
 					} else {
-						var noVillagesMessage = $('<p class="js-logestechs-loading"></p>').text('No matches found.');
+						var noVillagesMessage = $('<p class="js-logestechs-loading"></p>').text(logestechs_global_data.localization.no_matches_found);
 						resultsDiv.append(noVillagesMessage);
 					}
 				}
@@ -74,6 +74,7 @@ jQuery(document).ready(function ($) {
 	$('#logestechs-store-village-search').on('input', fetch_villages());
 	$(document).on('click', '.logestechs-dropdown img', function (e) {
 		e.stopPropagation();
+		$('.logestechs-dropdown').removeClass('visible');
 		$(this).parent().addClass('visible');
 	});
 	$(document).on('click', function (e) {
@@ -91,7 +92,6 @@ jQuery(document).ready(function ($) {
 		let order_id = $(this).data('order-id'); // Get order id from data-order-id attribute of clicked element
 		$('.js-logestechs-assign-company').attr('data-order-id', order_id); // Set order id to the assign company button
 		const next = document.querySelector('.js-logestechs-assign-company');
-		const submit = document.querySelector('.js-logestechs-transfer-order');
 		fetch_companies();
 		if (r) {
 			return;
@@ -179,7 +179,7 @@ jQuery(document).ready(function ($) {
 							} else {
 								setTimeout(function () {
 									isStop.fire();
-									let errorMessage = 'Something went wrong!'; // Default error message
+									let errorMessage = logestechs_global_data.localization.something_went_wrong;
 									if (response.data.errors) {
 										errorMessage += '<ul>';
 										response.data.errors.forEach(function (error) {
@@ -192,10 +192,10 @@ jQuery(document).ready(function ($) {
 									setTimeout(function () {
 										$('.js-loader-screen').fadeOut();
 										Swal.fire({
-											title: 'Oops...',
+											title: logestechs_global_data.localization.oops,
 											html: errorMessage,
 											icon: 'error',
-											confirmButtonColor: '#f24f41',
+											confirmButtonColor: '#12a167',
 										});
 										isReset.fire();
 
@@ -318,6 +318,7 @@ jQuery(document).ready(function ($) {
 	// Event handler for add company form submission
 	$(document).on('submit', '.js-company-form', function (e) {
 		e.preventDefault();
+		let that = $(this);
 
 		// Input validation
 		let isValid = true;
@@ -333,9 +334,9 @@ jQuery(document).ready(function ($) {
 		if (!isValid) {
 			Swal.fire({
 				title: 'Error!',
-				text: 'Please fill out all fields',
+				text: logestechs_global_data.localization.please_fill_out_all_fields,
 				icon: 'error',
-				confirmButtonColor: '#f24f41',
+				confirmButtonColor: '#12a167',
 			});
 			return; // Exit event handler
 		}
@@ -350,9 +351,9 @@ jQuery(document).ready(function ($) {
 			logestechs_global_data.ajax_url,
 			{
 				action: 'logestechs_save_company',
-				domain: $('[name="domain"]').val(),
-				email: $('[name="email"]').val(),
-				password: $('[name="password"]').val(),
+				domain: that.find('[name="domain"]').val(),
+				email: that.find('[name="email"]').val(),
+				password: that.find('[name="password"]').val(),
 				company_id: company_id,
 				security: logestechs_global_data.security,
 			},
@@ -373,16 +374,26 @@ jQuery(document).ready(function ($) {
 					$('.js-logestechs-update-company').hide().removeAttr('data-id');
 					Swal.fire({
 						title: 'Success!',
-						text: company_id ? 'Company updated successfully.' : 'Company added successfully.',
+						text: company_id ? logestechs_global_data.localization.company_updated_successfully : logestechs_global_data.localization.company_added_successfully,
 						icon: 'success',
 						confirmButtonColor: '#05b272',
 					});
 				} else if (response.data) {
+					let errorMessage = logestechs_global_data.localization.something_went_wrong;
+					if (response.data.errors) {
+						errorMessage += '<ul>';
+						response.data.errors.forEach(function (error) {
+							errorMessage += '<li>' + error + '</li>'; // Adding each error to a bulleted list
+						});
+						errorMessage += '</ul>';
+					} else if (response.data) {
+						errorMessage = response.data;
+					}
 					Swal.fire({
-						title: 'Oops...',
-						text: response.data,
+						title: logestechs_global_data.localization.oops,
+						html: errorMessage,
 						icon: 'error',
-						confirmButtonColor: '#f24f41',
+						confirmButtonColor: '#12a167',
 					});
 				}
 
@@ -413,19 +424,19 @@ jQuery(document).ready(function ($) {
 			+ '</div>';
 	}
 	// Event handler for delete company click
-	// Event handler for delete company click
-	$(document).on('click', '.js-logestechs-delete-company', function () {
+	$(document).on('click', '.js-logestechs-delete-company', function (e) {
+		e.stopPropagation();
 		let company_id = $(this).attr('data-id');
 		let row = $(this).closest('.js-logestechs-company');
 
 		// Confirmation alert using SweetAlert2
 		Swal.fire({
-			title: 'Are you sure?',
-			text: 'You are about to delete this company. This action cannot be undone.',
+			title: logestechs_global_data.localization.are_you_sure,
+			text: logestechs_global_data.localization.about_to_delete_company,
 			icon: 'warning',
 			showCancelButton: true,
-			confirmButtonText: 'Yes, delete it!',
-			cancelButtonText: 'No, keep it!',
+			confirmButtonText: logestechs_global_data.localization.yes_delete_it,
+			cancelButtonText: logestechs_global_data.localization.no_keep_it,
 			confirmButtonColor: '#b2050b',
 			reverseButtons: true
 		}).then((result) => {
@@ -445,32 +456,32 @@ jQuery(document).ready(function ($) {
 						if (response.success) {
 							row.remove();
 							Swal.fire({
-								title: 'Deleted!',
-								text: 'The company has been deleted.',
+								title: logestechs_global_data.localization.deleted,
+								text: logestechs_global_data.localization.company_deleted,
 								icon: 'success',
-								confirmButtonColor: '#f24f41',
+								confirmButtonColor: '#12a167',
 							});
 						} else {
-							let errorMessage = 'Something went wrong!'; // Default error message
+							let errorMessage = logestechs_global_data.localization.something_went_wrong;
 							if (response.data) {
 								errorMessage = response.data; // Specific error message
 							}
 
 							Swal.fire({
-								title: 'Oops...',
+								title: logestechs_global_data.localization.oops,
 								text: errorMessage,
 								icon: 'error',
-								confirmButtonColor: '#f24f41',
+								confirmButtonColor: '#12a167',
 							});
 						}
 					}
 				);
 			} else if (result.dismiss === Swal.DismissReason.cancel) {
 				Swal.fire({
-					title: 'Kept',
-					text: 'The company has not been deleted.',
+					title: logestechs_global_data.localization.kept,
+					text: logestechs_global_data.localization.order_not_cancelled,
 					icon: 'info',
-					confirmButtonColor: '#f24f41',
+					confirmButtonColor: '#12a167',
 				});
 			}
 		});
@@ -478,7 +489,9 @@ jQuery(document).ready(function ($) {
 
 
 	// On clicking the edit icon, fetch the respective company's data.
-	$(document).on('click', '.js-logestechs-edit-company', function () {
+	$(document).on('click', '.js-logestechs-edit-company', function (e) {
+		e.stopPropagation();
+
 		const company_id = $(this).attr('data-id');
 		const company = $(this).closest('.js-logestechs-company');
 		const companyDomain = company.find('.js-company-domain').html();
@@ -500,12 +513,12 @@ jQuery(document).ready(function ($) {
 		e.preventDefault();
 		let order_id = $(this).data('order-id');  // Assuming each assign button holds order id in 'data-order-id' attribute
 		Swal.fire({
-			title: 'Are you sure?',
-			text: 'You are about to cancel the order. This action cannot be undone.',
+			title: logestechs_global_data.localization.are_you_sure,
+			text: logestechs_global_data.localization.cancel_order_warning,
 			icon: 'warning',
 			showCancelButton: true,
-			confirmButtonText: 'Yes, cancel it!',
-			cancelButtonText: 'No, keep it!',
+			confirmButtonText: logestechs_global_data.localization.yes_cancel_it,
+			cancelButtonText: logestechs_global_data.localization.no_keep_it,
 			confirmButtonColor: '#b2050b',
 			reverseButtons: true
 		}).then((result) => {
@@ -526,36 +539,36 @@ jQuery(document).ready(function ($) {
 
 						if (response == '') {
 							Swal.fire({
-								title: 'Cancelled!',
-								text: 'The order has been cancelled.',
+								title: logestechs_global_data.localization.cancelled,
+								text: logestechs_global_data.localization.order_cancelled,
 								icon: 'success',
-								confirmButtonColor: '#f24f41',
+								confirmButtonColor: '#12a167',
 							}).then((result) => {
 								location.reload(); // Reload the page
 							});
 							// alert('Company has been assigned successfully.');
 							// Refresh page or update part of the page based on response.
 						} else {
-							let errorMessage = 'Something went wrong!'; // Default error message
+							let errorMessage = logestechs_global_data.localization.something_went_wrong;
 							if (response.data && response.data.error) {
 								errorMessage = response.data.error; // Specific error message
 							}
 
 							Swal.fire({
-								title: 'Oops...',
+								title: logestechs_global_data.localization.oops,
 								text: errorMessage,
 								icon: 'error',
-								confirmButtonColor: '#f24f41',
+								confirmButtonColor: '#12a167',
 							});
 						}
 					}
 				);
 			} else if (result.dismiss === Swal.DismissReason.cancel) {
 				Swal.fire({
-					title: 'Kept',
-					text: 'The order has not been cancelled.',
+					title: logestechs_global_data.localization.kept,
+					text: logestechs_global_data.localization.order_not_cancelled,
 					icon: 'info',
-					confirmButtonColor: '#f24f41',
+					confirmButtonColor: '#12a167',
 				})
 			}
 		});
@@ -605,10 +618,10 @@ jQuery(document).ready(function ($) {
 
 				} else {
 					Swal.fire({
-						title: 'Oops...',
-						text: 'Failed to download the PDF.',
+						title: logestechs_global_data.localization.oops,
+						text: logestechs_global_data.localization.failed_to_download_pdf,
 						icon: 'error',
-						confirmButtonColor: '#f24f41',
+						confirmButtonColor: '#12a167',
 					});
 				}
 			}

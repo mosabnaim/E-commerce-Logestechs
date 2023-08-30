@@ -1,6 +1,6 @@
 <?php
 /**
- * The file that handles the rendering of the tracking details popup
+ * The file that handles the rendering of the tracking details popup.
  *
  * @since      1.0.0
  * @package    Logestechs
@@ -10,25 +10,25 @@
 if (!class_exists('Logestechs_Tracking_Details_Popup_View')) {
 
     class Logestechs_Tracking_Details_Popup_View {
-
         /**
-         * Initialize the class and set its properties.
+         * Render the tracking details popup.
          *
          * @since    1.0.0
-         */
-        public function __construct() {
-            // You might want to enqueue necessary scripts or styles related to this view here.
-        }
-
-        /**
-         * Render the tracking details popup
-         *
-         * @param int $orderId The ID of the order whose tracking details are to be displayed
+         * @param int $orderId The ID of the order whose tracking details are to be displayed.
          */
         public function render() {
-            // Fetch any necessary data using $order_id
-            // Render the popup HTML. Ensure you escape all output!
-            $details_to_display = [ 'package_number', 'price', 'reservation_date', 'shipment_type', 'recipient', 'package_weight', 'expected_delivery_date', 'phone_number', ];
+            // Fetch any necessary data using $order_id.
+            $details_to_display = [
+                'package_number' => __('Package Number', 'logestechs'),
+                'price' => __('Price', 'logestechs'),
+                'reservation_date' => __('Reservation Date', 'logestechs'),
+                'shipment_type' => __('Shipment Type', 'logestechs'),
+                'recipient' => __('Recipient', 'logestechs'),
+                'package_weight' => __('Package Weight', 'logestechs'),
+                'expected_delivery_date' => __('Expected Delivery Date', 'logestechs'),
+                'phone_number' => __('Phone Number', 'logestechs')
+            ];
+            
             
             ob_start();
             ?>
@@ -38,9 +38,9 @@ if (!class_exists('Logestechs_Tracking_Details_Popup_View')) {
                     <div class="logestechs-popup-tracker-head">
                         <div class="logestechs-popup-label-wrapper">
                             <div class="logestechs-box-wrapper">
-                            <img src="<?php echo logestechs_image('box.svg'); ?>" alt="">
+                                <img src="<?php echo esc_url(logestechs_image('box.svg')); ?>" alt="<?php esc_attr_e('Box Icon', 'logestechs'); ?>">
                             </div>
-                            <p class="logestechs-popup-label"><?php _e('Package Tracking And Details', 'logestechs'); ?></p>
+                            <p class="logestechs-popup-label"><?php esc_html_e('Package Tracking And Details', 'logestechs'); ?></p>
                         </div>
                         <div class="logestechs-close-btn-wrapper">
                             <button class="js-close-popup close-btn">
@@ -52,9 +52,9 @@ if (!class_exists('Logestechs_Tracking_Details_Popup_View')) {
                     <div class="logestechs-popup-main">
                         <div class="logestechs-details-flex">
                             <?php
-                            foreach ($details_to_display as $item) {
-                                echo '<div class="logestechs-details-cell ' . logestechs_wordify($item) . '">';
-                                echo '<span class="key">' . logestechs_wordify($item) . '</span><div class="js-logestechs-order-value value" data-key="'.$item.'"><div class="logestechs-skeleton-loader" style="width: 40px; height: 20px"></div></div>';
+                            foreach ($details_to_display as $key => $label) {
+                                echo '<div class="logestechs-details-cell ' . esc_attr($label) . '">';
+                                echo '<span class="key">' . esc_html($label) . '</span><div class="js-logestechs-order-value value" data-key="'.esc_attr($key).'"><div class="logestechs-skeleton-loader" style="width: 40px; height: 20px"></div></div>';
                                 echo '</div>';
                             }
                             ?>

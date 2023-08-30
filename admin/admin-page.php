@@ -13,8 +13,6 @@
 if ( ! class_exists( 'Logestechs_Admin_Page' ) ) {
 
     class Logestechs_Admin_Page {
-        private $hook_suffix;
-
         /**
          * Initialize the class and set its properties.
          *
@@ -55,17 +53,6 @@ if ( ! class_exists( 'Logestechs_Admin_Page' ) ) {
 
             $logestechs_page = new Logestechs_Admin_Page_View();
             $logestechs_page->render();
-        }
-
-        public function render_settings_page() {
-            // Check user capabilities
-            if ( ! current_user_can( 'manage_options' ) ) {
-                wp_die( __( 'You do not have sufficient permissions to access this page.', 'logestechs' ) );
-            }
-
-            // Rendering logic for the settings page
-            $logestechs_settings_page = new Logestechs_Settings_Page_View();
-            $logestechs_settings_page->render();
         }
     }
 

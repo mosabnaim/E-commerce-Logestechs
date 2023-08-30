@@ -22,19 +22,12 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
          * @since    1.0.0
          */
         public function __construct() {
-            // Initialize the API
             $this->api              = new Logestechs_Api_Handler();
             $this->woocommerce_list = new Logestechs_Woocommerce_List_View();
+
+            // Hook into WordPress actions and filters
             add_filter( 'manage_edit-shop_order_columns', [$this->woocommerce_list, 'add_custom_column_header'], 20 );
             add_action( 'manage_shop_order_posts_custom_column', [$this->woocommerce_list, 'add_custom_column_data'], 20, 2 );
-
-            // Add an action to hook into the order status 'processing'
-            // add_action( 'woocommerce_order_status_processing', [$this, 'handle_processing_order'] );
-
-            // add_filter( 'woocommerce_order_actions', [$this, 'add_cancel_order_action'] );
-            // add_action( 'woocommerce_order_action_logestechs_cancel_order', [$this, 'handle_cancel_order_action'] );
-
-            // If you want to allow non-logged in users to perform the action, use wp_ajax_nopriv_{action} instead.
             add_action( 'wp_ajax_logestechs_assign_company', [$this, 'assign_company'] );
             add_action( 'wp_ajax_logestechs_prepare_order_popup', [$this, 'prepare_order_popup'] );
             add_action( 'wp_ajax_logestechs_print_order', [$this, 'print_order'] );
@@ -45,6 +38,13 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             add_action( 'wp_ajax_logestechs_fetch_villages', [$this, 'fetch_villages'] );
         }
 
+        /**
+         * Get transferred orders.
+         *
+         * @param int $items_per_page The number of items per page.
+         * @since 1.0.0
+         * @return array The list of transferred orders and the total count.
+         */
         public function get_transferred_orders( $items_per_page = 10 ) {
             global $wpdb;
 
@@ -121,29 +121,24 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             return ['orders' => $orders, 'total_count' => $total_count];
         }
 
-        private function prepare_order_data( $order ) {
-            // Convert the WooCommerce order to the format required by Logestechs API
-            // This method needs to be implemented based on the specific requirements of the Logestechs API
-            return $order;
-        }
-
-        // public function handle_processing_order( $order_id ) {
-        //     // Get the order object
-        //     $order = wc_get_order( $order_id );
-        //     // Transfer the order to Logestechs
-        //     $this->transfer_order( $order );
-        // }
-
-        // Handle the custom order action
+        /**
+         * Handle the custom order cancellation action.
+         *
+         * @param object $order The WooCommerce order object.
+         * @since 1.0.0
+         */
         public function handle_cancel_order_action( $order ) {
-            // Instantiate your order handler
-            $order_handler = new Logestechs_Order_Handler();
-
             // Cancel the order on Logestechs
-            $order_handler->cancel_order( $order->get_id() );
+            $this->cancel_order( $order->get_id() );
         }
 
-        // Add a custom order action to WooCommerce's order actions dropdown
+        /**
+         * Add a custom order action to WooCommerce's order actions dropdown.
+         *
+         * @since    1.0.0
+         * @param array $actions Current actions.
+         * @return array Modified actions.
+         */
         public function add_cancel_order_action( $actions ) {
             $actions['logestechs_cancel_order'] = __( 'Cancel Order on Logestechs', 'logestechs' );
 
@@ -153,32 +148,25 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
         /**
          * Cancel a Logestechs order.
          *
-         * @param string $order_id The ID of the order to cancel.
-         * @return mixed The response from the API.
+         * @since    1.0.0
          */
         public function cancel_order() {
-            // Before you cancel the order, you might want to do some checks,
-            // e.g. check if the order is in a status that allows cancellation
             check_ajax_referer( 'logestechs-security-nonce', 'security' );
 
             if ( ! current_user_can( 'manage_woocommerce' ) ) {
-                wp_send_json_error( 'You do not have permission to perform this action.' );
+                wp_send_json_error( __( 'You do not have permission to perform this action.', 'logestechs' ) );
             }
             $order_id = $_POST['order_id'] ? intval( $_POST['order_id'] ) : null;
             if ( ! $order_id ) {
-                wp_send_json_error( 'Error while processing this action!' );
+                wp_send_json_error( __( 'Error while processing this action!', 'logestechs' ) );
                 wp_die();
             }
 
             if ( get_post_meta( $order_id, '_logestechs_order_status', true ) == 'Cancelled' ) {
-                wp_send_json_error( 'This order already cancelled' );
+                wp_send_json_error( __( 'This order already cancelled', 'logestechs' ) );
                 wp_die();
             }
-            // Make the API request to cancel the order
-            // Cancel the order
             $response = $this->api->cancel_order( $order_id );
-            // Check if the order creation was successful
-            // Save the status in the database
 
             if ( $response ) {
                 wp_send_json_error( $response );
@@ -189,31 +177,30 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             die();
         }
 
+        /**
+         * Print a Logestechs order.
+         *
+         * @since    1.0.0
+         */
         public function print_order() {
-            // Before you cancel the order, you might want to do some checks,
-            // e.g. check if the order is in a status that allows cancellation
             check_ajax_referer( 'logestechs-security-nonce', 'security' );
 
             if ( ! current_user_can( 'manage_woocommerce' ) ) {
-                wp_send_json_error( 'You do not have permission to perform this action.' );
+                wp_send_json_error( __( 'You do not have permission to perform this action.', 'logestechs' ) );
             }
             $order_id = $_POST['order_id'] ? intval( $_POST['order_id'] ) : null;
             if ( ! $order_id ) {
-                wp_send_json_error( 'Error while processing this action!' );
+                wp_send_json_error( __( 'Error while processing this action!', 'logestechs' ) );
                 wp_die();
             }
 
             if ( get_post_meta( $order_id, '_logestechs_order_status', true ) == 'Cancelled' ) {
-                wp_send_json_error( 'This order already cancelled' );
+                wp_send_json_error( __( 'This order already cancelled', 'logestechs' ) );
                 wp_die();
             }
 
-            // Make the API request to cancel the order
-            // Cancel the order
             $response = $this->api->print_order( $order_id );
-            // Check if the order creation was successful
             if ( $response ) {
-                // Save the status in the database
                 wp_send_json_success( $response );
             }
             die();
@@ -222,119 +209,148 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
         /**
          * Transfer order to Logestechs.
          *
-         * @param array $order The order to transfer.
-         * @return mixed The response from the API.
+         * @since    1.0.0
          */
         public function assign_company() {
             check_ajax_referer( 'logestechs-security-nonce', 'security' );
 
             if ( ! current_user_can( 'manage_woocommerce' ) ) {
-                wp_send_json_error( 'You do not have permission to perform this action.' );
+                wp_send_json_error( __( 'You do not have permission to perform this action.', 'logestechs' ) );
             }
 
-            $company_id    = $_POST['company_id'] ? intval( $_POST['company_id'] ) : null;
-            $order_id      = $_POST['order_id'] ? intval( $_POST['order_id'] ) : null;
-            $village_id    = $_POST['logestechs_destination_village_id'] ? intval( $_POST['logestechs_destination_village_id'] ) : null;
-            $region        = $_POST['logestechs_destination_region_id'] ? intval( $_POST['logestechs_destination_region_id'] ) : null;
-            $city          = $_POST['logestechs_destination_city_id'] ? intval( $_POST['logestechs_destination_city_id'] ) : null;
-            $store_village = $_POST['logestechs_store_village_id'] ? intval( $_POST['logestechs_store_village_id'] ) : null;
-            $store_city    = $_POST['logestechs_store_city_id'] ? intval( $_POST['logestechs_store_city_id'] ) : null;
-            $store_region  = $_POST['logestechs_destination_region_id'] ? intval( $_POST['logestechs_store_region_id'] ) : null;
-              // Get other POST variables, safely trimmed
-            $business_name      = sanitize_text_field($_POST['logestechs_business_name'] ?? '');
-            $store_owner        = sanitize_text_field($_POST['logestechs_store_owner'] ?? '');
-            $store_phone_number = sanitize_text_field($_POST['logestechs_store_phone_number'] ?? '');
-            $store_address_1    = sanitize_text_field($_POST['logestechs_store_address'] ?? '');
-            $store_address_2    = sanitize_text_field($_POST['logestechs_store_address_2'] ?? '');
-            $custom_store       = isset($_POST['logestechs_custom_store']) ? sanitize_text_field($_POST['logestechs_custom_store']) : '';
+            $post_data_keys = [
+                'company_id', 'order_id',
+                'logestechs_destination_village_id',
+                'logestechs_destination_region_id',
+                'logestechs_destination_city_id',
+                'logestechs_store_village_id',
+                'logestechs_store_city_id',
+                'logestechs_store_region_id',
+                'logestechs_business_name',
+                'logestechs_store_owner',
+                'logestechs_store_phone_number',
+                'logestechs_store_address',
+                'logestechs_store_address_2',
+                'logestechs_custom_store'
+            ];
 
+            $sanitized_data = [];
+            foreach ( $post_data_keys as $key ) {
+                $sanitized_data[$key] = $_POST[$key] ?? null;
+            }
 
-            if ( ! $company_id || ! $order_id ) {
-                wp_send_json_error( 'Error while processing this action!' );
+            if ( ! $sanitized_data['company_id'] || ! $sanitized_data['order_id'] ) {
+                wp_send_json_error( __( 'Error while processing this action!', 'logestechs' ) );
                 wp_die();
             }
 
-            if ($custom_store && (!$order_id || !$company_id || !$business_name || !$store_owner || !$store_phone_number || !$store_address_1 || !$store_address_2)) {
-                // You might want to handle this error better, possibly returning a WP_Error object
-                wp_send_json_error('Missing required fields.');
-            }
-
-            if ( get_post_meta( $order_id, '_logestechs_order_status', true ) == 'transferred' ) {
-                wp_send_json_error( 'This order already transferred' );
+            if ( get_post_meta( $sanitized_data['order_id'], '_logestechs_order_status', true ) == 'transferred' ) {
+                wp_send_json_error( __( 'This order already transferred', 'logestechs' ) );
                 wp_die();
             }
 
-            if ( get_post_meta( $order_id, '_logestechs_order_status', true ) == 'transferred' ) {
-                wp_send_json_error( 'This order already transferred' );
+            if ( get_post_meta( $sanitized_data['order_id'], '_logestechs_order_status', true ) == 'transferred' ) {
+                wp_send_json_error( __( 'This order already transferred', 'logestechs' ) );
                 wp_die();
             }
 
             // Retrieve the order
-            $order = wc_get_order( $order_id );
-
-            // You can perform further operations or validations here
-            // Sanitize POST data
+            $order = wc_get_order( $sanitized_data['order_id'] );
+            
             $security_manager = new Logestechs_Security_Manager();
-            $validator        = $security_manager->get_validator();
-            $errors           = $validator->validate_order( $order );
+            $sanitizer        = $security_manager->get_sanitizer();
+
+            $order_data = $this->get_order_data( $order, $sanitized_data );
+
+            $order_data = $sanitizer->sanitize_order( $order_data );
+            $validator = $security_manager->get_validator();
+            $errors    = $validator->validate_order( $order_data );
 
             if ( ! empty( $errors ) ) {
                 wp_send_json_error( ['errors' => $errors] );
                 wp_die();
             }
 
-            update_post_meta( $order_id, '_logestechs_village', $village_id );
-            update_post_meta( $order_id, '_logestechs_region', $region );
-            update_post_meta( $order_id, '_logestechs_city', $city );
-            
-            if($custom_store) {
-                $order->store_village = $store_village;
-                $order->store_city = $store_city;
-                $order->store_region = $store_region;
-                $order->business_name = $business_name;
-                $order->store_owner = $store_owner;
-                $order->store_phone_number = $store_phone_number;
-                $order->store_address = $store_address_1;
-                $order->store_address_2 = $store_address_2;
+            if ( $sanitized_data['logestechs_custom_store'] ) {
+                $store_keys = [
+                    'logestechs_store_village_id',
+                    'logestechs_store_city_id',
+                    'logestechs_store_region_id',
+                    'logestechs_business_name',
+                    'logestechs_store_owner',
+                    'logestechs_store_phone_number',
+                    'logestechs_store_address',
+                    'logestechs_store_address_2',
+                    'logestechs_custom_store'
+                ];
+
+                foreach ( $store_keys as $key ) {
+                    $order->update_post_meta( '_' . $key, $sanitized_data[$key] );
+                }
+            }
+            $destination_keys = [
+                'logestechs_destination_village_id',
+                'logestechs_destination_region_id',
+                'logestechs_destination_city_id'
+            ];
+
+            foreach ( $destination_keys as $key ) {
+                $meta_key = '_' . $key;
+                $order->update_meta_data( $meta_key, $sanitized_data[$key] );
             }
 
             $credentials_storage = Logestechs_Credentials_Storage::get_instance();
-            $company             = $credentials_storage->get_company( $company_id );
+            $company             = $credentials_storage->get_company( $sanitized_data['company_id'] );
             // Call your API handler to save the order
-            $response               = $this->api->transfer_order_to_logestechs( $company, $order );
-            if(isset($response['error'])) {
+            $response = $this->api->transfer_order_to_logestechs( $company, $order_data );
+
+            if ( ! $response ) {
+                wp_send_json_error( ['errors' => [__( 'Error while processing this action!', 'logestechs' )]] );
+                wp_die();
+            }
+            if ( isset( $response['error'] ) ) {
                 wp_send_json_error( ['errors' => [$response['error']]] );
                 wp_die();
             }
-            $date                   = new DateTime();                   // Current date and time
+            $date = new DateTime();                                     // Current date and time
             $date->setTimezone( new DateTimeZone( wp_timezone_string() ) ); // Set WordPress timezone
-            $timestamp = $date->getTimestamp();                         // Get Unix timestamp
-                                                                        // Check if the order creation was successful
+            $timestamp = $date->getTimestamp(); // Get Unix timestamp
+            // Check if the order creation was successful
             if ( isset( $response['barcode'] ) ) {
+                
+                // Save the updated meta data
+                $order->save();
+
                 // Store the fact that the order has been transferred, along with the Logestechs order ID
-                update_post_meta( $order_id, '_logestechs_order_barcode', $response['barcode'] );
-                update_post_meta( $order_id, '_logestechs_order_id', $response['id'] );
-                update_post_meta( $order_id, '_logestechs_company_name', $company->company_name );
-                update_post_meta( $order_id, '_logestechs_api_company_id', $company->company_id );
-                update_post_meta( $order_id, '_logestechs_local_company_id', $company_id );
-                update_post_meta( $order_id, '_logestechs_date', $timestamp );
-                update_post_meta( $order_id, '_logestechs_order_status', 'transferred' );
+                update_post_meta( $sanitized_data['order_id'], '_logestechs_order_barcode', $response['barcode'] );
+                update_post_meta( $sanitized_data['order_id'], '_logestechs_order_id', $response['id'] );
+                update_post_meta( $sanitized_data['order_id'], '_logestechs_company_name', $company->company_name );
+                update_post_meta( $sanitized_data['order_id'], '_logestechs_api_company_id', $company->company_id );
+                update_post_meta( $sanitized_data['order_id'], '_logestechs_currency', $company->currency );
+                update_post_meta( $sanitized_data['order_id'], '_logestechs_local_company_id', $sanitized_data['company_id'] );
+                update_post_meta( $sanitized_data['order_id'], '_logestechs_date', $timestamp );
+                update_post_meta( $sanitized_data['order_id'], '_logestechs_order_status', 'transferred' );
             }
+
             wp_send_json_success( isset( $response['barcode'] ) );
         }
 
+        /**
+         * Prepare order for Logestechs popup.
+         *
+         * @since    1.0.0
+         */
         public function prepare_order_popup() {
             check_ajax_referer( 'logestechs-security-nonce', 'security' );
 
             if ( ! current_user_can( 'manage_woocommerce' ) ) {
-                wp_send_json_error( 'You do not have permission to perform this action.' );
+                wp_send_json_error( __( 'You do not have permission to perform this action.', 'logestechs' ) );
             }
 
-            $company_id = $_POST['company_id'] ? intval( $_POST['company_id'] ) : null;
-            $order_id   = $_POST['order_id'] ? intval( $_POST['order_id'] ) : null;
+            $order_id = $_POST['order_id'] ? intval( $_POST['order_id'] ) : null;
 
-            if ( ! $company_id || ! $order_id ) {
-                wp_send_json_error( 'Error while processing this action!' );
+            if ( ! $order_id ) {
+                wp_send_json_error( __( 'Error while processing this action!', 'logestechs' ) );
                 wp_die();
             }
             // Retrieve the order
@@ -344,45 +360,54 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             wp_die();
         }
 
+        /**
+         * Track a Logestechs order.
+         *
+         * @since    1.0.0
+         */
         public function track_order() {
             check_ajax_referer( 'logestechs-security-nonce', 'security' );
 
+            // Ensure the user has the necessary capability.
             if ( ! current_user_can( 'manage_woocommerce' ) ) {
-                wp_send_json_error( 'You do not have permission to perform this action.' );
+                wp_send_json_error( __( 'You do not have permission to perform this action.', 'logestechs' ) );
             }
 
-            $order_id = $_POST['order_id'] ? intval( $_POST['order_id'] ) : null;
+            // Validate and fetch order ID.
+            $order_id = isset( $_POST['order_id'] ) ? intval( $_POST['order_id'] ) : null;
 
             if ( ! $order_id ) {
-                wp_send_json_error( 'Error while processing this action!' );
+                wp_send_json_error( __( 'Error while processing this action!', 'logestechs' ) );
                 wp_die();
             }
 
-            // Get the order ID from the Ajax request
-            $order_id = intval( $_POST['order_id'] );
+            // Get company currency symbol.
+            $currency_symbol = get_post_meta($order_id, '_logestechs_currency', true);
 
-            // Get the order details from WooCommerce (you might need to modify this part based on your needs)
-            $currency_symbol = html_entity_decode( get_woocommerce_currency_symbol() );
+            // Make a request to the Logestechs API for order tracking details.
+            $response = $this->api->track_order( $order_id );
 
-            // Make a request to the Logestechs API to get the details
-            $response      = $this->api->track_order( $order_id );
+            if ( ! $response || ! isset( $response['barcode'] ) ) {
+                wp_send_json_error( __( 'Unable to retrieve order details from Logestechs.', 'logestechs' ) );
+                wp_die();
+            }
+
+            // Extract and format order details.
             $created_date  = logestechs_convert_to_local_time( $response['createdDate'] );
             $expected_date = logestechs_convert_to_local_time( $response['expectedDeliveryDate'] );
 
-            // Compile the details to display
             $details_to_display = [
                 'order_id'               => $order_id,
                 'package_number'         => '#' . $response['barcode'],
-                'price'                  => $response['cost'] . ' ' . $currency_symbol, // Price from WooCommerce
-                                                                                        // 'price'                  => $order->get_total() . ' ' . $currency_symbol, // Price from WooCommerce
-                'reservation_date' => ! empty( $created_date ) ? $created_date->format( 'd/m/Y' ) : 'N/A',
+                'price'                  => $response['cost'] . ' ' . $currency_symbol,
+                'reservation_date'       => ! empty( $created_date ) ? $created_date->format( 'd/m/Y' ) : __( 'N/A', 'logestechs' ),
                 'shipment_type'          => $response['shipmentType'],
                 'recipient'              => $response['receiverFirstName'] . ' ' . $response['receiverLastName'],
-                'package_weight'         => ! empty( $response['weight'] ) ? $response['weight'] : 'N/A',
-                'expected_delivery_date' => ! empty( $expected_date ) ? $expected_date->format( 'd/m/Y' ) : 'N/A',
+                'package_weight'         => ! empty( $response['weight'] ) ? $response['weight'] : __( 'N/A', 'logestechs' ),
+                'expected_delivery_date' => ! empty( $expected_date ) ? $expected_date->format( 'd/m/Y' ) : __( 'N/A', 'logestechs' ),
                 'phone_number'           => $response['receiverPhone']
             ];
-
+            // Compile tracking data.
             $tracking_data = [];
             foreach ( $response['deliveryRoute'] as $tracking ) {
                 $date            = logestechs_convert_to_local_time( $tracking['deliveryDate'] );
@@ -394,128 +419,182 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             }
 
             $details_to_display['tracking_data'] = $tracking_data;
-            // Respond with JSON
+
+            // Send the prepared data.
             wp_send_json( $details_to_display );
             wp_die();
         }
 
-        public function get_order_data( $order ) {
-            $quantity = 0;
-            foreach ( $order->get_items() as $item ) {
-                $quantity += $item->get_quantity();
-            }
-            $store_address    = $order->store_address;
-            $store_address_2  = $order->store_address_2;
-            $store_phone      = $order->store_phone_number;
-            $business_name    = $order->business_name;
-            $store_owner      = $order->store_owner;
-            $store_region_id  = $order->store_region;
-            $store_city_id    = $order->store_city;
-            $store_village_id = $order->store_village;
+        /**
+         * Retrieve and prepare order data for Logestechs API.
+         *
+         * This function retrieves data from a WooCommerce order and prepares it to be sent to Logestechs API.
+         *
+         * @param WC_Order $order The WooCommerce order object.
+         * @return array The prepared order data.
+         *
+         * @since 1.0.0
+         */
+        public function get_order_data( WC_Order $order, $store_data ) {
+            // Get WooCommerce Order ID
+            $order_id = $order->get_id();
 
-            $region_id  = $order->village;
-            $city_id    = $order->region;
-            $village_id = $order->city;
-            
-            $package_items = [];
-            foreach ( $order->get_items() as $item ) {
-                $product = $item->get_product();
-                $name = $product->get_name(); // Product name
-                $price = $product->get_price(); // Product price
-        
-                $package_items[] = [
-                    "name" => $name,
-                    "cod" => $price * $item->get_quantity() // Total cost for this item
-                ];
+            // Get Website Domain
+            $website_domain = get_site_url();
+
+            // Prepare to retrieve metadata keys for Logestechs.
+            $relevant_store_keys = [
+                'logestechs_store_village_id',
+                'logestechs_store_city_id',
+                'logestechs_store_region_id',
+                'logestechs_business_name',
+                'logestechs_store_owner',
+                'logestechs_store_phone_number',
+                'logestechs_store_address',
+                'logestechs_store_address_2',
+                'logestechs_custom_store',
+                'logestechs_destination_village_id',
+                'logestechs_destination_region_id',
+                'logestechs_destination_city_id'
+            ];
+
+            $relevant_store_data = [];
+            foreach ($relevant_store_keys as $key) {
+                if (isset($store_data[$key])) {
+                    $relevant_store_data[$key] = $store_data[$key];
+                }
             }
+
+            // Calculate total items quantity.
+            $quantity = array_sum( array_map( function ( $item ) {
+                return $item->get_quantity();
+            }, $order->get_items() ) );
+
+            // Compile package items data.
+            $package_items = array_map( function ( $item ) {
+                $product = $item->get_product();
+
+                return [
+                    'name' => $product->get_name(),
+                    'cod'  => $product->get_price() * $item->get_quantity()
+                ];
+            }, $order->get_items() );
+
+            // Build order data for Logestechs.
             $order_data = [
-                'pkg'                => [
-                    'receiverName' => $order->get_shipping_first_name() . ' ' . $order->get_shipping_last_name(),
-                    'cod'          => $order->get_total(),                                                          // You'll need to modify this according to your requirements
-                    'notes'        => $order->get_customer_note(),                                                  // Order notes
-                      // 'invoiceNumber' => $order->get_id(),
+                'pkg' => [
+                    'receiverName'              => $order->get_shipping_first_name() . ' ' . $order->get_shipping_last_name(),
+                    'cod'                       => $order->get_total(),
+                    'notes'                     => $order->get_customer_note(),
                     'packageItemsToDeliverList' => $package_items,
-                    'senderName'                => $store_owner,
-                    'businessSenderName'        => $business_name,
-                    'senderPhone'               => $store_phone,
-                    'receiverPhone'             => $order->get_billing_phone(),   // Ensure you have this field
+                    'receiverPhone'             => $order->get_billing_phone(),
                     'receiverPhone2'            => '',
                     'serviceType'               => 'STANDARD',
                     'shipmentType'              => 'COD',
                     'quantity'                  => $quantity,
-                    'description'               => '',
+                    'description'               => "Order ID: {$order_id} - Domain: {$website_domain}",  // Updated here
                     'integrationSource'         => 'WOOCOMMERCE'
                 ],
-                'destinationAddress' => [
-                    'addressLine1' => $order->get_shipping_address_1() . ' - ' . $order->get_shipping_address_2(),
-                    'cityId'       => intval($city_id), // You'll need to map WooCommerce city to Logestechs city ID
-                    'regionId'     => intval($region_id), // You'll need to provide this value
-                    'villageId'    => intval($village_id) // You'll need to provide this value
-                ],
                 'pkgUnitType'   => 'METRIC',
-                'originAddress' => [
-                    'addressLine1' => $store_address,
-                    'addressLine2' => $store_address_2,
-                    'cityId'       => intval($store_region_id),   // You'll need to map WooCommerce city to Logestechs city ID
-                    'regionId'     => intval($store_city_id),     // You'll need to provide this value
-                    'villageId'    => intval($store_village_id)   // You'll need to provide this value
-                ]
             ];
-            // $debugger = new Logestechs_Debugger;
-            // $debugger->clear()->log([$order_data])->write();
+
+            // Incorporate the retrieved metadata into the $order_data array.
+            if (!empty($relevant_store_data['logestechs_custom_store'])) {
+                $order_data['pkg']['senderName']         = $relevant_store_data['logestechs_store_owner'];
+                $order_data['pkg']['businessSenderName'] = $relevant_store_data['logestechs_business_name'];
+                $order_data['pkg']['senderPhone']        = $relevant_store_data['logestechs_store_phone_number'];
+        
+                $order_data['originAddress'] = [
+                    'addressLine1' => $relevant_store_data['logestechs_store_address'],
+                    'addressLine2' => $relevant_store_data['logestechs_store_address_2'],
+                    'cityId'       => intval( $relevant_store_data['logestechs_store_city_id'] ),
+                    'regionId'     => intval( $relevant_store_data['logestechs_store_region_id'] ),
+                    'villageId'    => intval( $relevant_store_data['logestechs_store_village_id'] )
+                ];
+            }
+            
+            $order_data['destinationAddress'] = [
+                'addressLine1' => trim( $order->get_shipping_address_1() . ' - ' . $order->get_shipping_address_2() ),
+                'cityId'       => intval( $relevant_store_data['logestechs_destination_city_id'] ),
+                'regionId'     => intval( $relevant_store_data['logestechs_destination_region_id'] ),
+                'villageId'    => intval( $relevant_store_data['logestechs_destination_village_id'] )
+            ];
+
             return $order_data;
         }
 
+        /**
+         * Sync order statuses with Logestechs.
+         *
+         * @since    1.0.0
+         */
         public function sync_orders_status() {
+            // Check nonce for security.
             check_ajax_referer( 'logestechs-security-nonce', 'security' );
 
+            // Check user capabilities.
             if ( ! current_user_can( 'manage_woocommerce' ) ) {
-                wp_send_json_error( 'You do not have permission to perform this action.' );
+                wp_send_json_error( __( 'You do not have permission to perform this action.', 'logestechs' ) );
+                wp_die();
             }
 
-            $api_handler   = new Logestechs_Api_Handler();
-            $order_handler = new Logestechs_Order_Handler();
+            // Initialize API handler.
+            $api_handler = new Logestechs_Api_Handler();
 
-            $orders = $order_handler->get_transferred_orders()['orders'];
+            // Fetch transferred orders.
+            $orders = $this->get_transferred_orders()['orders'];
 
-            // Extract the WordPress order IDs and their corresponding logestechs_order_id
-            $logestechs_order_ids = [];
-            foreach ( $orders as $order_post ) {
-                $order_id                        = $order_post->ID;
-                $logestechs_order_ids[$order_id] = get_post_meta( $order_id, '_logestechs_order_id', true );
-            }
+            // Extract WordPress order IDs and corresponding logestechs_order_id.
+            $logestechs_order_ids = array_reduce( $orders, function ( $carry, $order_post ) {
+                $order_id         = $order_post->ID;
+                $carry[$order_id] = get_post_meta( $order_id, '_logestechs_order_id', true );
 
-            // Fetch statuses from Logestechs
+                return $carry;
+            }, [] );
+
+            // Fetch statuses from Logestechs.
             $statuses = $api_handler->get_orders_status( array_values( $logestechs_order_ids ) );
 
-            // Update post meta
-            $updated_statuses = [];
-            foreach ( $logestechs_order_ids as $order_id => $logestechs_order_id ) {
+            // Update post meta and store updated statuses.
+            $updated_statuses = array_reduce( array_keys( $logestechs_order_ids ), function ( $carry, $order_id ) use ( $statuses, $logestechs_order_ids ) {
+                $logestechs_order_id = $logestechs_order_ids[$order_id];
                 if ( isset( $statuses[$logestechs_order_id] ) ) {
                     update_post_meta( $order_id, '_logestechs_order_status', $statuses[$logestechs_order_id] );
-                    $updated_statuses[$order_id] = $statuses[$logestechs_order_id];
+                    $carry[$order_id] = $statuses[$logestechs_order_id];
                 }
-            }
 
-            // Respond with JSON
+                return $carry;
+            }, [] );
+
+            // Respond with updated statuses.
             wp_send_json( $updated_statuses );
             wp_die();
         }
 
+        /**
+         * Load and display transferred orders in the admin panel.
+         *
+         * @since    1.0.0
+         */
         public function load_orders() {
+            // Check nonce for security.
             check_ajax_referer( 'logestechs-security-nonce', 'security' );
 
+            // Check user capabilities.
             if ( ! current_user_can( 'manage_woocommerce' ) ) {
-                wp_send_json_error( 'You do not have permission to perform this action.' );
+                wp_send_json_error( __( 'You do not have permission to perform this action.', 'logestechs' ) );
+                wp_die();
             }
 
-            // Get the requested page number
-            $current_page  = isset( $_POST['paged'] ) ? intval( $_POST['paged'] ) : 1;
-            $order_handler = new Logestechs_Order_Handler();
-            $orders_array  = $order_handler->get_transferred_orders();
-            $orders        = $orders_array['orders'];
-            $total_count   = $orders_array['total_count'];
+            // Get the requested page number.
+            $current_page = isset( $_POST['paged'] ) ? intval( $_POST['paged'] ) : 1;
 
+            // Fetch transferred orders.
+            $orders_array = $this->get_transferred_orders();
+            $orders       = $orders_array['orders'];
+            $total_count  = $orders_array['total_count'];
+
+            // Begin HTML output buffer.
             ob_start();
             if ( empty( $orders ) ) {
                 ?>
@@ -525,16 +604,18 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                 <?php
             } else {
                 foreach ( $orders as $order_post ) {
-                    $order               = wc_get_order( $order_post );
-                    $order_id            = $order->get_id();
-                    $order_barcode       = get_post_meta( $order_id, '_logestechs_order_barcode', true );
-                    $order_logestechs_id = get_post_meta( $order_id, '_logestechs_order_id', true );
-                    $company_name        = get_post_meta( $order_id, '_logestechs_company_name', true );
-                    $date                = logestechs_convert_to_local_time( get_post_meta( $order_id, '_logestechs_date', true ) );
-                    $status              = get_post_meta( $order_id, '_logestechs_order_status', true );
+                    $order         = wc_get_order( $order_post );
+                    $order_id      = $order->get_id();
+                    $order_barcode = get_post_meta( $order_id, '_logestechs_order_barcode', true );
+                    $company_name  = get_post_meta( $order_id, '_logestechs_company_name', true );
+                    $date          = logestechs_convert_to_local_time( get_post_meta( $order_id, '_logestechs_date', true ) );
                     ?>
                     <tr class="js-logestechs-order" data-order-id="<?php echo $order_id; ?>">
-                        <td>#<?php echo esc_html( $order_id ); ?></td>
+                        <td>
+                            <a href="<?php echo esc_url( admin_url( 'post.php?post=' . $order_id . '&action=edit' ) ); ?>">
+                                #<?php echo esc_html( $order_id ); ?>
+                            </a>
+                        </td>
                         <td><?php echo $date->format( 'd/m/Y H:i' ); ?></td>
                         <td>#<?php echo esc_html( $order_barcode ); ?></td>
                         <td><?php echo esc_html( $company_name ); ?></td>
@@ -545,12 +626,12 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                             <div class="logestechs-dropdown">
                                 <img src="<?php echo logestechs_image( 'dots.svg' ); ?>" />
                                 <div class="logestechs-dropdown-content js-normal-dropdown">
-                                    <div class="js-logestechs-print" data-order-id="<?php echo $order_id; ?>">Print Invoice</div>
-                                    <div class="js-open-details-popup" data-order-id="<?php echo $order_id; ?>">Track</div>
-                                    <div class="js-logestechs-cancel" data-order-id="<?php echo $order_id; ?>">Cancel</div>
+                                    <div class="js-logestechs-print" data-order-id="<?php echo $order_id; ?>"><?php _e( 'Print Invoice', 'logestechs' );?></div>
+                                    <div class="js-open-details-popup" data-order-id="<?php echo $order_id; ?>"><?php _e( 'Track', 'logestechs' );?></div>
+                                    <div class="js-logestechs-cancel" data-order-id="<?php echo $order_id; ?>"><?php _e( 'Cancel', 'logestechs' );?></div>
                                 </div>
                                 <div class="logestechs-dropdown-content js-cancelled-dropdown hidden">
-                                    <div class="js-open-transfer-popup logestechs-white-btn" data-order-id="<?php echo $order_id; ?>">Assign Order</div>
+                                    <div class="js-open-transfer-popup logestechs-white-btn" data-order-id="<?php echo $order_id; ?>"><?php _e( 'Assign Order', 'logestechs' );?></div>
                                 </div>
                             </div>
                         </td>
@@ -560,25 +641,27 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             }
             $orders_html = ob_get_clean();
 
-                                                    // Set up pagination.
-            $total_pages = ceil( $total_count / 10 ); // Replace YOUR_ITEMS_PER_PAGE with the number of items per page.
+                                  // Set up pagination.
+            $items_per_page = 10; // or whatever constant you want
+            $total_pages    = ceil( $total_count / $items_per_page );
             ob_start();
             $pagination_links = paginate_links( [
                 'base'      => add_query_arg( 'paged', '%#%', remove_query_arg( ['action', 'paged'] ) ),
                 'format'    => '?paged=%#%',
-                'prev_text' => __( '&laquo;' ),
-                'next_text' => __( '&raquo;' ),
+                'prev_text' => __( '&laquo;', 'logestechs' ),
+                'next_text' => __( '&raquo;', 'logestechs' ),
                 'total'     => $total_pages,
                 'current'   => $current_page,
                 'mid_size'  => 1 // Number of pages to display around the current page
             ] );
             if ( $pagination_links ) {
                 echo '<div class="logestechs-pagination">';
-                echo '<span class="logestechs-pagination-label">Page ' . $current_page . ' of ' . $total_pages . '</span> ';
+                echo '<span class="logestechs-pagination-label">' . sprintf( __( 'Page %1$s of %2$s', 'logestechs' ), $current_page, $total_pages ) . '</span> ';
                 echo '<div>' . $pagination_links . '</div>';
                 echo '</div>';
             }
             $pagination_links_html = ob_get_clean();
+
             // Send JSON response.
             wp_send_json( [
                 'orders_html'      => $orders_html,
@@ -589,22 +672,38 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             wp_die();
         }
 
+        /**
+         * Fetch villages based on the query from the AJAX request.
+         *
+         * @since    1.0.0
+         */
         public function fetch_villages() {
+            // Check nonce for security.
             check_ajax_referer( 'logestechs-security-nonce', 'security' );
 
+            // Check user capabilities.
             if ( ! current_user_can( 'manage_woocommerce' ) ) {
-                wp_send_json_error( 'You do not have permission to perform this action.' );
+                wp_send_json_error( __( 'You do not have permission to perform this action.', 'logestechs' ) );
+                wp_die();
             }
 
-            $order_id = $_POST['order_id'] ? intval( $_POST['order_id'] ) : null;
+            // Sanitize and validate input.
+            $order_id = isset( $_POST['order_id'] ) ? intval( $_POST['order_id'] ) : null;
+            $query    = isset( $_POST['query'] ) ? sanitize_text_field( $_POST['query'] ) : '';
 
-            $query = isset( $_POST['query'] ) ? sanitize_text_field( $_POST['query'] ) : '';
-
-            // Search the villages based on the query
-            $villages = $this->api->search_villages( $order_id, $query );
-            // Send JSON response.
-            wp_send_json_success( ['villages' => $villages] );
+            try {
+                // Search the villages based on the query.
+                $villages = $this->api->search_villages( $order_id, $query );
+                // Send JSON response.
+                wp_send_json_success( ['villages' => $villages] );
+            } catch ( Exception $e ) {
+                wp_send_json_error( __( 'There was an error fetching the villages. Please try again.', 'logestechs' ) );
+            } finally {
             wp_die();
+            wp_die();
+                wp_die();
+            }
         }
+
     }
 }

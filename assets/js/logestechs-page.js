@@ -1,4 +1,6 @@
 jQuery(document).ready(function ($) {
+    let is_sending_request = false;
+
     var debounceTimer;
     var sortOrder = getParameterByName('sort_order');
     var sortBy = getParameterByName('sort_by');
@@ -138,6 +140,10 @@ jQuery(document).ready(function ($) {
     }
     function load_orders() {
         // Make an AJAX request to fetch the page content
+        if(is_sending_request) {
+            return;
+        }
+        is_sending_request = true;
         $.post(
             logestechs_global_data.ajax_url,
             {
@@ -151,6 +157,7 @@ jQuery(document).ready(function ($) {
                 date_to: dateTo
             },
             function (response) {
+                is_sending_request = false;
                 // Update the page content with the received HTML
                 // Assuming the orders are contained in an element with the ID "logestechs_orders_table"
                 $('#logestechs_orders_table tbody').html(response.orders_html);
@@ -172,6 +179,10 @@ jQuery(document).ready(function ($) {
     function syncLogestechsOrders() {
         $('span.js-logestechs-status-cell').removeClass().addClass('js-logestechs-status-cell').html('<div class="logestechs-skeleton-loader"></div>');
         $('.logestechs-dropdown').hide();
+        if(is_sending_request) {
+            return;
+        }
+        is_sending_request = true;
         $.post(
             logestechs_global_data.ajax_url,
             {
@@ -185,6 +196,8 @@ jQuery(document).ready(function ($) {
                 date_to: dateTo
             },
             function (response) {
+                is_sending_request = false;
+
                 $('.logestechs-dropdown').show();
                 $.each(response, function (orderId, newStatus) {
                     var $row = $(".js-logestechs-order[data-order-id='" + orderId + "']");

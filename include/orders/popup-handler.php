@@ -1,8 +1,6 @@
 <?php
 /**
- * The file that handles Logestechs orders
- *
- * This file is used to handle Logestechs orders such as transferring orders, tracking orders, and cancelling orders.
+ * The file that handles Logestechs orders.
  *
  * @since      1.0.0
  * @package    Logestechs
@@ -12,6 +10,7 @@
 if ( ! class_exists( 'Logestechs_Popup_Handler' ) ) {
 
     class Logestechs_Popup_Handler {
+
         /**
          * Initialize the class and set its properties.
          *
@@ -24,14 +23,16 @@ if ( ! class_exists( 'Logestechs_Popup_Handler' ) ) {
             add_action( 'wp_ajax_logestechs_fetch_companies', [$this, 'fetch_companies'] );
         }
 
+        /**
+         * Render popups.
+         *
+         * @since    1.0.0
+         */
         public function render_popups() {
-            // Get the current screen's information
             $screen = get_current_screen();
             $slug   = Logestechs_Config::MENU_SLUG;
 
-            // Ensure that we're dealing with a WooCommerce order
             if ( 'shop_order' == $screen->post_type || 'edit-shop_order' === $screen->id || 'shop_order' === $screen->id || 'toplevel_page_logestechs' === $screen->id ) {
-                // Here we could fetch data if needed and pass it to the View
                 $transfer_popup = new Logestechs_Manage_Companies_Popup_View();
                 if ( 'toplevel_page_' . $slug === $screen->id ) {
                     $transfer_popup->render();
@@ -44,53 +45,63 @@ if ( ! class_exists( 'Logestechs_Popup_Handler' ) ) {
             }
         }
 
+        /**
+         * Save company credentials.
+         *
+         * @since    1.0.0
+         */
         public function save_company() {
             check_ajax_referer( 'logestechs-security-nonce', 'security' );
 
             if ( ! current_user_can( 'manage_woocommerce' ) ) {
-                wp_send_json_error( ['message' => 'You do not have permission to perform this action.'] );
+                wp_send_json_error( ['message' => __('You do not have permission to perform this action.', 'logestechs')] );
                 wp_die();
             }
 
-            // Sanitize POST data
             $security_manager = new Logestechs_Security_Manager();
             $sanitizer        = $security_manager->get_sanitizer();
             $validator        = $security_manager->get_validator();
 
             $credentials = $sanitizer->sanitize_credentials( $_POST );
             $errors      = $validator->validate_credentials( $credentials );
+
             if ( ! empty( $errors ) ) {
                 wp_send_json_error( ['errors' => $errors] );
                 wp_die();
             }
-            // If success, let's store the company details in our database.
+
             $credentials_manager = new Logestechs_Credentials_Manager();
             $response            = $credentials_manager->save_credentials( $credentials );
 
-            if ( isset($response['error']) ) {
-                wp_send_json_error( $response['error'] );
+            if ( is_wp_error( $response ) ) {
+                $error_message = $response->get_error_message();
+                wp_send_json_error( array('errors' => [$error_message]) );
                 wp_die();
             }
 
-            // Send the company data back to the client.
             wp_send_json_success( $response );
             wp_die();
         }
 
+        /**
+         * Delete a company's credentials.
+         *
+         * @since    1.0.0
+         */
         public function delete_company() {
             check_ajax_referer( 'logestechs-security-nonce', 'security' );
 
             if ( ! current_user_can( 'manage_woocommerce' ) ) {
-                wp_send_json_error( 'You do not have permission to perform this action.' );
+                wp_send_json_error( __('You do not have permission to perform this action.', 'logestechs') );
             }
 
             $company_id = $_POST['company_id'] ? intval( $_POST['company_id'] ) : null;
             if ( ! $company_id ) {
-                wp_send_json_error( 'Error while deleting this item!' );
+                wp_send_json_error( __('Error while deleting this item!', 'logestechs') );
                 wp_die();
             }
-            $credentials_manager   = new Logestechs_Credentials_Manager();
-            // Check if there are any WooCommerce orders that are using the logestechs_order_id with the given company_id
+
+            $credentials_manager = new Logestechs_Credentials_Manager();
             $args = [
                 'post_type'      => 'shop_order',
                 'meta_query'     => [
@@ -106,18 +117,18 @@ if ( ! class_exists( 'Logestechs_Popup_Handler' ) ) {
                     ]
                 ],
                 'post_status'    => 'any',
-                'posts_per_page' => 1 // we only need to know if at least one exists
+                'posts_per_page' => 1
             ];
             $query = new WP_Query( $args );
             if ( $query->have_posts() ) {
-                wp_send_json_error( 'Cannot delete this company as it is associated with existing orders!' );
+                wp_send_json_error( __('Cannot delete this company as it is associated with existing orders!', 'logestechs') );
                 wp_die();
             }
-            // Connect to Logestechs API and perform delete.
+
             $response = $credentials_manager->delete_credentials( $company_id );
 
             if ( is_wp_error( $response ) ) {
-                wp_send_json_error( 'Error while deleting this item!' );
+                wp_send_json_error( __('Error while deleting this item!', 'logestechs') );
                 wp_die();
             }
 
@@ -125,11 +136,16 @@ if ( ! class_exists( 'Logestechs_Popup_Handler' ) ) {
             wp_die();
         }
 
+        /**
+         * Fetches company credentials.
+         *
+         * @since    1.0.0
+         */
         public function fetch_companies() {
             check_ajax_referer( 'logestechs-security-nonce', 'security' );
 
             if ( ! current_user_can( 'manage_woocommerce' ) ) {
-                wp_send_json_error( 'You do not have permission to perform this action.' );
+                wp_send_json_error( __('You do not have permission to perform this action.', 'logestechs') );
             }
 
             $credentials_manager = new Logestechs_Credentials_Manager();
@@ -139,7 +155,5 @@ if ( ! class_exists( 'Logestechs_Popup_Handler' ) ) {
 
             wp_die();
         }
-
     }
-
 }

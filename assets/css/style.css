@@ -115,7 +115,6 @@
 
 .logestechs-input-container label {
     position: absolute;
-    left: 0;
     padding: 5px;
     transition: all 0.3s;
     background: #FFF6E9;
@@ -533,16 +532,15 @@ input[type=text].logestechs-dropdown-input {
 }
 
 .logestechs-village-results {
-    position: absolute;
-    width: 270px;
+    width: 283px;
     background: #fff;
     border: 1px solid #dadada;
-    max-height: 135px;
+    max-height: 200px;
     overflow: auto;
     padding: 10px 0;
     cursor: pointer;
     border-bottom: 1px solid #dadada;
-    width: 100%;
+    margin-bottom: 11px;
 }
 
 .logestechs-village-results div {
@@ -555,28 +553,38 @@ input[type=text].logestechs-dropdown-input {
     background: #dadada;
 }
 
+.logestechs-search-wrapper {
+    position: relative;
+}
+
 .logestechs-order-settings-popup .logestechs-primary-btn {
     width: 100%;
     margin: 0;
 }
-#logestechs-order-companies-popup .logestechs-popup-head,#logestechs-order-transfer-popup .logestechs-popup-head {
+
+#logestechs-order-companies-popup .logestechs-popup-head,
+#logestechs-order-transfer-popup .logestechs-popup-head {
     padding-bottom: 10px;
 }
+
 .js-logestechs-loading {
     padding: 3px 24px;
 }
 
 .logestechs-destination-address-label {
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 500;
 }
+
 .logestechs-settings {
     display: flex;
     flex-wrap: wrap;
 }
+
 .logestechs-settings-page .logestechs-header {
     margin-bottom: 10px;
 }
+
 .logestechs-settings form {
     width: 100%;
 }
@@ -591,19 +599,22 @@ input[type=text].logestechs-dropdown-input {
     gap: 0 10px;
     box-sizing: border-box;
 }
+
 .logestechs-card p {
     margin-top: 0;
 }
+
 .logestechs-card h2 {
     margin: 0;
     margin-bottom: 6px;
 }
+
 .logestechs-field {
     display: flex;
     flex-direction: column;
     margin: 10px 0;
-    width: 100%; /* Set a specific width so that two fields can fit in one row */
-    box-sizing: border-box; /* Include padding and border in the element's total width */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .logestechs-field input[type=text].logestechs-dropdown-input {
@@ -619,9 +630,52 @@ input[type=text].logestechs-dropdown-input {
 .logestechs-field input {
     padding: 10px;
     border: 1px solid #ccc;
+    margin-bottom: 5px;
 }
+
 .logestechs-popup-details {
     overflow: auto;
     max-height: 500px;
     padding: 0 33px;
+    padding-bottom: 40px;
+}
+
+
+.logestechs-skeleton-row {
+    display: flex;
+    gap: 10px;
+}
+
+.logestechs-skeleton-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.logestechs-skeleton-row .logestechs-skeleton-loader {
+    margin: 0;
+}
+
+.logestechs-skeleton-loader {
+    width: 100%;
+    height: 18px;
+    margin-inline: auto;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite linear;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+[dir="rtl"] .logestechs-logo-background {
+    -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
 }

@@ -1,21 +1,45 @@
 <?php
 /**
- * The file that handles security
+ * The file that manages security features.
  *
- * This file is used to manage security features of the Logestechs plugin.
+ * This file handles the security features of the Logestechs plugin, acting as a bridge
+ * between the plugin's functionalities and security operations.
  *
  * @since      1.0.0
  * @package    Logestechs
  * @subpackage Logestechs/security
  */
 
-if ( ! class_exists( 'Logestechs_Security_Manager' ) ) {
+if (!class_exists('Logestechs_Security_Manager')) {
 
     class Logestechs_Security_Manager {
 
-        private $validator; // Logestechs_Data_Validator instance
-        private $sanitizer; // Logestechs_Input_Sanitizer instance
-        private $encryptor; // Logestechs_Data_Encryption instance
+        /**
+         * Instance of the Logestechs_Data_Validator class.
+         *
+         * @since    1.0.0
+         * @access   private
+         * @var      Logestechs_Data_Validator    $validator    Manages data validation.
+         */
+        private $validator;
+
+        /**
+         * Instance of the Logestechs_Input_Sanitizer class.
+         *
+         * @since    1.0.0
+         * @access   private
+         * @var      Logestechs_Input_Sanitizer   $sanitizer    Manages input sanitization.
+         */
+        private $sanitizer;
+
+        /**
+         * Instance of the Logestechs_Data_Encryption class.
+         *
+         * @since    1.0.0
+         * @access   private
+         * @var      Logestechs_Data_Encryption   $encryptor    Manages data encryption.
+         */
+        private $encryptor;
 
         /**
          * Initialize the class and set its properties.
@@ -23,36 +47,44 @@ if ( ! class_exists( 'Logestechs_Security_Manager' ) ) {
          * @since    1.0.0
          */
         public function __construct() {
-            // Initialize validator, sanitizer and encryptor
             $this->validator = new Logestechs_Data_Validator();
             $this->sanitizer = new Logestechs_Input_Sanitizer();
-            $encryption_key  = get_option( 'logestechs_encryption_key' );
-
-            $this->encryptor = new Logestechs_Data_Encryption( $encryption_key );
+            
+            $encryption_key = get_option('logestechs_encryption_key');
+            if (!$encryption_key) {
+                // Handle error if encryption key isn't found. This could be logging the error or generating a new key.
+                // For now, we'll just throw an exception.
+                throw new Exception('Encryption key not found.');
+            }
+            
+            $this->encryptor = new Logestechs_Data_Encryption($encryption_key);
         }
 
         /**
-         * Get the validator instance.
+         * Retrieve the validator instance.
          *
-         * @return Logestechs_Data_Validator The validator instance.
+         * @since    1.0.0
+         * @return   Logestechs_Data_Validator   The validator instance.
          */
         public function get_validator() {
             return $this->validator;
         }
 
         /**
-         * Get the sanitizer instance.
+         * Retrieve the sanitizer instance.
          *
-         * @return Logestechs_Input_Sanitizer The sanitizer instance.
+         * @since    1.0.0
+         * @return   Logestechs_Input_Sanitizer   The sanitizer instance.
          */
         public function get_sanitizer() {
             return $this->sanitizer;
         }
 
         /**
-         * Get the encryptor instance.
+         * Retrieve the encryptor instance.
          *
-         * @return Logestechs_Data_Encryption The encryptor instance.
+         * @since    1.0.0
+         * @return   Logestechs_Data_Encryption   The encryptor instance.
          */
         public function get_encryptor() {
             return $this->encryptor;

@@ -18,15 +18,16 @@ define( 'LOGESTECHS_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'LOGESTECHS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'LOGESTECHS_PLUGIN_BASENAME', plugin_basename( dirname( __FILE__ ) ) ); // Basename
 
+// Plugin activation and deactivation.
+register_activation_hook( __FILE__, [ 'Logestechs_Plugin_Activator', 'activate' ] );
+register_deactivation_hook( __FILE__, [ 'Logestechs_Plugin_Deactivator', 'deactivate' ] );
+
 // Require plugin classes using autoloader
 require_once LOGESTECHS_PLUGIN_PATH . 'utils/helper-functions.php';
 require_once LOGESTECHS_PLUGIN_PATH . 'autoloader.php';
 $autoloader = new Logestechs_Autoloader;
 $autoloader->init();
 
-// Plugin activation and deactivation.
-register_activation_hook( __FILE__, [ 'Logestechs_Plugin_Activator', 'activate' ] );
-register_deactivation_hook( __FILE__, [ 'Logestechs_Plugin_Deactivator', 'deactivate' ] );
 
 $logestechs_core = new Logestechs_Plugin_Core();
 $logestechs_core->run();

@@ -51,21 +51,23 @@ if ( ! class_exists( 'Logestechs_Order_Metabox' ) ) {
          * @since    1.0.0
          */
         public function logestechs_metabox_html( $post ) {
-            $api             = new Logestechs_Api_Handler();
-            $response        = $api->track_order( $post->ID );
-            $currency_symbol = html_entity_decode( get_woocommerce_currency_symbol() );
+            $api                = new Logestechs_Api_Handler();
+            $response           = $api->track_order( $post->ID );
+
+            // Get company currency symbol.
+            $currency_symbol = get_post_meta($post->ID, '_logestechs_currency', true);
+                        
             $details_to_display = [
                 'id' => $post->ID
             ];
 
-            if ( isset($response['id']) ) {
+            if ( isset( $response['id'] ) ) {
                 $details_to_display = [
                     'id'                     => $post->ID,
                     'order_id'               => $response['id'],
                     'package_number'         => '#' . $response['barcode'],
-                    'cost'                  => $response['cost'] . ' ' . $currency_symbol, // Price from WooCommerce
-                    // 'price'                  => $order->get_total() . ' ' . $currency_symbol, // Price from WooCommerce
-                    'reservation_date' => ! empty( $response['createdDate'] ) ? date( 'd/m/Y', strtotime( $response['createdDate'] ) ) : 'N/A',
+                    'price'                   => $response['cost'] . ' ' . $currency_symbol,
+                    'reservation_date'       => ! empty( $response['createdDate'] ) ? date( 'd/m/Y', strtotime( $response['createdDate'] ) ) : 'N/A',
                     'shipment_type'          => $response['shipmentType'],
                     'recipient'              => $response['receiverFirstName'] . ' ' . $response['receiverLastName'],
                     'package_weight'         => ! empty( $response['weight'] ) ? $response['weight'] : 'N/A',
@@ -79,6 +81,13 @@ if ( ! class_exists( 'Logestechs_Order_Metabox' ) ) {
             $view->render();
         }
 
+        /**
+         * Formats the order metadata by removing leading underscores and unserializing if needed.
+         *
+         * @param array $order_meta Order metadata.
+         * @return array Formatted order metadata.
+         * @since    1.0.0
+         */
         public function format_order_meta( $order_meta ) {
             foreach ( $order_meta as $key => $value ) {
                 if ( strpos( $key, '_' ) === 0 ) {
