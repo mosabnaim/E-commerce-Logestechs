@@ -144,14 +144,6 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
             // Get the company details:
             $credentials_storage = Logestechs_Credentials_Storage::get_instance();
             $company             = $credentials_storage->get_company( $local_company_id );
-            $debugger = new Logestechs_Debugger;
-            $debugger->clear()->log([
-                $company,
-                !$company,
-                empty($company),
-                is_object($company),
-                !empty($company),
-            ])->write();
             if(empty($company)) {
                 return __( 'Error while processing this action!', 'logestechs' );
             }
@@ -179,29 +171,50 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
         }
 
         /**
-         * Send a request to print an order on Logestechs.
+         * Send a request to print multiple orders on Logestechs.
          *
-         * This method sends a POST request to Logestechs to print a specific order
-         * and returns the response. It uses the order's company ID and Logestechs ID
-         * as parameters in the request.
-         *
-         * @param int $order_id The ID of the order to print.
+         * @param array $order_ids The IDs of the orders to print.
          * @return mixed The response from the API, or false if an error occurred.
          *
-         * @since    1.0.0
+         * @since 1.0.0
          */
-        public function print_order( $order_id ) {
-            $company_id    = get_post_meta( $order_id, '_logestechs_api_company_id', true );
-            $logestechs_id = get_post_meta( $order_id, '_logestechs_order_id', true );
+        public function print_order( $order_ids ) {
+            $logestechs_ids = [];
+            $company_id = null;
+            $all_same_company = true; // Flag to check if all orders belong to the same company
 
-            $response = $this->request( "guests/{$company_id}/packages/pdf", 'POST', [
-                'ids' => [
-                    $logestechs_id
-                ]
-            ], $company_id );
+            foreach ( $order_ids as $order_id ) {
+                $current_company_id = get_post_meta( $order_id, '_logestechs_api_company_id', true );
+                $current_logestechs_id = get_post_meta( $order_id, '_logestechs_order_id', true );
 
-            return $response;
+                // Set the company_id during the first loop iteration
+                if ( $company_id === null ) {
+                    $company_id = $current_company_id;
+                }
+
+                // Check if the orders belong to the same company
+                if ( $company_id !== $current_company_id ) {
+                    $all_same_company = false;
+                    break; // No need to continue the loop as they are from different companies
+                }
+
+                // Add the current Logestechs ID to the list
+                $logestechs_ids[] = $current_logestechs_id;
+            }
+
+            // If all orders are from the same company, proceed to send the print request
+            if ( $all_same_company && $company_id !== null ) {
+                $response = $this->request( "guests/{$company_id}/packages/pdf", 'POST', [
+                    'ids' => $logestechs_ids
+                ], $company_id );
+
+                return $response;
+            }
+
+            // Return false or an error message if the orders do not belong to the same company
+            return false;
         }
+
 
         /**
          * Search villages in Logestechs using a query.
@@ -307,32 +320,6 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
                 'ids' => $order_ids
             ] );
 
-            $statuses_mapping = [
-                'DRAFT'                                                => __( 'Draft' ),
-                'PENDING_CUSTOMER_CARE_APPROVAL'                       => __( 'Submitted' ),
-                'APPROVED_BY_CUSTOMER_CARE_AND_WAITING_FOR_DISPATCHER' => __( 'Ready for dispatching' ),
-                'CANCELLED'                                            => __( 'Cancelled' ),
-                'ASSIGNED_TO_DRIVER_AND_PENDING_APPROVAL'              => __( 'Assigned to Drivers' ),
-                'REJECTED_BY_DRIVER_AND_PENDING_MANGEMENT'             => __( 'Rejected By Drivers' ),
-                'ACCEPTED_BY_DRIVER_AND_PENDING_PICKUP'                => __( 'Pending Pickup' ),
-                'SCANNED_BY_DRIVER_AND_IN_CAR'                         => __( 'Picked' ),
-                'SCANNED_BY_HANDLER_AND_UNLOADED'                      => __( 'Pending Sorting' ),
-                'MOVED_TO_SHELF_AND_OUT_OF_HANDLER_CUSTODY'            => __( 'Sorted on Shelves' ),
-                'OPENED_ISSUE_AND_WAITING_FOR_MANAGEMENT'              => __( 'Reported to Management' ),
-                'DELIVERED_TO_RECIPIENT'                               => __( 'Delivered' ),
-                'POSTPONED_DELIVERY'                                   => __( 'Postponed delivery' ),
-                'RETURNED_BY_RECIPIENT'                                => __( 'Returned by recipient' ),
-                'COMPLETED'                                            => __( 'Completed' ),
-                'FAILED'                                               => __( 'Failed' ),
-                'RESOLVED_FAILURE'                                     => __( 'Resolved Failure' ),
-                'UNRESOLVED_FAILURE'                                   => __( 'Unresolved Failure' ),
-                'TRANSFERRED_OUT'                                      => __( 'Transferred out' ),
-                'PARTIALLY_DELIVERED'                                  => __( 'Partially delivered' ),
-                'SWAPPED'                                              => __( 'Swapped' ),
-                'BROUGHT'                                              => __( 'Brought' ),
-                'DELIVERED_TO_SENDER'                                  => __( 'Delivered to sender' )
-            ];
-
             $statuses = [];
 
             foreach ( $response as $item ) {
@@ -342,8 +329,7 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
 
                 $packageId            = $item['packageId'];
                 $status_code          = $item['status'];
-                $status               = isset( $statuses_mapping[$status_code] ) ? $statuses_mapping[$status_code] : $status_code;
-                $statuses[$packageId] = $status;
+                $statuses[$packageId] = $status_code;
             }
 
             return $statuses;

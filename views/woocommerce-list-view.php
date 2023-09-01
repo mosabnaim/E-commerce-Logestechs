@@ -46,8 +46,9 @@
             if ('logestechs' === $column) {
                 $logestechs_company = get_post_meta($post_id, '_logestechs_company_name', true);
                 $logestechs_order_status = get_post_meta($post_id, '_logestechs_order_status', true);
+                $completed_statuses = Logestechs_Config::ACCEPTABLE_TRANSFER_STATUS;
 
-                if (!empty($logestechs_company) && 'Cancelled' !== $logestechs_order_status) {
+                if (!empty($logestechs_company) && !in_array($logestechs_order_status, $completed_statuses)) {
                     echo '<p>' . esc_html($logestechs_company) . '</p>';
                 } else {
                     echo '<button class="js-open-transfer-popup logestechs-btn-text" data-order-id="' . esc_attr($post_id) . '">' . esc_html__( 'Assign Company', 'logestechs' ) . '</button>';

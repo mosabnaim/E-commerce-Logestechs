@@ -165,7 +165,10 @@ if ( ! class_exists( 'Logestechs_Enqueue' ) ) {
                     'edit'   => logestechs_image( 'edit.svg' ),
                     'loader' => logestechs_image( 'logestechs-loader.riv' )
                 ],
+                'completed_status_array' => Logestechs_Config::COMPLETED_STATUS,
                 'localization' => [
+                    'transfer_order' => __( 'Transfer Order', 'logestechs' ),
+                    'request_pickup' => __( 'Request Pickup', 'logestechs' ),
                     'company_logo_alt' => __( 'company logo', 'logestechs' ),
                     'oops' => __( 'Oops...', 'logestechs' ),
                     'something_went_wrong' => __( 'Something went wrong.', 'logestechs' ),
@@ -188,6 +191,10 @@ if ( ! class_exists( 'Logestechs_Enqueue' ) ) {
                     'length_error' => __( 'Please write at least 2 characters.', 'logestechs' ),
                     'loading' => __( 'loading...', 'logestechs' ),
                     'no_matches_found' => __( 'No matches found.', 'logestechs' ),
+                    'downloading' => __( 'Downloading...', 'logestechs' ),
+                    'print_invoice' => __( 'Print Invoice', 'logestechs' ),
+                    'bulk_print_error' => __( 'All selected orders must belong to the same company to enable bulk printing.', 'logestechs' ),
+                    'bulk_transfer_error' => __( 'All selected orders must be assignable to enable bulk transfer.', 'logestechs' ),
                 ]
             ];
         }

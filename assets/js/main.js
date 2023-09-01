@@ -81,16 +81,24 @@ jQuery(document).ready(function ($) {
 		$('.logestechs-dropdown').removeClass('visible');
 		$('.logestechs-village-results').hide();
 	});
+
 	$('#logestechs-custom-store-checkbox').on('change', function() {
         $('.js-logestechs-store-details input').attr('required', this.checked);
     });
-	$(document).on('click', '.js-open-transfer-popup', function (e) {
+	$(document).on('click', '.js-open-transfer-popup, .js-open-pickup-popup', function (e) {
 		e.preventDefault();
 		$transfer_popup.fadeIn(); // append the clone to the body and show it
-		$('.js-logestechs-assign-company').addClass('disabled').prop('disabled', true); // Set order id to the assign company button
+		$('.js-logestechs-assign-company').addClass('disabled').prop('disabled', true); 
 
 		let order_id = $(this).data('order-id'); // Get order id from data-order-id attribute of clicked element
 		$('.js-logestechs-assign-company').attr('data-order-id', order_id); // Set order id to the assign company button
+		if($(this).hasClass('js-open-pickup-popup')) {
+			$transfer_popup.attr('data-shipment-type', 'bring');
+			$('.js-logestechs-transfer-order').html(logestechs_global_data.localization.request_pickup);
+		}else {
+			$transfer_popup.removeAttr('data-shipment-type'); 
+			$('.js-logestechs-transfer-order').html(logestechs_global_data.localization.transfer_order);
+		}
 		const next = document.querySelector('.js-logestechs-assign-company');
 		fetch_companies();
 		if (r) {
@@ -149,6 +157,12 @@ jQuery(document).ready(function ($) {
 						name: 'action',
 						value: 'logestechs_assign_company'
 					});
+					if( $transfer_popup.attr('data-shipment-type') == 'bring') {
+						formData.push({
+							name: 'requesting_pickup',
+							value: true
+						});
+					}
 					formData.push({
 						name: 'security',
 						value: logestechs_global_data.security,
@@ -546,8 +560,6 @@ jQuery(document).ready(function ($) {
 							}).then((result) => {
 								location.reload(); // Reload the page
 							});
-							// alert('Company has been assigned successfully.');
-							// Refresh page or update part of the page based on response.
 						} else {
 							let errorMessage = logestechs_global_data.localization.something_went_wrong;
 							if (response.data && response.data.error) {
@@ -574,12 +586,26 @@ jQuery(document).ready(function ($) {
 		});
 	});
 
-	$(document).on('click', '.js-logestechs-print', function (e) {
-		e.preventDefault();
+	$(document).on('click', '.js-logestechs-print, .js-logestechs-bulk-print', function (e) {
+		e.stopPropagation();
 		let that = $(this);
-		that.addClass('disabled').prop('disabled', true).html('Downloading...');
+
+		that.addClass('disabled').prop('disabled', true);
+		let downloading_text = logestechs_global_data.localization.downloading;
+		if (that.hasClass('js-logestechs-bulk-print')) {
+			that.find('p').html(downloading_text);
+		} else {
+			that.html(downloading_text);
+		}
 		// Optional: You might want to get some data from the clicked element, such as an order ID
-		var order_id = $(this).data('order-id');
+		let order_ids = [];
+		if (that.hasClass('js-logestechs-print')) {
+			order_ids = [that.data('order-id')];
+		} else if (that.hasClass('js-logestechs-bulk-print')) {
+			order_ids = getSelectedOrders();
+		}
+
+		console.log(order_ids);
 
 		// Make an AJAX request to your server to get the PDF URL
 		if(is_sending_request) return;
@@ -588,13 +614,18 @@ jQuery(document).ready(function ($) {
 			logestechs_global_data.ajax_url,
 			{
 				action: 'logestechs_print_order',
-				order_id: order_id,
+				order_ids: order_ids,
 				security: logestechs_global_data.security,
 			},
 			function (response) {
 				is_sending_request = false;
-
-				that.removeClass('disabled').prop('disabled', false).html('Print Invoice');
+				that.removeClass('disabled').prop('disabled', false);
+				let print_text = logestechs_global_data.localization.print_invoice;
+				if (that.hasClass('js-logestechs-bulk-print')) {
+					that.find('p').html(print_text);
+				} else {
+					that.html(print_text);
+				}
 				// Check if the response contains the URL
 				if (response.success && response.data && response.data.url) {
 					// Check if the response contains the URL
@@ -603,7 +634,7 @@ jQuery(document).ready(function ($) {
 						var link = document.createElement('a');
 						link.href = response.data.url;
 						link.target = '_blank'; // Open in a new window/tab
-						link.download = 'order_' + order_id + '.pdf'; // You can name the file as you like
+						link.download = 'package-invoice' +  '.pdf'; // You can name the file as you like
 						link.style.display = 'none'; // Hide the link
 
 						// Append the link to the body
@@ -626,7 +657,13 @@ jQuery(document).ready(function ($) {
 				}
 			}
 		);
+
 	});
+	function getSelectedOrders() {
+		return $.map($('input[type=checkbox][name=selected_orders]:checked'), function(element) {
+			return $(element).closest('.js-logestechs-order').attr('data-order-id');
+		});
+	}
 	$(document).on('change', '#logestechs-custom-store-checkbox', function(e) {
 		if(this.checked) {
 			$('.js-logestechs-store-details').show();

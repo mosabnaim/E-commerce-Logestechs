@@ -6,20 +6,22 @@ jQuery(document).ready(function ($) {
     var sortBy = getParameterByName('sort_by');
     // Get current page number from URL
     var searchQuery = getParameterByName('search');
+    var statusFilter = getParameterByName('status_filter');
     var dateFrom = getParameterByName('date_from');
     var dateTo = getParameterByName('date_to');
 
     var currentPage = getParameterByName('paged');
     if (!currentPage) currentPage = 1;
     $('.js-logestechs-search').val(searchQuery);
-    if(dateFrom && dateTo) {
-        $('#date_range').val(dateFrom + ' - '+ dateTo);
+    if (dateFrom && dateTo) {
+        $('#date_range').val(dateFrom + ' - ' + dateTo);
     }
     $('.js-logestechs-search').on('keyup', function () {
         clearTimeout(debounceTimer);
         let that = $(this);
         debounceTimer = setTimeout(function () {
             searchQuery = that.val().trim().replace(/#/g, '');
+            $('.js-logestechs-select-all').prop('checked', false).trigger('change');
             load_orders();
         }, 800);
     });
@@ -33,7 +35,7 @@ jQuery(document).ready(function ($) {
         if (!results[2]) return '';
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
-    $('.js-logestechs-submit-settings').on('click', function() {
+    $('.js-logestechs-submit-settings').on('click', function () {
         $('#logestechs-settings-submit').trigger('click');
     });
     // Highlight the current page
@@ -46,34 +48,36 @@ jQuery(document).ready(function ($) {
         autoUpdateInput: false,
         locale: {
             format: 'YYYY-MM-DD'
-            
         }
-    }, function(start, end) {
+    }, function (start, end) {
         dateFrom = start.format('YYYY-MM-DD');
         dateTo = end.format('YYYY-MM-DD');
+        $('.js-logestechs-select-all').prop('checked', false).trigger('change');
 
         load_orders();
         // You can use the 'start' and 'end' dates here as required
     });
-    $('#date_range').on('apply.daterangepicker', function(ev, picker) {
+    $('#date_range').on('apply.daterangepicker', function (ev, picker) {
         $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
     });
-  
-    $('#date_range').on('cancel.daterangepicker', function(ev, picker) {
+
+    $('#date_range').on('cancel.daterangepicker', function (ev, picker) {
         dateFrom = '';
         dateTo = '';
 
+        $('.js-logestechs-select-all').prop('checked', false).trigger('change');
         load_orders();
         $(this).val('');
     });
-    $(document).on('click', '.js-logestechs-sort', function(e) {
+    $(document).on('click', '.js-logestechs-sort', function (e) {
         e.preventDefault();
         sortBy = $(this).data('sort-by');
-        if(sortOrder == 'ASC') {
+        if (sortOrder == 'ASC') {
             sortOrder = 'DESC'; // You can toggle this based on the current sort order
-        }else {
+        } else {
             sortOrder = 'ASC'; // You can toggle this based on the current sort order
         }
+        
         load_orders();
     });
 
@@ -93,6 +97,7 @@ jQuery(document).ready(function ($) {
         else {
             currentPage = parseInt($(this).text(), 10);
         }
+        $('.js-logestechs-select-all').prop('checked', false).trigger('change');
 
         // Call the load_orders function to reload the content
         load_orders();
@@ -100,47 +105,138 @@ jQuery(document).ready(function ($) {
     function updateUrlWithParameters() {
         var url = new URL(window.location.href);
         var params = new URLSearchParams(url.search);
-    
+
         // Update the parameters with the new values
         params.set('paged', currentPage);
-        
-        if(searchQuery) {
+
+        if (searchQuery) {
             params.set('search', searchQuery);
-        }else {
+        } else {
             params.delete('search');
         }
-        if(sortBy) {
+        if (statusFilter) {
+            params.set('status_filter', statusFilter);
+        } else {
+            params.delete('status_filter');
+        }
+        if (sortBy) {
             params.set('sort_by', sortBy);
-        }else {
+        } else {
             params.delete('sort_by');
         }
-        if(sortOrder) {
+        if (sortOrder) {
             params.set('sort_order', sortOrder);
-        }else {
+        } else {
             params.delete('sort_order');
         }
-        if(dateFrom) {
+        if (dateFrom) {
             params.set('date_from', dateFrom);
-        }else {
+        } else {
             params.delete('date_from');
         }
-        if(dateTo) {
+        if (dateTo) {
             params.set('date_to', dateTo);
-        }else {
+        } else {
             params.delete('date_to');
         }
-        ['paged', 'search', 'sort_by', 'sort_order', 'date_from', 'date_to'].forEach(function(key) {
+        ['paged', 'search', 'sort_by', 'sort_order', 'date_from', 'date_to', 'status_filter'].forEach(function (key) {
             if (!params.get(key) || params.get(key) == null) params.delete(key);
         });
         // Set the new search string back to the URL object
         url.search = params.toString();
-    
+
         // Push the new URL to the history state
         history.pushState(null, null, url.toString());
     }
+    // Listening to checkbox changes
+    $(document).on('change', 'input[type=checkbox][name=selected_orders]', function () {
+        let selectedCount = $('input[type=checkbox][name=selected_orders]:checked').length;
+
+        // Show/hide the selection actions header
+        if (selectedCount > 0) {
+            $('.js-logestechs-selection-actions').show();
+            $('.js-logestechs-table-head').hide();
+        } else {
+            $('.js-logestechs-table-head').show();
+            $('.js-logestechs-selection-actions').hide();
+        }
+
+        if ($('input[type=checkbox][name=selected_orders]:checked').length == 0) {
+            $('.js-logestechs-select-all').prop('checked', false);
+        } else if ($('input[type=checkbox][name=selected_orders]:not(:checked)').length == 0) {
+            $('.js-logestechs-select-all').prop('checked', true);
+        }
+
+        // Update the selected packages count
+        $('.js-logestechs-selection-count').text(selectedCount);
+
+        // Enable/Disable bulk actions
+        if (selectedCount > 0) {
+            $('.js-logestechs-bulk-print, .js-logestechs-bulk-transfer').removeClass('disabled');
+        } else {
+            $('.js-logestechs-bulk-print, .js-logestechs-bulk-transfer').addClass('disabled');
+        }
+
+        // Check if all selected rows have 'js-logestechs-submittable' class
+        const $selectedCheckboxes = $('input[type=checkbox][name=selected_orders]:checked');
+        const $submittableRows = $selectedCheckboxes.closest('tr').filter('.js-logestechs-submittable');
+        
+        if ($selectedCheckboxes.length === $submittableRows.length && selectedCount > 0) {
+            $('.js-logestechs-bulk-transfer').removeClass('disabled').show();
+            $('.js-logestechs-bulk-transfer').attr('title', ''); // Clear the tooltip
+        } else {
+            $('.js-logestechs-bulk-transfer').addClass('disabled').prop('disabled', true);
+            $('.js-logestechs-bulk-transfer').attr('title', logestechs_global_data.localization.bulk_transfer_error);
+        }
+
+        check_if_printable();
+    });
+
+    // Select all checkboxes
+    $('.js-logestechs-select-all').on('change', function () {
+        let isChecked = $(this).prop('checked');
+        $('input[type=checkbox][name=selected_orders]').prop('checked', isChecked).trigger('change');
+    });
+    $('.js-logestechs-select-all-btn').on('click', function () {
+        $('.js-logestechs-select-all').prop('checked', true).trigger('change');
+    });
+    $('.js-logestechs-cancel-selection').on('click', function () {
+        $('.js-logestechs-select-all').prop('checked', false).trigger('change');
+
+        $('.js-logestechs-table-head').show();
+        $('.js-logestechs-selection-actions').hide();
+    });
+    function check_if_printable() {  
+        // Initialize an empty array to hold unique company names
+        let companyNames = [];
+
+        // Loop through each selected checkbox
+        $('input[type=checkbox][name=selected_orders]:checked').each(function() {
+            // Get closest row
+            const $row = $(this).closest('tr');
+
+            // Get the company name from that row
+            const companyName = $row.find('.logestechs-company-name').text();
+
+            // If the company name is not in the array, add it
+            if ($.inArray(companyName, companyNames) === -1) {
+                companyNames.push(companyName);
+            }
+        });
+
+        bulkPrintButton = $('.js-logestechs-bulk-print');
+        // Check if all selected rows are from the same company
+        if (companyNames.length === 1) {
+            bulkPrintButton.removeClass('disabled').prop('disabled', false);
+            bulkPrintButton.attr('title', ''); // Clear the tooltip
+        } else {
+            bulkPrintButton.addClass('disabled').prop('disabled', true);
+            bulkPrintButton.attr('title', logestechs_global_data.localization.bulk_print_error);
+        }
+    }
     function load_orders() {
         // Make an AJAX request to fetch the page content
-        if(is_sending_request) {
+        if (is_sending_request) {
             return;
         }
         is_sending_request = true;
@@ -150,11 +246,12 @@ jQuery(document).ready(function ($) {
                 action: 'logestechs_get_orders',
                 security: logestechs_global_data.security,
                 paged: currentPage,
-                search: searchQuery, // Include the search query here
+                search: searchQuery,
                 sort_by: sortBy,
                 sort_order: sortOrder,
                 date_from: dateFrom,
-                date_to: dateTo
+                date_to: dateTo,
+                status_filter: statusFilter
             },
             function (response) {
                 is_sending_request = false;
@@ -165,21 +262,20 @@ jQuery(document).ready(function ($) {
                 $('.logestechs-pagination').html(response.pagination_links);
                 $('.js-logestechs-count').html(response.total_count);
 
-                // Replace the URL with the new page number
                 updateUrlWithParameters();
-                if(response.total_count) {
+                if (response.total_count) {
                     syncLogestechsOrders();
                 }
             }
         );
     }
-    
+
     load_orders();
 
     function syncLogestechsOrders() {
         $('span.js-logestechs-status-cell').removeClass().addClass('js-logestechs-status-cell').html('<div class="logestechs-skeleton-loader"></div>');
         $('.logestechs-dropdown').hide();
-        if(is_sending_request) {
+        if (is_sending_request) {
             return;
         }
         is_sending_request = true;
@@ -193,7 +289,8 @@ jQuery(document).ready(function ($) {
                 sort_by: sortBy,
                 sort_order: sortOrder,
                 date_from: dateFrom,
-                date_to: dateTo
+                date_to: dateTo,
+                status_filter: statusFilter
             },
             function (response) {
                 is_sending_request = false;
@@ -203,13 +300,15 @@ jQuery(document).ready(function ($) {
                     var $row = $(".js-logestechs-order[data-order-id='" + orderId + "']");
                     var $statusCell = $row.find("span.js-logestechs-status-cell");
                     $statusCell.removeClass().addClass('js-logestechs-status-cell');
-                    $statusCell.addClass("logestechs-" + newStatus.toLowerCase().replace(/ /g, '-'));
+                    $statusCell.addClass("logestechs-" + newStatus.toLowerCase().replace(/_/g, '-'));
                     $statusCell.text(newStatus);
-
-                    if(newStatus.toLowerCase() == 'cancelled') {
+                    const completedStatusArray = logestechs_global_data?.completed_status_array;
+                    if (completedStatusArray?.includes(newStatus.toUpperCase())) {
+                        $row.addClass('js-logestechs-submittable');
                         $row.find('.js-normal-dropdown').addClass('hidden');
                         $row.find('.js-cancelled-dropdown').removeClass('hidden');
-                    }else {
+                    } else {
+                        $row.removeClass('js-logestechs-submittable');
                         $row.find('.js-normal-dropdown').removeClass('hidden');
                         $row.find('.js-cancelled-dropdown').addClass('hidden');
                     }
@@ -217,7 +316,54 @@ jQuery(document).ready(function ($) {
             }
         );
     }
+    $(document).on('click', '.logestechs-dropdown-filter', function(e) {
+        e.stopPropagation();
+        $('.logestechs-dropdown').removeClass('visible');
+		$('.logestechs-village-results').hide();
+        $('.js-logestechs-status-filter-dropdown').show();
+    });
+    $(document).on('click', '.js-logestechs-status-filter-dropdown', function(e) {
+        e.stopPropagation();
+    });
+	$(document).on('click', function (e) {
+		$('.js-logestechs-status-filter-dropdown').hide();
+	});
+    // Listen for input in the search field
+    $('#logestechs-status-search').on('input', function() {
+        
+        // Get the current search term
+        var searchTerm = $(this).val().toLowerCase();
+        
+        // Loop through each status option
+        $('.logestechs-status-options div').each(function() {
+            
+            // Get the text of the current status option
+            var optionText = $(this).text().toLowerCase();
+            
+            // Check if the search term is present in the option text
+            if (optionText.indexOf(searchTerm) > -1) {
+                $(this).show();  // Show the option if the term is present
+            } else {
+                $(this).hide();  // Hide the option if the term is not present
+            }
+        });
+    });
+    // Add a new event listener for when a status is clicked
+    $('.logestechs-status-options div').on('click', function () {
+        // Get the clicked status
+        statusFilter = $(this).data('value');
+		$('.js-logestechs-status-filter-dropdown').hide();
+        $('.logestechs-status-filter').html($(this).html());
+        $('.js-logestechs-select-all').prop('checked', false).trigger('change');
+        // Load orders with the new filter
 
+        load_orders();
+    });
+    $('.js-logestechs-bulk-transfer').on('click', function () {
+        if($(this).hasClass('disabled')) return;
+        
+        console.log('transferred');
+    });
     // Click event handler
     $(document).on('click', '.js-logestechs-sync', syncLogestechsOrders);
 

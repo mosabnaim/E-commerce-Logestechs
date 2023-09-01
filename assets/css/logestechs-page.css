@@ -9,7 +9,9 @@
 #wpcontent {
     padding-left: 0;
 }
-
+.logestechs-relative {
+    position: relative;
+}
 .logestechs-logo {
     display: flex;
     align-items: center;
@@ -78,8 +80,8 @@
     padding: 0 10px;
 }
 
-.logestechs-sync-btn {
-    width: 163px;
+.logestechs-action-btn {
+    padding-inline: 20px;
     height: 37px;
     background: #FFF;
     display: flex;
@@ -87,9 +89,17 @@
     align-items: center;
     gap: 10px;
     cursor: pointer;
+    user-select: none;
+}
+.logestechs-action-btn.disabled {
+    color: #c5c5c5;
+    cursor: auto;
+}
+.logestechs-action-btn.disabled img {
+    filter: contrast(.1);
 }
 
-.logestechs-sync-btn img {
+.logestechs-action-btn img, .logestechs-calendar-icon, .logestechs-search-icon {
     width: 20px;
     color: #1e1e1e;
 }
@@ -112,15 +122,28 @@
     padding: 15px 0;
 }
 
-.logestechs-search-icon {
+.logestechs-calendar-icon, .logestechs-search-icon {
     background: #fff;
     position: absolute;
-    top: 7px;
+    top: 8px;
     inset-inline-end: 10px;
 }
 
 .logestechs-search-wrapper {
     position: relative;
+}
+
+.logestechs-divider {
+    width: 1px;
+    height: 20px;
+    margin-inline: 10px;
+    background: #000;
+}
+.logestechs-selected-text {
+    margin-inline-end: 15px;
+}
+.logestechs-hidden-head {
+    display: none;
 }
 
 .logestechs-table-wrapper table {
@@ -149,7 +172,7 @@
 
 #logestechs_orders_table th {
     padding: 20px 0;
-    font-weight: 500;
+    font-weight: bold;
     font-size: 14px;
 
 }
@@ -245,4 +268,73 @@
 }
 [dir="rtl"] #wpcontent {
     margin-right: 140px;
+}
+
+.logestechs-dropdown-filter {
+    position: relative;
+    width: 170px;
+    margin-inline: auto;
+}
+.logestechs-dropdown-filter img {
+    width: 13px;
+    position: absolute;
+    inset-inline-end: 12px;
+}
+.logestechs-status-label {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    background-color: #f2f2f2;
+    border-radius: 3px;
+    padding: 2px 9px;
+    font-weight: bold;
+}
+.logestechs-status-dropdown {
+    height: 23px;
+    padding: 15px 15px 10px 15px;
+    border-radius: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #b3b1b1;
+    cursor: pointer;
+}
+
+.logestechs-status-results {
+    width: 200px;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
+    font-weight: normal;
+    background-color: #fff;
+    padding: 2px 0 10px 0;
+    border: 1px solid #e5e1e1;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+.logestechs-status-search-wrapper {
+    position: relative;
+    padding-inline: 10px;
+}
+.logestechs-status-search-wrapper img {
+    position: absolute;
+    top: 18px;
+    inset-inline-end: 16px;
+}
+.logestechs-relative {
+    position: relative;
+}
+.logestechs-status-options div {
+    padding: 13px;
+    cursor: pointer;
+    transition: all 300ms ease-in-out;
+    text-align: start;
+    padding-inline-start: 26px;
+}
+.logestechs-status-options div:not(:last-child) {
+    border-bottom: 1px solid #cfcece;
+}
+.logestechs-status-options div:hover {
+    background-color: #eae8e8;
 }

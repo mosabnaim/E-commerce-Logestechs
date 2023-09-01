@@ -30,7 +30,12 @@
          */
         public function render() {
             $logestechs_order_id = $this->order_details['package_number'] ?? '';
-            $is_assignable = !( !empty($logestechs_order_id) && $this->order_details['status'] !== 'Cancelled' );
+            $completed_statuses = Logestechs_Config::ACCEPTABLE_TRANSFER_STATUS;
+            $acceptable_pickup_statuses = Logestechs_Config::ACCEPTABLE_PICKUP_STATUS;
+
+            $pickup_allowed = !( !empty($logestechs_order_id) &&  !in_array($this->order_details['status'], $acceptable_pickup_statuses) );
+            $is_assignable = !( !empty($logestechs_order_id) &&  !in_array($this->order_details['status'], $completed_statuses) );
+            $display_pickup_btn = $pickup_allowed ? 'block' : 'none';
             $display_details = $is_assignable ? 'none' : 'block';
             $display_assign_btn = $is_assignable ? 'block' : 'none';
             $details_to_display = [
@@ -53,7 +58,10 @@
                     </div>
                     <p class="logestechs-primary-text"><?php echo esc_html(Logestechs_Config::PLUGIN_NAME); ?></p>
                 </div>
-                <button id="logestechs-transfer-order" data-order-id="<?php echo esc_attr($this->order_details['id']); ?>" class="js-open-transfer-popup logestechs-white-btn" style="display: <?php echo esc_attr($display_assign_btn); ?>;"><?php esc_html_e('Assign Company', 'logestechs'); ?></button>
+                <div class="logestechs-flex">
+                    <button data-order-id="<?php echo esc_attr($this->order_details['id']); ?>" class="js-open-pickup-popup logestechs-white-btn" style="display: <?php echo esc_attr($display_pickup_btn); ?>;"><?php esc_html_e('Request Pickup', 'logestechs'); ?></button>
+                    <button id="logestechs-transfer-order" data-order-id="<?php echo esc_attr($this->order_details['id']); ?>" class="js-open-transfer-popup logestechs-white-btn" style="display: <?php echo esc_attr($display_assign_btn); ?>;"><?php esc_html_e('Assign Company', 'logestechs'); ?></button>
+                </div>
             </div>
             <div class="logestechs-details" style="display: <?php echo esc_attr($display_details); ?>;">
                 <div class="js-logestechs-order-details logestechs-details-flex">

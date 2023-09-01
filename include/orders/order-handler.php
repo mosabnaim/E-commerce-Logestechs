@@ -56,6 +56,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             $search          = isset( $_POST['search'] ) ? sanitize_text_field( $_POST['search'] ) : '';
             $date_from_input = isset( $_POST['date_from'] ) ? sanitize_text_field( $_POST['date_from'] ) : '';
             $date_to_input   = isset( $_POST['date_to'] ) ? sanitize_text_field( $_POST['date_to'] ) : '';
+            $status_filter    = isset( $_POST['status_filter'] ) ? sanitize_text_field( $_POST['status_filter'] ) : '';
 
             $date_from = strtotime( $date_from_input . ' 00:00:00' );
             $date_to   = strtotime( $date_to_input . ' 23:59:59' );
@@ -97,6 +98,11 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             if ( $date_from_input && $date_to_input ) {
                 $base_query .= $wpdb->prepare( ' AND meta_logestechs_date.meta_value BETWEEN %d AND %d', $date_from, $date_to );
             }
+                    
+            // Add status filter if provided
+            if ($status_filter) {
+                $base_query .= $wpdb->prepare(' AND meta_status.meta_value = %s', $status_filter);
+            }
 
             // Add order by (assuming $sort_by and $sort_order are validated against a whitelist of allowable values)
             if ( $sort_by && $sort_order ) {
@@ -120,6 +126,31 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
 
             return ['orders' => $orders, 'total_count' => $total_count];
         }
+        
+        /**
+         * Get unique Logestechs order statuses.
+         *
+         * Fetches unique values for the '_logestechs_order_status' meta key.
+         * These values can be used for filtering orders in a dropdown.
+         *
+         * @since 1.0.0
+         * @return array The array containing unique order statuses.
+         */
+        function get_unique_order_statuses() {
+            global $wpdb;
+
+            $query = "
+                SELECT DISTINCT meta_value 
+                FROM {$wpdb->postmeta} 
+                WHERE meta_key = '_logestechs_order_status'
+                AND meta_value IS NOT NULL
+            ";
+        
+            $results = $wpdb->get_col($query);
+
+            return $results;
+        }
+
 
         /**
          * Handle the custom order cancellation action.
@@ -162,7 +193,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                 wp_die();
             }
 
-            if ( get_post_meta( $order_id, '_logestechs_order_status', true ) == 'Cancelled' ) {
+            if ( get_post_meta( $order_id, '_logestechs_order_status', true ) == 'CANCELLED' ) {
                 wp_send_json_error( __( 'This order already cancelled', 'logestechs' ) );
                 wp_die();
             }
@@ -173,7 +204,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                 die();
             }
 
-            update_post_meta( $order_id, '_logestechs_order_status', 'Cancelled' );
+            update_post_meta( $order_id, '_logestechs_order_status', 'CANCELLED' );
             die();
         }
 
@@ -188,18 +219,12 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             if ( ! current_user_can( 'manage_woocommerce' ) ) {
                 wp_send_json_error( __( 'You do not have permission to perform this action.', 'logestechs' ) );
             }
-            $order_id = $_POST['order_id'] ? intval( $_POST['order_id'] ) : null;
-            if ( ! $order_id ) {
+            $order_ids = $_POST['order_ids'] ? $_POST['order_ids'] : null;
+            if ( ! $order_ids ) {
                 wp_send_json_error( __( 'Error while processing this action!', 'logestechs' ) );
                 wp_die();
             }
-
-            if ( get_post_meta( $order_id, '_logestechs_order_status', true ) == 'Cancelled' ) {
-                wp_send_json_error( __( 'This order already cancelled', 'logestechs' ) );
-                wp_die();
-            }
-
-            $response = $this->api->print_order( $order_id );
+            $response = $this->api->print_order( $order_ids );
             if ( $response ) {
                 wp_send_json_success( $response );
             }
@@ -219,7 +244,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             }
 
             $post_data_keys = [
-                'company_id', 'order_id',
+                'company_id', 'order_id', 'requesting_pickup',
                 'logestechs_destination_village_id',
                 'logestechs_destination_region_id',
                 'logestechs_destination_city_id',
@@ -244,12 +269,9 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                 wp_die();
             }
 
-            if ( get_post_meta( $sanitized_data['order_id'], '_logestechs_order_status', true ) == 'transferred' ) {
-                wp_send_json_error( __( 'This order already transferred', 'logestechs' ) );
-                wp_die();
-            }
+            $order_status = get_post_meta( $sanitized_data['order_id'], '_logestechs_order_status', true );
 
-            if ( get_post_meta( $sanitized_data['order_id'], '_logestechs_order_status', true ) == 'transferred' ) {
+            if ( !in_array($order_status, Logestechs_Config::ACCEPTABLE_TRANSFER_STATUS) ) {
                 wp_send_json_error( __( 'This order already transferred', 'logestechs' ) );
                 wp_die();
             }
@@ -329,7 +351,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                 update_post_meta( $sanitized_data['order_id'], '_logestechs_currency', $company->currency );
                 update_post_meta( $sanitized_data['order_id'], '_logestechs_local_company_id', $sanitized_data['company_id'] );
                 update_post_meta( $sanitized_data['order_id'], '_logestechs_date', $timestamp );
-                update_post_meta( $sanitized_data['order_id'], '_logestechs_order_status', 'transferred' );
+                update_post_meta( $sanitized_data['order_id'], '_logestechs_order_status', 'REQUESTED' );
             }
 
             wp_send_json_success( isset( $response['barcode'] ) );
@@ -435,7 +457,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
          *
          * @since 1.0.0
          */
-        public function get_order_data( WC_Order $order, $store_data ) {
+        public function get_order_data( WC_Order $order, $form_data ) {
             // Get WooCommerce Order ID
             $order_id = $order->get_id();
 
@@ -458,13 +480,13 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                 'logestechs_destination_city_id'
             ];
 
-            $relevant_store_data = [];
+            $package_data = [];
             foreach ($relevant_store_keys as $key) {
-                if (isset($store_data[$key])) {
-                    $relevant_store_data[$key] = $store_data[$key];
+                if (isset($form_data[$key])) {
+                    $package_data[$key] = $form_data[$key];
                 }
             }
-
+            $requesting_pickup = $form_data['requesting_pickup'] ?? false;
             // Calculate total items quantity.
             $quantity = array_sum( array_map( function ( $item ) {
                 return $item->get_quantity();
@@ -490,7 +512,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                     'receiverPhone'             => $order->get_billing_phone(),
                     'receiverPhone2'            => '',
                     'serviceType'               => 'STANDARD',
-                    'shipmentType'              => 'COD',
+                    'shipmentType'              => $requesting_pickup? 'BRING' : 'COD',
                     'quantity'                  => $quantity,
                     'description'               => "Order ID: {$order_id} - Domain: {$website_domain}",  // Updated here
                     'integrationSource'         => 'WOOCOMMERCE'
@@ -499,25 +521,25 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             ];
 
             // Incorporate the retrieved metadata into the $order_data array.
-            if (!empty($relevant_store_data['logestechs_custom_store'])) {
-                $order_data['pkg']['senderName']         = $relevant_store_data['logestechs_store_owner'];
-                $order_data['pkg']['businessSenderName'] = $relevant_store_data['logestechs_business_name'];
-                $order_data['pkg']['senderPhone']        = $relevant_store_data['logestechs_store_phone_number'];
+            if (!empty($package_data['logestechs_custom_store'])) {
+                $order_data['pkg']['senderName']         = $package_data['logestechs_store_owner'];
+                $order_data['pkg']['businessSenderName'] = $package_data['logestechs_business_name'];
+                $order_data['pkg']['senderPhone']        = $package_data['logestechs_store_phone_number'];
         
                 $order_data['originAddress'] = [
-                    'addressLine1' => $relevant_store_data['logestechs_store_address'],
-                    'addressLine2' => $relevant_store_data['logestechs_store_address_2'],
-                    'cityId'       => intval( $relevant_store_data['logestechs_store_city_id'] ),
-                    'regionId'     => intval( $relevant_store_data['logestechs_store_region_id'] ),
-                    'villageId'    => intval( $relevant_store_data['logestechs_store_village_id'] )
+                    'addressLine1' => $package_data['logestechs_store_address'],
+                    'addressLine2' => $package_data['logestechs_store_address_2'],
+                    'cityId'       => intval( $package_data['logestechs_store_city_id'] ),
+                    'regionId'     => intval( $package_data['logestechs_store_region_id'] ),
+                    'villageId'    => intval( $package_data['logestechs_store_village_id'] )
                 ];
             }
             
             $order_data['destinationAddress'] = [
                 'addressLine1' => trim( $order->get_shipping_address_1() . ' - ' . $order->get_shipping_address_2() ),
-                'cityId'       => intval( $relevant_store_data['logestechs_destination_city_id'] ),
-                'regionId'     => intval( $relevant_store_data['logestechs_destination_region_id'] ),
-                'villageId'    => intval( $relevant_store_data['logestechs_destination_village_id'] )
+                'cityId'       => intval( $package_data['logestechs_destination_city_id'] ),
+                'regionId'     => intval( $package_data['logestechs_destination_region_id'] ),
+                'villageId'    => intval( $package_data['logestechs_destination_village_id'] )
             ];
 
             return $order_data;
@@ -555,12 +577,15 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             // Fetch statuses from Logestechs.
             $statuses = $api_handler->get_orders_status( array_values( $logestechs_order_ids ) );
 
+            $statuses_mapping = Logestechs_Config::STATUS_ARRAY;
+            
             // Update post meta and store updated statuses.
-            $updated_statuses = array_reduce( array_keys( $logestechs_order_ids ), function ( $carry, $order_id ) use ( $statuses, $logestechs_order_ids ) {
+            $updated_statuses = array_reduce( array_keys( $logestechs_order_ids ), function ( $carry, $order_id ) use ( $statuses, $logestechs_order_ids, $statuses_mapping ) {
                 $logestechs_order_id = $logestechs_order_ids[$order_id];
                 if ( isset( $statuses[$logestechs_order_id] ) ) {
-                    update_post_meta( $order_id, '_logestechs_order_status', $statuses[$logestechs_order_id] );
-                    $carry[$order_id] = $statuses[$logestechs_order_id];
+                    $status = $statuses[$logestechs_order_id];
+                    update_post_meta( $order_id, '_logestechs_order_status', $status );
+                    $carry[$order_id] = isset( $statuses_mapping[$status] ) ? __( $statuses_mapping[$status], 'logestechs' ) : $status;
                 }
 
                 return $carry;
@@ -611,6 +636,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                     $date          = logestechs_convert_to_local_time( get_post_meta( $order_id, '_logestechs_date', true ) );
                     ?>
                     <tr class="js-logestechs-order" data-order-id="<?php echo $order_id; ?>">
+                        <td><input type="checkbox" name="selected_orders"></td>
                         <td>
                             <a href="<?php echo esc_url( admin_url( 'post.php?post=' . $order_id . '&action=edit' ) ); ?>">
                                 #<?php echo esc_html( $order_id ); ?>
@@ -618,7 +644,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                         </td>
                         <td><?php echo $date->format( 'd/m/Y H:i' ); ?></td>
                         <td>#<?php echo esc_html( $order_barcode ); ?></td>
-                        <td><?php echo esc_html( $company_name ); ?></td>
+                        <td class="logestechs-company-name"><?php echo esc_html( $company_name ); ?></td>
                         <td>
                             <span class="js-logestechs-status-cell"><div class="logestechs-skeleton-loader"></div></span>
                         </td>
@@ -629,9 +655,12 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                                     <div class="js-logestechs-print" data-order-id="<?php echo $order_id; ?>"><?php _e( 'Print Invoice', 'logestechs' );?></div>
                                     <div class="js-open-details-popup" data-order-id="<?php echo $order_id; ?>"><?php _e( 'Track', 'logestechs' );?></div>
                                     <div class="js-logestechs-cancel" data-order-id="<?php echo $order_id; ?>"><?php _e( 'Cancel', 'logestechs' );?></div>
+                                    <div class="js-open-pickup-popup js-logestechs-request-return logestechs-white-btn" data-order-id="<?php echo $order_id; ?>"><?php _e( 'Request Pickup', 'logestechs' );?></div>
                                 </div>
                                 <div class="logestechs-dropdown-content js-cancelled-dropdown hidden">
+                                    <div class="js-logestechs-print" data-order-id="<?php echo $order_id; ?>"><?php _e( 'Print Invoice', 'logestechs' );?></div>
                                     <div class="js-open-transfer-popup logestechs-white-btn" data-order-id="<?php echo $order_id; ?>"><?php _e( 'Assign Order', 'logestechs' );?></div>
+                                    <div class="js-open-pickup-popup js-logestechs-request-return logestechs-white-btn" data-order-id="<?php echo $order_id; ?>"><?php _e( 'Request Pickup', 'logestechs' );?></div>
                                 </div>
                             </div>
                         </td>

@@ -50,9 +50,12 @@ if ( ! class_exists( 'Logestechs_Admin_Page' ) ) {
             if ( ! current_user_can( 'manage_options' ) ) {
                 wp_die( __( 'You do not have sufficient permissions to access this page.', 'logestechs' ) );
             }
-
+            $order_handler = new Logestechs_Order_Handler();
+            $statuses = $order_handler->get_unique_order_statuses();
             $logestechs_page = new Logestechs_Admin_Page_View();
-            $logestechs_page->render();
+            $logestechs_page->render([
+                'statuses' => $statuses
+            ]);
         }
     }
 
