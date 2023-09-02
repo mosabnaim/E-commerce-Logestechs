@@ -4,6 +4,12 @@ jQuery(document).ready(function ($) {
 	let $details_popup = $('#logestechs-order-details-popup'); // cache the original hidden popup
 	let r;
 	let is_sending_request = false;
+	let selected_orders;
+	let isLoading;
+	let isFinished;
+	let isStop;
+	let isReset;
+
 	function debounce(func, delay) {
 		var timeout;
 		return function () {
@@ -70,7 +76,7 @@ jQuery(document).ready(function ($) {
 		}, 300);
 	}
 	
-	$('#logestechs-destination-village-search').on('input', fetch_villages());
+	$(document).on('input', '.logestechs-destination-village-search', fetch_villages());
 	$('#logestechs-store-village-search').on('input', fetch_villages());
 	$(document).on('click', '.logestechs-dropdown img', function (e) {
 		e.stopPropagation();
@@ -85,21 +91,24 @@ jQuery(document).ready(function ($) {
 	$('#logestechs-custom-store-checkbox').on('change', function() {
         $('.js-logestechs-store-details input').attr('required', this.checked);
     });
+	$(document).on('click', '.js-logestechs-bulk-transfer', function (e) {
+		e.preventDefault();
+		selected_orders = getSelectedOrders();
+		handle_transfer_order_popup();
+	});
 	$(document).on('click', '.js-open-transfer-popup, .js-open-pickup-popup', function (e) {
 		e.preventDefault();
-		$transfer_popup.fadeIn(); // append the clone to the body and show it
-		$('.js-logestechs-assign-company').addClass('disabled').prop('disabled', true); 
+		selected_orders = [
+			$(this).data('order-id')
+		];
 
-		let order_id = $(this).data('order-id'); // Get order id from data-order-id attribute of clicked element
-		$('.js-logestechs-assign-company').attr('data-order-id', order_id); // Set order id to the assign company button
-		if($(this).hasClass('js-open-pickup-popup')) {
-			$transfer_popup.attr('data-shipment-type', 'bring');
-			$('.js-logestechs-transfer-order').html(logestechs_global_data.localization.request_pickup);
-		}else {
-			$transfer_popup.removeAttr('data-shipment-type'); 
-			$('.js-logestechs-transfer-order').html(logestechs_global_data.localization.transfer_order);
-		}
-		const next = document.querySelector('.js-logestechs-assign-company');
+		handle_transfer_order_popup();
+	});
+
+	function handle_transfer_order_popup() {
+		$transfer_popup.fadeIn();
+		$('.js-logestechs-assign-company').addClass('disabled').prop('disabled', true);
+		
 		fetch_companies();
 		if (r) {
 			return;
@@ -112,116 +121,133 @@ jQuery(document).ready(function ($) {
 			fit: rive.Fit.cover,
 			onLoad: (_) => {
 				const inputs = r.stateMachineInputs('State Machine 1');
-				const isLoading = inputs.find(i => i.name === 'loading');
-				const isFinished = inputs.find(i => i.name === 'finished');
-				const isStop = inputs.find(i => i.name === 'stopped');
-				const isReset = inputs.find(i => i.name === 'reset');
-				next.onclick = (e) => {
-					if(is_sending_request) return;
-					is_sending_request = true;
-
-					let company_id = $('.js-logestechs-company.selected').attr('data-id');
-					let order_id = $(this).data('order-id');
-					$.post(
-						logestechs_global_data.ajax_url,
-						{
-							action: 'logestechs_prepare_order_popup',
-							security: logestechs_global_data.security,
-							company_id: company_id,
-							order_id: order_id
-						},
-						function (response) {
-							is_sending_request = false;
-
-							if (response.success) {
-								$('.js-logestechs-order-address').html(response.data);
-								$('.logestechs-order-settings-popup').fadeIn();
-								$('.logestechs-order-settings-popup').find('[name="company_id"]').val(company_id);
-								$('.logestechs-order-settings-popup').find('[name="order_id"]').val(order_id);
-							}
-						}
-					);
-				}
-
-				$('form.logestechs-order-settings-popup').on('submit', function(e) {
-					e.preventDefault();
-					$('.logestechs-order-settings-popup').fadeOut();
-					$('.js-loader-screen').fadeIn();
-					isLoading.fire();
-
-					// Serialize the form data
-					let formData = $(this).serializeArray();
-					
-					// Optionally add specific values or merge with other data
-					formData.push({
-						name: 'action',
-						value: 'logestechs_assign_company'
-					});
-					if( $transfer_popup.attr('data-shipment-type') == 'bring') {
-						formData.push({
-							name: 'requesting_pickup',
-							value: true
-						});
-					}
-					formData.push({
-						name: 'security',
-						value: logestechs_global_data.security,
-					});
-					var loadingStartTime = Date.now(); // Capture the time when loading started
-					if(is_sending_request) return;
-					is_sending_request = true;
-					$.post(
-						logestechs_global_data.ajax_url,
-						formData,
-						function (response) {
-							is_sending_request = false;
-
-							var loadingEndTime = Date.now(); // Capture the time when loading finished
-							var loadingDuration = loadingEndTime - loadingStartTime; // Calculate the duration of the loading animation
-
-							// Calculate the time remaining for the next loop completion
-							var animationDuration = 1300; // Duration of one loop in milliseconds
-							var remainingTime = Math.ceil(loadingDuration / animationDuration) * animationDuration - loadingDuration;
-
-							if (response.success) {
-								setTimeout(function () {
-									isFinished.fire(); // Reload the page
-									setTimeout(function () {
-										location.reload();
-									}, 1800);
-								}, remainingTime);
-							} else {
-								setTimeout(function () {
-									isStop.fire();
-									let errorMessage = logestechs_global_data.localization.something_went_wrong;
-									if (response.data.errors) {
-										errorMessage += '<ul>';
-										response.data.errors.forEach(function (error) {
-											errorMessage += '<li>' + error + '</li>'; // Adding each error to a bulleted list
-										});
-										errorMessage += '</ul>';
-									} else if (response.data) {
-										errorMessage = response.data;
-									}
-									setTimeout(function () {
-										$('.js-loader-screen').fadeOut();
-										Swal.fire({
-											title: logestechs_global_data.localization.oops,
-											html: errorMessage,
-											icon: 'error',
-											confirmButtonColor: '#12a167',
-										});
-										isReset.fire();
-
-									}, 3800);
-								}, 2000);
-							}
-						}
-					);
-				});
-
+				isLoading = inputs.find(i => i.name === 'loading');
+				isFinished = inputs.find(i => i.name === 'finished');
+				isStop = inputs.find(i => i.name === 'stopped');
+				isReset = inputs.find(i => i.name === 'reset');
 			}
 		});
+	}
+
+	$(document).on('click', '.js-logestechs-assign-company', function (e) {
+		if (is_sending_request) return;
+		is_sending_request = true;
+
+		$.post(
+			logestechs_global_data.ajax_url,
+			{
+				action: 'logestechs_prepare_order_popup',
+				security: logestechs_global_data.security,
+				selected_orders: selected_orders
+			},
+			function (response) {
+				is_sending_request = false;
+				
+				if (response.success) {
+					let company_id = $('.js-logestechs-company.selected').attr('data-id');
+
+					// Loop through the response.data which should be your array of addresses
+					$('.js-logestechs-address-cloned').remove();
+					$('.logestechs-addresses-divider').remove();
+					for(let order_id in response.data) {
+						let clonedElement = $('.js-logestechs-address-block').first().clone();
+						let address = response.data[order_id];
+						// Clone the .js-logestechs-order-address element and update its content
+						clonedElement.find('.js-logestechs-order-address').html(address);
+						clonedElement.find('.logestechs-order-head span').html(order_id);
+
+						// Update the name attributes
+						clonedElement.find('.js-logestechs-selected-village').attr('name', 'destination[' + order_id + '][village_id]').prop('required', true);
+						clonedElement.find('.js-logestechs-selected-city').attr('name', 'destination[' + order_id + '][city_id]').prop('required', true);
+						clonedElement.find('.js-logestechs-selected-region').attr('name', 'destination[' + order_id + '][region_id]').prop('required', true);
+						clonedElement.show().removeClass('js-logestechs-address-block').addClass('js-logestechs-address-cloned');
+						
+						// Append the cloned element
+						$('.js-logestechs-addresses').append(clonedElement);
+						$('.js-logestechs-addresses').append($('<div class="logestechs-addresses-divider"></div>'));
+					}
+
+					$('.logestechs-order-settings-popup').fadeIn();
+					$('.logestechs-order-settings-popup').find('[name="company_id"]').val(company_id);
+				}
+			}
+		);
+	});
+	$(document).on('submit', 'form.logestechs-order-settings-popup', function (e) {
+		e.preventDefault();
+		$('.logestechs-order-settings-popup').fadeOut();
+		$('.js-loader-screen').fadeIn();
+		isLoading.fire();
+		
+		// Serialize the form data
+		let formData = $(this).serializeArray();
+		
+		// Optionally add specific values or merge with other data
+		formData.push({
+			name: 'action',
+			value: 'logestechs_assign_company'
+		});
+		if( $transfer_popup.attr('data-shipment-type') == 'bring') {
+			formData.push({
+				name: 'requesting_pickup',
+				value: true
+			});
+		}
+		formData.push({
+			name: 'security',
+			value: logestechs_global_data.security,
+		});
+		var loadingStartTime = Date.now(); // Capture the time when loading started
+		if(is_sending_request) return;
+		is_sending_request = true;
+		$.post(
+			logestechs_global_data.ajax_url,
+			formData,
+			function (response) {
+				is_sending_request = false;
+
+				var loadingEndTime = Date.now(); // Capture the time when loading finished
+				var loadingDuration = loadingEndTime - loadingStartTime; // Calculate the duration of the loading animation
+
+				// Calculate the time remaining for the next loop completion
+				var animationDuration = 1300; // Duration of one loop in milliseconds
+				var remainingTime = Math.ceil(loadingDuration / animationDuration) * animationDuration - loadingDuration;
+
+				if (response.success) {
+					setTimeout(function () {
+						isFinished.fire(); // Reload the page
+						setTimeout(function () {
+							location.reload();
+						}, 1800);
+					}, remainingTime);
+				} else {
+					setTimeout(function () {
+						isStop.fire();
+						let errorMessage = logestechs_global_data.localization.something_went_wrong;
+						if (response.data.errors) {
+							errorMessage += '<ul>';
+							response.data.errors.forEach(function (error) {
+								errorMessage += '<li>' + error + '</li>'; // Adding each error to a bulleted list
+							});
+							errorMessage += '</ul>';
+						} else if (response.data) {
+							errorMessage = response.data;
+						}
+						setTimeout(function () {
+							$('.js-loader-screen').fadeOut();
+							Swal.fire({
+								title: logestechs_global_data.localization.oops,
+								html: errorMessage,
+								icon: 'error',
+								confirmButtonColor: '#12a167',
+							});
+							isReset.fire();
+
+						}, 3800);
+					}, 2000);
+				}
+			}
+		);
 	});
 	$(document).on('click', '.js-open-companies-popup', function (e) {
 		e.preventDefault();
@@ -605,8 +631,6 @@ jQuery(document).ready(function ($) {
 			order_ids = getSelectedOrders();
 		}
 
-		console.log(order_ids);
-
 		// Make an AJAX request to your server to get the PDF URL
 		if(is_sending_request) return;
 		is_sending_request = true;
@@ -670,5 +694,43 @@ jQuery(document).ready(function ($) {
 		}else {
 			$('.js-logestechs-store-details').hide();
 		}
+	});
+	var isActionTriggered = false; // Flag to check if action is already triggered
+
+	$('#doaction, #doaction2').click(function(e) {
+	  var actionselected = $(this).prev('select').val();
+  
+	  if (actionselected === 'logestechs_bulk_transfer' && !isActionTriggered) {
+		e.preventDefault();
+		
+		isActionTriggered = true; // Set flag to true
+		let has_error = false;
+		var selectedPosts = [];
+		$('input[name="post[]"]:checked').each(function() {
+			if($(this).closest('tr').find('.js-open-transfer-popup').length == 0) {
+				Swal.fire({
+					title: logestechs_global_data.localization.oops,
+					html: logestechs_global_data.localization.bulk_transfer_error,
+					icon: 'error',
+					confirmButtonColor: '#12a167',
+				});
+				has_error = true;
+				return;
+			}
+			selectedPosts.push($(this).val());
+		});
+		
+		if(has_error) {
+			isActionTriggered = false; // Reset flag to false
+
+			return;
+		} 
+		
+		selected_orders = selectedPosts;
+
+		handle_transfer_order_popup();
+		
+		isActionTriggered = false; // Reset flag to false
+	  }
 	});
 });

@@ -171,18 +171,15 @@ jQuery(document).ready(function ($) {
         $('.js-logestechs-selection-count').text(selectedCount);
 
         // Enable/Disable bulk actions
-        if (selectedCount > 0) {
-            $('.js-logestechs-bulk-print, .js-logestechs-bulk-transfer').removeClass('disabled');
-        } else {
-            $('.js-logestechs-bulk-print, .js-logestechs-bulk-transfer').addClass('disabled');
-        }
-
+        if (selectedCount == 0) {
+            $('.js-logestechs-bulk-print, .js-logestechs-bulk-transfer').addClass('disabled').prop('disabled', true);
+        } 
         // Check if all selected rows have 'js-logestechs-submittable' class
         const $selectedCheckboxes = $('input[type=checkbox][name=selected_orders]:checked');
         const $submittableRows = $selectedCheckboxes.closest('tr').filter('.js-logestechs-submittable');
         
         if ($selectedCheckboxes.length === $submittableRows.length && selectedCount > 0) {
-            $('.js-logestechs-bulk-transfer').removeClass('disabled').show();
+            $('.js-logestechs-bulk-transfer').removeClass('disabled').prop('disabled', false).show();
             $('.js-logestechs-bulk-transfer').attr('title', ''); // Clear the tooltip
         } else {
             $('.js-logestechs-bulk-transfer').addClass('disabled').prop('disabled', true);
@@ -359,11 +356,7 @@ jQuery(document).ready(function ($) {
 
         load_orders();
     });
-    $('.js-logestechs-bulk-transfer').on('click', function () {
-        if($(this).hasClass('disabled')) return;
-        
-        console.log('transferred');
-    });
+
     // Click event handler
     $(document).on('click', '.js-logestechs-sync', syncLogestechsOrders);
 

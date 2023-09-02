@@ -55,18 +55,23 @@ if ( ! class_exists( 'Logestechs_Manage_Companies_Popup_View' ) ) {
                         <!-- Order details for the popup -->
                         <div class="logestechs-popup-details">
                             <p class="logestechs-destination-address-label"><?php _e('Destination Address:', 'logestechs'); ?></p>
-                            <p class="js-logestechs-order-address"></p>
+                            <div class="js-logestechs-addresses">
+                                <div class="js-logestechs-address-wrapper js-logestechs-address-block" style="display: none;">
+                                    <p class="logestechs-order-head"><?php esc_html_e( 'Order ID:', 'logestechs' )?> #<span></span></p>
 
-                            <!-- Village search for destination -->
-                            <div class="logestechs-search-wrapper">
-                                <div class="logestechs-field">
-                                    <label><?php _e('Destination village', 'logestechs'); ?></label>
-                                    <input type="text" id="logestechs-destination-village-search" class="logestechs-dropdown-input" placeholder="<?php _e('Search for village...', 'logestechs'); ?>" required>
-                                    <input type="hidden" name="logestechs_destination_village_id" class="js-logestechs-selected-village" required>
-                                    <input type="hidden" name="logestechs_destination_city_id" class="js-logestechs-selected-city" required>
-                                    <input type="hidden" name="logestechs_destination_region_id" class="js-logestechs-selected-region" required>
+                                    <p class="js-logestechs-order-address"></p>
+                                    <!-- Village search for destination -->
+                                    <div class="logestechs-search-wrapper">
+                                        <div class="logestechs-field">
+                                            <label><?php _e('Destination village', 'logestechs'); ?></label>
+                                            <input name="_search" type="text" class="logestechs-destination-village-search logestechs-dropdown-input" placeholder="<?php _e('Search for village...', 'logestechs'); ?>">
+                                            <input name="_village" type="hidden" class="js-logestechs-selected-village">
+                                            <input name="_city" type="hidden" class="js-logestechs-selected-city">
+                                            <input name="_region" type="hidden" class="js-logestechs-selected-region">
+                                        </div>
+                                        <div class="logestechs-destination-village-results logestechs-village-results" style="display: none;"></div>
+                                    </div>
                                 </div>
-                                <div class="logestechs-destination-village-results logestechs-village-results" style="display: none;"></div>
                             </div>
                             <div class="logestechs-checkbox">
                                 <input type="checkbox" name="logestechs_custom_store" id="logestechs-custom-store-checkbox" value="1" />

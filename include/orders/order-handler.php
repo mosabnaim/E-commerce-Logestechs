@@ -26,6 +26,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             $this->woocommerce_list = new Logestechs_Woocommerce_List_View();
 
             // Hook into WordPress actions and filters
+            add_filter( 'bulk_actions-edit-shop_order', [$this, 'custom_bulk_actions'], 20, 1 );
             add_filter( 'manage_edit-shop_order_columns', [$this->woocommerce_list, 'add_custom_column_header'], 20 );
             add_action( 'manage_shop_order_posts_custom_column', [$this->woocommerce_list, 'add_custom_column_data'], 20, 2 );
             add_action( 'wp_ajax_logestechs_assign_company', [$this, 'assign_company'] );
@@ -37,7 +38,11 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             add_action( 'wp_ajax_logestechs_get_orders', [$this, 'load_orders'] );
             add_action( 'wp_ajax_logestechs_fetch_villages', [$this, 'fetch_villages'] );
         }
-
+        function custom_bulk_actions( $bulk_actions ) {
+            $bulk_actions['logestechs_bulk_transfer'] = sprintf(__('Bulk Transfer to %s', 'logestechs'), Logestechs_Config::PLUGIN_NAME);
+            return $bulk_actions;
+        }
+          
         /**
          * Get transferred orders.
          *
@@ -244,10 +249,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             }
 
             $post_data_keys = [
-                'company_id', 'order_id', 'requesting_pickup',
-                'logestechs_destination_village_id',
-                'logestechs_destination_region_id',
-                'logestechs_destination_city_id',
+                'company_id', 'destination', 'requesting_pickup',
                 'logestechs_store_village_id',
                 'logestechs_store_city_id',
                 'logestechs_store_region_id',
@@ -264,24 +266,34 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                 $sanitized_data[$key] = $_POST[$key] ?? null;
             }
 
-            if ( ! $sanitized_data['company_id'] || ! $sanitized_data['order_id'] ) {
+            if ( ! $sanitized_data['company_id'] || ! $sanitized_data['destination'] ) {
                 wp_send_json_error( __( 'Error while processing this action!', 'logestechs' ) );
                 wp_die();
             }
 
-            $order_status = get_post_meta( $sanitized_data['order_id'], '_logestechs_order_status', true );
+           
+            foreach ($sanitized_data['destination'] as $order_id => $address) {
+                $sanitized_data['logestechs_destination_village_id'] = $address['village_id'] ?? '';
+                $sanitized_data['logestechs_destination_region_id'] = $address['region_id'] ?? '';
+                $sanitized_data['logestechs_destination_city_id'] = $address['city_id'] ?? '';
+                $this->process_order_transfer($sanitized_data, $order_id);
+            }
 
-            if ( !in_array($order_status, Logestechs_Config::ACCEPTABLE_TRANSFER_STATUS) ) {
+            wp_send_json_success( isset( $response['barcode'] ) );
+        }
+        public function process_order_transfer($sanitized_data, $order_id) {
+            $order_status = get_post_meta( $order_id, '_logestechs_order_status', true );
+
+            if ( !empty($order_status) && !in_array($order_status, Logestechs_Config::ACCEPTABLE_TRANSFER_STATUS) ) {
                 wp_send_json_error( __( 'This order already transferred', 'logestechs' ) );
                 wp_die();
             }
 
-            // Retrieve the order
-            $order = wc_get_order( $sanitized_data['order_id'] );
-            
             $security_manager = new Logestechs_Security_Manager();
             $sanitizer        = $security_manager->get_sanitizer();
 
+            // Retrieve the order
+            $order = wc_get_order( $order_id );
             $order_data = $this->get_order_data( $order, $sanitized_data );
 
             $order_data = $sanitizer->sanitize_order( $order_data );
@@ -344,19 +356,18 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                 $order->save();
 
                 // Store the fact that the order has been transferred, along with the Logestechs order ID
-                update_post_meta( $sanitized_data['order_id'], '_logestechs_order_barcode', $response['barcode'] );
-                update_post_meta( $sanitized_data['order_id'], '_logestechs_order_id', $response['id'] );
-                update_post_meta( $sanitized_data['order_id'], '_logestechs_company_name', $company->company_name );
-                update_post_meta( $sanitized_data['order_id'], '_logestechs_api_company_id', $company->company_id );
-                update_post_meta( $sanitized_data['order_id'], '_logestechs_currency', $company->currency );
-                update_post_meta( $sanitized_data['order_id'], '_logestechs_local_company_id', $sanitized_data['company_id'] );
-                update_post_meta( $sanitized_data['order_id'], '_logestechs_date', $timestamp );
-                update_post_meta( $sanitized_data['order_id'], '_logestechs_order_status', 'REQUESTED' );
+                update_post_meta( $order_id, '_logestechs_order_barcode', $response['barcode'] );
+                update_post_meta( $order_id, '_logestechs_order_id', $response['id'] );
+                update_post_meta( $order_id, '_logestechs_company_name', $company->company_name );
+                update_post_meta( $order_id, '_logestechs_api_company_id', $company->company_id );
+                update_post_meta( $order_id, '_logestechs_currency', $company->currency );
+                update_post_meta( $order_id, '_logestechs_local_company_id', $sanitized_data['company_id'] );
+                update_post_meta( $order_id, '_logestechs_date', $timestamp );
+                update_post_meta( $order_id, '_logestechs_order_status', 'REQUESTED' );
             }
 
-            wp_send_json_success( isset( $response['barcode'] ) );
+            return isset( $response['barcode'] );
         }
-
         /**
          * Prepare order for Logestechs popup.
          *
@@ -369,15 +380,19 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                 wp_send_json_error( __( 'You do not have permission to perform this action.', 'logestechs' ) );
             }
 
-            $order_id = $_POST['order_id'] ? intval( $_POST['order_id'] ) : null;
+            $selected_orders = $_POST['selected_orders'] ?$_POST['selected_orders'] : null;
 
-            if ( ! $order_id ) {
+            if ( ! $selected_orders) {
                 wp_send_json_error( __( 'Error while processing this action!', 'logestechs' ) );
                 wp_die();
             }
-            // Retrieve the order
-            $order = wc_get_order( $order_id );
-            wp_send_json_success( $order->get_formatted_shipping_address() );
+
+            $addresses = [];
+            foreach ($selected_orders as $order_id) {
+                $order = wc_get_order( $order_id );
+                $addresses[$order_id] = $order->get_formatted_shipping_address();
+            }
+            wp_send_json_success( $addresses );
 
             wp_die();
         }
@@ -497,7 +512,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                 $product = $item->get_product();
 
                 return [
-                    'name' => $product->get_name(),
+                    'name' => $item->get_quantity() . 'x ' .$product->get_name(),
                     'cod'  => $product->get_price() * $item->get_quantity()
                 ];
             }, $order->get_items() );
@@ -514,7 +529,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                     'serviceType'               => 'STANDARD',
                     'shipmentType'              => $requesting_pickup? 'BRING' : 'COD',
                     'quantity'                  => $quantity,
-                    'description'               => "Order ID: {$order_id} - Domain: {$website_domain}",  // Updated here
+                    'description'               => "Order ID: {$order_id} - Domain: {$website_domain}", 
                     'integrationSource'         => 'WOOCOMMERCE'
                 ],
                 'pkgUnitType'   => 'METRIC',

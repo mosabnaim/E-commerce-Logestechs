@@ -154,6 +154,7 @@ if ( ! class_exists( 'Logestechs_Popup_Handler' ) ) {
 
             wp_send_json_success( $companies );
 
+
             wp_die();
         }
     }

@@ -637,7 +637,6 @@ input[type=text].logestechs-dropdown-input {
     overflow: auto;
     max-height: 500px;
     padding: 0 33px;
-    padding-bottom: 40px;
 }
 
 
@@ -678,4 +677,18 @@ input[type=text].logestechs-dropdown-input {
 [dir="rtl"] .logestechs-logo-background {
     -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
+}
+
+.logestechs-order-head {
+    font-size: 16px;
+    margin-bottom: 0;
+}
+.logestechs-addresses-divider {
+    width: 335px;
+    height: 1px;
+    background: #c5c5c5;
+    position: relative;
+    left: -34px;
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
