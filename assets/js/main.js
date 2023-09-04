@@ -25,6 +25,11 @@ jQuery(document).ready(function ($) {
 			var that = $(this);
 			var wrapper = that.closest('.logestechs-search-wrapper');
 			var resultsDiv = wrapper.find('.logestechs-village-results');
+
+			wrapper.find('.js-logestechs-selected-village').val('');
+			wrapper.find('.js-logestechs-selected-region').val('');
+			wrapper.find('.js-logestechs-selected-city').val('');
+
 			var query = that.val().trim();
 			if (query.length < 2) {
 				resultsDiv.html('<p class="js-logestechs-loading">' + logestechs_global_data.localization.length_error + '</p>').show();
@@ -173,8 +178,65 @@ jQuery(document).ready(function ($) {
 			}
 		);
 	});
+
 	$(document).on('submit', 'form.logestechs-order-settings-popup', function (e) {
 		e.preventDefault();
+
+		var phoneNumber = $('#logestechs_store_phone_number').val(); // Retrieve the phone number input
+		var phonePattern = /^\+[1-9]{1}[0-9]{9,14}$/; // The pattern to match
+		var has_error = false;
+		
+		if($('#logestechs-custom-store-checkbox').is(':checked') && !phonePattern.test(phoneNumber)) { // If phone number doesn't match pattern
+			Swal.fire({
+				title: logestechs_global_data.localization.oops,
+				html: logestechs_global_data.localization.phone_error,
+				icon: 'error',
+				confirmButtonColor: '#12a167',
+			});
+			has_error = true;
+		  return; // Stop further execution
+		}
+
+		$('.js-logestechs-address-cloned').each(function() {
+			var village = $(this).find('.js-logestechs-selected-village').val();
+			var city = $(this).find('.js-logestechs-selected-city').val();
+			var region = $(this).find('.js-logestechs-selected-region').val();
+
+			if (!village || !city || !region) {
+				has_error = true;
+				var order_id = $(this).find('.logestechs-order-head span').html();
+				Swal.fire({
+					title: logestechs_global_data.localization.oops,
+					text: logestechs_global_data.localization.invalid_destination.replace('%s', order_id),
+					icon: 'error',
+					confirmButtonColor: '#12a167',
+				});
+				return; // Break the loop
+			}
+		});
+		if(has_error) {
+			return;
+		}
+
+		if($('#logestechs-custom-store-checkbox').is(':checked')) {
+			let store_details = $('.js-logestechs-store-details');
+			var village = store_details.find('.js-logestechs-selected-village').val();
+			var city = store_details.find('.js-logestechs-selected-city').val();
+			var region = store_details.find('.js-logestechs-selected-region').val();
+			if ($('#logestechs-custom-store-checkbox').is(':checked') && (!village || !city || !region)) {
+				Swal.fire({
+					title: logestechs_global_data.localization.oops,
+					text: logestechs_global_data.localization.invalid_store_address,
+					icon: 'error',
+					confirmButtonColor: '#12a167',
+
+				});
+				return; // Break the loop
+			}
+		}
+
+			
+
 		$('.logestechs-order-settings-popup').fadeOut();
 		$('.js-loader-screen').fadeIn();
 		isLoading.fire();
@@ -719,13 +781,24 @@ jQuery(document).ready(function ($) {
 			}
 			selectedPosts.push($(this).val());
 		});
-		
+
 		if(has_error) {
 			isActionTriggered = false; // Reset flag to false
 
 			return;
 		} 
 		
+        // Check if selectedPosts length is greater than 20
+        if (selectedPosts.length > 20) {
+            Swal.fire({
+                title: logestechs_global_data.localization.oops,
+                html: logestechs_global_data.localization.bulk_transfer_length_error,
+                icon: 'error',
+                confirmButtonColor: '#12a167',
+            });
+            return;
+        }
+
 		selected_orders = selectedPosts;
 
 		handle_transfer_order_popup();

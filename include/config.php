@@ -49,6 +49,8 @@ class Logestechs_Config {
         'BROUGHT'                                              => 'Brought',
         'DELIVERED_TO_SENDER'                                  => 'Delivered to sender'
     ];
+
+    // Can delete/edit the company if completed
     const COMPLETED_STATUS = [
         'CANCELLED',
         'RETURNED_BY_RECIPIENT',
@@ -62,6 +64,8 @@ class Logestechs_Config {
         'BROUGHT',
         'DELIVERED_TO_SENDER'
     ];
+
+    // Can Assign the company if acceptable
     const ACCEPTABLE_TRANSFER_STATUS = [
         'CANCELLED',
         'RETURNED_BY_RECIPIENT',
@@ -75,19 +79,10 @@ class Logestechs_Config {
         'BROUGHT',
         'DELIVERED_TO_SENDER'
     ];
+
+    // Can Assign the company if acceptable
     const ACCEPTABLE_PICKUP_STATUS = [
-        'PENDING_CUSTOMER_CARE_APPROVAL',
-        'APPROVED_BY_CUSTOMER_CARE_AND_WAITING_FOR_DISPATCHER',
         'CANCELLED',
-        'ASSIGNED_TO_DRIVER_AND_PENDING_APPROVAL',
-        'REJECTED_BY_DRIVER_AND_PENDING_MANGEMENT',
-        'ACCEPTED_BY_DRIVER_AND_PENDING_PICKUP',
-        'SCANNED_BY_DRIVER_AND_IN_CAR',
-        'SCANNED_BY_HANDLER_AND_UNLOADED',
-        'MOVED_TO_SHELF_AND_OUT_OF_HANDLER_CUSTODY',
-        'OPENED_ISSUE_AND_WAITING_FOR_MANAGEMENT',
-        'DELIVERED_TO_RECIPIENT',
-        'POSTPONED_DELIVERY',
         'RETURNED_BY_RECIPIENT',
         'COMPLETED',
         'FAILED',
@@ -97,7 +92,7 @@ class Logestechs_Config {
         'PARTIALLY_DELIVERED',
         'SWAPPED',
         'BROUGHT',
-        'DELIVERED_TO_SENDER',
+        'DELIVERED_TO_SENDER'
     ];
 
     /**

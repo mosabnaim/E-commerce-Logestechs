@@ -195,6 +195,10 @@ if ( ! class_exists( 'Logestechs_Enqueue' ) ) {
                     'print_invoice' => __( 'Print Invoice', 'logestechs' ),
                     'bulk_print_error' => __( 'All selected orders must belong to the same company to enable bulk printing.', 'logestechs' ),
                     'bulk_transfer_error' => __( 'All selected orders must be assignable to enable bulk transfer.', 'logestechs' ),
+                    'phone_error' => __( 'Invalid sender phone number. It must start with a "+" followed by 9 to 14 digits.', 'logestechs' ),
+                    'invalid_destination' => __( 'Order ID %s: Destination village has invalid value.', 'logestechs' ),
+                    'invalid_store_address' => __( 'Store village has invalid value.', 'logestechs' ),
+                    'bulk_transfer_length_error' => __( 'You cannot select more than 20 posts at a time.', 'logestechs' ),
                 ]
             ];
         }

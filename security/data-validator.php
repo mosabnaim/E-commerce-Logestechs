@@ -117,7 +117,7 @@ if ( ! class_exists( 'Logestechs_Data_Validator' ) ) {
                 }
                 // Validate phone number using regular expression
                 if ( !empty($originAddress['senderPhone']) && ! preg_match("/^\+[1-9]{1}[0-9]{9,14}$/", $originAddress['senderPhone']) ) {
-                    $errors[] = __('Invalid sender phone number.', 'logestechs');
+                    $errors[] = __('Invalid sender phone number. It must start with a "+" followed by digits.', 'logestechs');
                 }
             } else {
                 // If origin address is not provided, all related fields should be optional

@@ -67,7 +67,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             $date_to   = strtotime( $date_to_input . ' 23:59:59' );
 
             $sort_by    = isset( $_POST['sort_by'] ) ? sanitize_text_field( $_POST['sort_by'] ) : 'date';
-            $sort_order = isset( $_POST['sort_order'] ) ? sanitize_text_field( $_POST['sort_order'] ) : 'DESC';
+            $sort_order = isset( $_POST['sort_order'] ) ? sanitize_text_field( $_POST['sort_order'] ) : 'ASC';
             // Define a mapping array
             $sort_mapping = [
                 'id'         => 'p.ID',
@@ -197,9 +197,9 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                 wp_send_json_error( __( 'Error while processing this action!', 'logestechs' ) );
                 wp_die();
             }
-
-            if ( get_post_meta( $order_id, '_logestechs_order_status', true ) == 'CANCELLED' ) {
-                wp_send_json_error( __( 'This order already cancelled', 'logestechs' ) );
+            $order_status = get_post_meta( $order_id, '_logestechs_order_status', true );
+            if ( in_array($order_status, Logestechs_Config::COMPLETED_STATUS) ) {
+                wp_send_json_error( __( 'This order already finished.', 'logestechs' ) );
                 wp_die();
             }
             $response = $this->api->cancel_order( $order_id );
@@ -271,6 +271,10 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                 wp_die();
             }
 
+            if ( count($sanitized_data['destination']) > 20 ) {
+                wp_send_json_error( __( 'Maximum orders allowed to transfer at once is 20', 'logestechs' ) );
+                wp_die();
+            }
            
             foreach ($sanitized_data['destination'] as $order_id => $address) {
                 $sanitized_data['logestechs_destination_village_id'] = $address['village_id'] ?? '';
@@ -319,7 +323,9 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                 ];
 
                 foreach ( $store_keys as $key ) {
-                    $order->update_post_meta( '_' . $key, $sanitized_data[$key] );
+                    if(!empty($sanitized_data[$key])) {
+                        $order->update_meta_data( '_' . $key, $sanitized_data[$key] );
+                    }
                 }
             }
             $destination_keys = [
@@ -329,8 +335,10 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             ];
 
             foreach ( $destination_keys as $key ) {
-                $meta_key = '_' . $key;
-                $order->update_meta_data( $meta_key, $sanitized_data[$key] );
+                if(!empty($sanitized_data[$key])) {
+                    $meta_key = '_' . $key;
+                    $order->update_meta_data( $meta_key, $sanitized_data[$key] );
+                }
             }
 
             $credentials_storage = Logestechs_Credentials_Storage::get_instance();
@@ -670,7 +678,6 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                                     <div class="js-logestechs-print" data-order-id="<?php echo $order_id; ?>"><?php _e( 'Print Invoice', 'logestechs' );?></div>
                                     <div class="js-open-details-popup" data-order-id="<?php echo $order_id; ?>"><?php _e( 'Track', 'logestechs' );?></div>
                                     <div class="js-logestechs-cancel" data-order-id="<?php echo $order_id; ?>"><?php _e( 'Cancel', 'logestechs' );?></div>
-                                    <div class="js-open-pickup-popup js-logestechs-request-return logestechs-white-btn" data-order-id="<?php echo $order_id; ?>"><?php _e( 'Request Pickup', 'logestechs' );?></div>
                                 </div>
                                 <div class="logestechs-dropdown-content js-cancelled-dropdown hidden">
                                     <div class="js-logestechs-print" data-order-id="<?php echo $order_id; ?>"><?php _e( 'Print Invoice', 'logestechs' );?></div>

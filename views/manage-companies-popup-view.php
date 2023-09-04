@@ -90,7 +90,7 @@ if ( ! class_exists( 'Logestechs_Manage_Companies_Popup_View' ) ) {
                                 <!-- Store Phone Number -->
                                 <div class="logestechs-field">
                                     <label for="logestechs_store_phone_number"><?php _e('Store Phone Number', 'logestechs'); ?></label>
-                                    <input type="text" name="logestechs_store_phone_number" id="logestechs_store_phone_number" />
+                                    <input type="text" name="logestechs_store_phone_number" id="logestechs_store_phone_number" placeholder="+1234567890" />
                                 </div>
                                 <div class="logestechs-search-wrapper">
                                     <div class="logestechs-field">
