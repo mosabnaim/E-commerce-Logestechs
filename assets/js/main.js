@@ -36,7 +36,7 @@ jQuery(document).ready(function ($) {
 				return;
 			};
 	
-			var order_id = $('.logestechs-order-settings-popup').find('[name="order_id"]').val();
+			var company_id = $('.logestechs-order-settings-popup').find('[name="company_id"]').val();
 			resultsDiv.html('<p class="js-logestechs-loading">' + logestechs_global_data.localization.loading + '</p>').show();
 	
 			if (is_sending_request) return;
@@ -48,7 +48,7 @@ jQuery(document).ready(function ($) {
 					action: 'logestechs_fetch_villages',
 					security: logestechs_global_data.security,
 					query: query,
-					order_id: order_id,
+					company_id: company_id,
 				},
 				function (response) {
 					is_sending_request = false;

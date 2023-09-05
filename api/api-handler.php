@@ -228,9 +228,7 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
          *
          * @since    1.0.0
          */
-        public function search_villages( $order_id, $query ) {
-            $company_id = get_post_meta( $order_id, '_logestechs_api_company_id', true );
-
+        public function search_villages( $query, $company_id ) {
             $response = $this->request( 'addresses/villages', 'GET', [
                 'search' => $query
             ], $company_id );

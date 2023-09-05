@@ -739,12 +739,12 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             }
 
             // Sanitize and validate input.
-            $order_id = isset( $_POST['order_id'] ) ? intval( $_POST['order_id'] ) : null;
+            $company_id = isset( $_POST['company_id'] ) ? intval( $_POST['company_id'] ) : null;
             $query    = isset( $_POST['query'] ) ? sanitize_text_field( $_POST['query'] ) : '';
 
             try {
                 // Search the villages based on the query.
-                $villages = $this->api->search_villages( $order_id, $query );
+                $villages = $this->api->search_villages(  $query, $company_id );
                 // Send JSON response.
                 wp_send_json_success( ['villages' => $villages] );
             } catch ( Exception $e ) {
