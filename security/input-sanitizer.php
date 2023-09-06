@@ -47,7 +47,9 @@ if (!class_exists('Logestechs_Input_Sanitizer')) {
             ]);
 
             // Sanitize each credential element.
-            $credentials['domain']     = $this->sanitize($data['domain']);
+            if(! Logestechs_Config::COMPANY_DOMAIN ) {
+                $credentials['domain']     = $this->sanitize($data['domain']);
+            }
             $credentials['password']   = $this->sanitize($data['password']);
             $credentials['email']      = $this->sanitize($data['email']);
             $credentials['company_id'] = $data['company_id'] ? intval($data['company_id']) : null;

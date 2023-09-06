@@ -52,9 +52,22 @@ if ( ! class_exists( 'Logestechs_Admin_Page' ) ) {
             }
             $order_handler = new Logestechs_Order_Handler();
             $statuses = $order_handler->get_unique_order_statuses();
+
+            $is_logged_in = false;
+            if( Logestechs_Config::COMPANY_DOMAIN ) {
+                $db = Logestechs_Credentials_Storage::get_instance();
+                $first_record = $db->get_first_record();
+                if($first_record) {
+                    $is_logged_in = true;
+                    $email = $first_record->email;
+                }
+            }
+            
             $logestechs_page = new Logestechs_Admin_Page_View();
             $logestechs_page->render([
-                'statuses' => $statuses
+                'statuses' => $statuses,
+                'is_logged_in' => $is_logged_in,
+                'email' => $email ?? null
             ]);
         }
     }

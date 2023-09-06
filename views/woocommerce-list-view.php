@@ -25,7 +25,7 @@
             foreach ( $columns as $column_name => $column_info ) {
                 $new_columns[$column_name] = $column_info;
                 if ( 'order_number' === $column_name ) {
-                    $new_columns['logestechs'] = esc_html__( 'Logestechs', 'logestechs' );
+                    $new_columns['logestechs'] = Logestechs_Config::PLUGIN_NAME;
                 }
             }
         
@@ -41,18 +41,27 @@
          * @param int    $post_id The post ID (order ID).
          */
         public function add_custom_column_data($column, $post_id) {
-
+            if ('logestechs' != $column) {
+                return;
+            }
             // Check if it's our custom column and display the column data.
-            if ('logestechs' === $column) {
-                $logestechs_company = get_post_meta($post_id, '_logestechs_company_name', true);
-                $logestechs_order_status = get_post_meta($post_id, '_logestechs_order_status', true);
-                $completed_statuses = Logestechs_Config::ACCEPTABLE_TRANSFER_STATUS;
-
-                if (!empty($logestechs_company) && !in_array($logestechs_order_status, $completed_statuses)) {
-                    echo '<p>' . esc_html($logestechs_company) . '</p>';
+            $completed_statuses = Logestechs_Config::ACCEPTABLE_TRANSFER_STATUS;
+            $logestechs_order_status = get_post_meta($post_id, '_logestechs_order_status', true);
+            if(Logestechs_Config::COMPANY_DOMAIN) {
+                $order_barcode = get_post_meta($post_id, '_logestechs_order_barcode', true);
+                if (!in_array($logestechs_order_status, $completed_statuses)) {
+                    echo '<p>#' . esc_html($order_barcode) . '</p>';
                 } else {
-                    echo '<button class="js-open-transfer-popup logestechs-btn-text" data-order-id="' . esc_attr($post_id) . '">' . esc_html__( 'Assign Company', 'logestechs' ) . '</button>';
+                    echo '<button class="js-open-transfer-popup logestechs-btn-text" data-order-id="' . esc_attr($post_id) . '">' . esc_html__( 'Transfer Order', 'logestechs' ) . '</button>';
                 }
+                return;
+            }
+            
+            $logestechs_company = get_post_meta($post_id, '_logestechs_company_name', true);
+            if (!empty($logestechs_company) && !in_array($logestechs_order_status, $completed_statuses)) {
+                echo '<p>' . esc_html($logestechs_company) . '</p>';
+            } else {
+                echo '<button class="js-open-transfer-popup logestechs-btn-text" data-order-id="' . esc_attr($post_id) . '">' . esc_html__( 'Assign Company', 'logestechs' ) . '</button>';
             }
         }
     }

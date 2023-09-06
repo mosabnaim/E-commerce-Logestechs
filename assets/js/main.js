@@ -418,7 +418,7 @@ jQuery(document).ready(function ($) {
 	}
 
 	// Event handler for add company form submission
-	$(document).on('submit', '.js-company-form', function (e) {
+	$(document).on('submit', '.js-company-form, .logestechs-login-form', function (e) {
 		e.preventDefault();
 		let that = $(this);
 
@@ -444,7 +444,7 @@ jQuery(document).ready(function ($) {
 		}
 
 		// Disable buttons
-		$('.js-logestechs-add-company, .js-logestechs-update-company').addClass('disabled').prop('disabled', true);
+		that.find('button').addClass('disabled').prop('disabled', true);
 
 		let company_id = $(this).find('.js-logestechs-update-company').attr('data-id');
 		if(is_sending_request) return;
@@ -471,7 +471,11 @@ jQuery(document).ready(function ($) {
 					} else {
 						$('.js-logestechs-company[data-id="' + company_id + '"]').replaceWith(companyElement);
 					}
-					$('[name="domain"], [name="email"], [name="password"]').val('');
+					$('[name="domain"], [name="password"]').val('');
+					if(! that.hasClass('logestechs-login-form')) {
+						$('[name="email"]').val('');
+					}
+
 					$('.js-logestechs-add-company').show();
 					$('.js-logestechs-update-company').hide().removeAttr('data-id');
 					Swal.fire({
@@ -500,7 +504,7 @@ jQuery(document).ready(function ($) {
 				}
 
 				// Enable buttons
-				$('.js-logestechs-add-company, .js-logestechs-update-company').removeClass('disabled').prop('disabled', false);
+				that.find('button').removeClass('disabled').prop('disabled', false);
 			}
 		);
 	});

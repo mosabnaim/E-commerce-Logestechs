@@ -47,10 +47,14 @@ if ( ! class_exists( 'Logestechs_Credentials_Manager' ) ) {
          * @return   array|WP_Error   The saved data or error on failure.
          */
         public function save_credentials( $credentials ) {
-            // Sanitize credentials
-            $domain   = sanitize_text_field( $credentials['domain'] );
-            $domain = str_replace(['https://', 'http://', '/'], '', $domain);
-            $email    = $credentials['email'];
+            if( Logestechs_Config::COMPANY_DOMAIN) {
+                $domain = Logestechs_Config::COMPANY_DOMAIN;
+            }else {
+                // Sanitize credentials
+                $domain   = sanitize_text_field( $credentials['domain'] );
+                $domain = str_replace(['https://', 'http://', '/'], '', $domain);
+            }
+            $email    = sanitize_text_field($credentials['email']);
             $password = sanitize_text_field( $credentials['password'] );
             $id       = isset( $credentials['company_id'] ) ? intval( $credentials['company_id'] ) : null;
 
@@ -89,41 +93,50 @@ if ( ! class_exists( 'Logestechs_Credentials_Manager' ) ) {
             ];
             $format = ['%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'];
 
-            // Check for the existence of credentials based on domain and email
-            if ( is_null( $id ) ) {
-                $exist = $this->db->email_exists_for_domain( $domain, $email );
-                if ( $exist ) {
-                    return new WP_Error( 'company_exists', __( 'This company already exists!', 'logestechs' ) );
+            if ( Logestechs_Config::COMPANY_DOMAIN ) {
+                $first_record = $this->db->get_first_record();
+                if ($first_record) {
+                    $db_response = $this->db->update_credentials($first_record->id, $data, $format);
+                } else {
+                    $db_response = $this->db->insert_credentials($data, $format);
                 }
-                $db_response = $this->db->insert_credentials( $data, $format );
-                $id          = $db_response;
             } else {
-                $completed_statuses = Logestechs_Config::COMPLETED_STATUS;
-                // Check if there are any WooCommerce orders associated with this company before updating
-                $args = [
-                    'post_type'      => 'shop_order',
-                    'meta_query'     => [
-                        [
-                            'key'     => '_logestechs_local_company_id',
-                            'value'   => $id,
-                            'compare' => '='
+                // Check for the existence of credentials based on domain and email
+                if ( is_null( $id ) ) {
+                    $exist = $this->db->email_exists_for_domain( $domain, $email );
+                    if ( $exist ) {
+                        return new WP_Error( 'company_exists', __( 'This company already exists!', 'logestechs' ) );
+                    }
+                    $db_response = $this->db->insert_credentials( $data, $format );
+                    $id          = $db_response;
+                } else {
+                    $completed_statuses = Logestechs_Config::COMPLETED_STATUS;
+                    // Check if there are any WooCommerce orders associated with this company before updating
+                    $args = [
+                        'post_type'      => 'shop_order',
+                        'meta_query'     => [
+                            [
+                                'key'     => '_logestechs_local_company_id',
+                                'value'   => $id,
+                                'compare' => '='
+                            ],
+                            [
+                                'key'     => '_logestechs_order_status',
+                                'value'   => $completed_statuses,
+                                'compare' => 'NOT IN'
+                            ]
                         ],
-                        [
-                            'key'     => '_logestechs_order_status',
-                            'value'   => $completed_statuses,
-                            'compare' => 'NOT IN'
-                        ]
-                    ],
-                    'post_status'    => 'any',
-                    'posts_per_page' => 1 // Checking if at least one order exists
-                ];
-                $query = new WP_Query( $args );
-                if ( $query->have_posts() ) {
-                    wp_send_json_error( 'Cannot delete this company as it is associated with existing orders!' );
-                    wp_die();
+                        'post_status'    => 'any',
+                        'posts_per_page' => 1 // Checking if at least one order exists
+                    ];
+                    $query = new WP_Query( $args );
+                    if ( $query->have_posts() ) {
+                        wp_send_json_error( 'Cannot delete this company as it is associated with existing orders!' );
+                        wp_die();
+                    }
+    
+                    $db_response = $this->db->update_credentials( $id, $data, $format );
                 }
-
-                $db_response = $this->db->update_credentials( $id, $data, $format );
             }
 
             if ( $db_response ) {
@@ -135,7 +148,7 @@ if ( ! class_exists( 'Logestechs_Credentials_Manager' ) ) {
 
             return new WP_Error( 'db_error', __( 'There was an error saving the credentials to the database.', 'logestechs' ) );
         }
-
+        
         /**
          * Delete Logestechs credentials.
          *

@@ -23,7 +23,7 @@ if ( ! class_exists( 'Logestechs_Data_Validator' ) ) {
         public function validate_credentials( $credentials ) {
             $errors = [];
 
-            if ( empty( $credentials['domain'] ) ) {
+            if ( ! Logestechs_Config::COMPANY_DOMAIN && empty( $credentials['domain'] ) ) {
                 $errors[] = __( 'Domain is required.', 'logestechs' );
             }
 

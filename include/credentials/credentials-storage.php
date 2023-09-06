@@ -175,5 +175,18 @@ if ( ! class_exists( 'Logestechs_Credentials_Storage' ) ) {
 
             return $this->wpdb->get_var( $query );
         }
+
+        /**
+         * Get the first Logestechs record.
+         *
+         * @since    1.0.5
+         * @return   object|NULL  Returns the first record or NULL if no records exist.
+         */
+        public function get_first_record() {
+            $query = $this->wpdb->prepare("SELECT * FROM {$this->table_name} WHERE 1=%d ORDER BY id ASC LIMIT 1", 1);
+
+            return $this->wpdb->get_row($query);
+        }
+
     }
 }

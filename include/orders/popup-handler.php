@@ -71,7 +71,7 @@ if ( ! class_exists( 'Logestechs_Popup_Handler' ) ) {
             }
 
             $credentials_manager = new Logestechs_Credentials_Manager();
-            $response            = $credentials_manager->save_credentials( $credentials );
+            $response = $credentials_manager->save_credentials( $credentials );
 
             if ( is_wp_error( $response ) ) {
                 $error_message = $response->get_error_message();

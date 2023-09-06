@@ -25,6 +25,8 @@ if (!class_exists('Logestechs_Admin_Page_View')) {
         public function render($args = []) {
             $statuses = $args['statuses'] ?? [];
             $status_filter = $_GET['status_filter'] ?? '';
+            $is_logged_in = $args['is_logged_in'] ?? false;
+            $email = $args['email'] ?? '';
             $display_status = Logestechs_Config::STATUS_ARRAY[$status_filter] ?? esc_html__('All', 'logestechs');
             // Start the output buffer.
             ob_start();
@@ -40,7 +42,48 @@ if (!class_exists('Logestechs_Admin_Page_View')) {
                     </div>
                     <p class="logestechs-primary-text"><?php echo esc_html(Logestechs_Config::PLUGIN_NAME); ?></p>
                 </div>
-                <button id="logestechs-transfer-order" class="js-open-companies-popup logestechs-primary-btn"><?php esc_html_e('Manage Companies', 'logestechs'); ?></button>
+                <?php 
+                if(Logestechs_Config::COMPANY_DOMAIN) { 
+                    ?>
+                    <div class="logestechs-relative">
+                        <button id="manageAccountButton" class="logestechs-primary-btn"><?php esc_html_e('Manage Account', 'logestechs'); ?></button>
+                        <div class="logestechs-overlaypanel" style="display: none;">
+                            <div class="logestechs-content">
+                                <div class="logestechs-form-title">
+                                    <?php 
+                                    if ($is_logged_in) {
+                                        echo sprintf(esc_html__('You are logged in using %s', 'logestechs'), $email);
+                                    } else {
+                                        echo esc_html__('Please add your account credentials', 'logestechs');
+                                    }
+                                    ?>
+                                </div>
+                                <form class="logestechs-login-form">
+                                    <div class="logestechs-input-item">
+                                        <label class="logestechs-input-label" for="email"><?php echo esc_html__('Email', 'logestechs'); ?></label>
+                                        <img class="logestechs-user-icon" src="<?php echo logestechs_image('user-icon.svg') ?>" alt="User Icon">
+                                        <input type="text" id="email" name="email" class="logestechs-input" placeholder="" value="<?php echo $email ?>">
+                                    </div>
+                                    <div class="logestechs-input-item">
+                                        <label class="logestechs-input-label" for="password"><?php echo esc_html__('Password', 'logestechs'); ?></label>
+                                        <img class="logestechs-lock-icon" src="<?php echo logestechs_image('lock-icon.svg') ?>" alt="Lock Icon">
+                                        <input type="password" id="password" name="password" class="logestechs-input" placeholder="">
+                                    </div>
+                                    <button type="submit" class="logestechs-submit-button"> <?php ($is_logged_in)? _e('Update Account', 'logestechs') : _e('Save Account', 'logestechs'); ?></button>
+                                </form>
+                                <div class="logestechs-exit">
+                                    <button class="logestechs-cancel-button"><?php echo esc_html__('Close', 'logestechs'); ?></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php 
+                }else {
+                    ?>
+                    <button id="logestechs-transfer-order" class="js-open-companies-popup logestechs-primary-btn"><?php esc_html_e('Manage Companies', 'logestechs'); ?></button>
+                    <?php 
+                }
+                ?>
             </div>
             
             <!-- Table control section -->

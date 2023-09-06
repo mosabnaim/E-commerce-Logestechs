@@ -15,7 +15,9 @@ class Logestechs_Config {
     const MENU_SLUG   = 'logestechs';
     const PLUGIN_LOGO = LOGESTECHS_PLUGIN_URL . 'assets/img/logo.jpeg';
     const PLUGIN_ICON = LOGESTECHS_PLUGIN_URL . 'assets/img/logo.svg';
-
+    // const COMPANY_DOMAIN   = null;
+    const COMPANY_DOMAIN   = 'ksademo.logestechs.com';
+    
     const PLUGIN_STYLES = [
         '--logestechs-primary-color'  => '#F97F35',
         '--logestechs-gradient'       => 'linear-gradient(270deg, #FBA229 0%, #F87E34 100%);',

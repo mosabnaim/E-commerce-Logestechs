@@ -343,6 +343,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
 
             $credentials_storage = Logestechs_Credentials_Storage::get_instance();
             $company             = $credentials_storage->get_company( $sanitized_data['company_id'] );
+
             // Call your API handler to save the order
             $response = $this->api->transfer_order_to_logestechs( $company, $order_data );
 
@@ -484,9 +485,6 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             // Get WooCommerce Order ID
             $order_id = $order->get_id();
 
-            // Get Website Domain
-            $website_domain = get_site_url();
-
             // Prepare to retrieve metadata keys for Logestechs.
             $relevant_store_keys = [
                 'logestechs_store_village_id',
@@ -531,14 +529,15 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                     'receiverName'              => $order->get_shipping_first_name() . ' ' . $order->get_shipping_last_name(),
                     'cod'                       => $order->get_total(),
                     'notes'                     => $order->get_customer_note(),
-                    'packageItemsToDeliverList' => $package_items,
+                    'packageItemsToDeliverList' => array_values($package_items),
                     'receiverPhone'             => $order->get_billing_phone(),
                     'receiverPhone2'            => '',
                     'serviceType'               => 'STANDARD',
                     'shipmentType'              => $requesting_pickup? 'BRING' : 'COD',
                     'quantity'                  => $quantity,
-                    'description'               => "Order ID: {$order_id} - Domain: {$website_domain}", 
-                    'integrationSource'         => 'WOOCOMMERCE'
+                    'description'               => "Order ID: {$order_id}",
+                    'integrationSource'         => 'WOOCOMMERCE',
+                    'supplierInvoice'           => $order_id,
                 ],
                 'pkgUnitType'   => 'METRIC',
             ];
@@ -608,7 +607,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                 if ( isset( $statuses[$logestechs_order_id] ) ) {
                     $status = $statuses[$logestechs_order_id];
                     update_post_meta( $order_id, '_logestechs_order_status', $status );
-                    $carry[$order_id] = isset( $statuses_mapping[$status] ) ? __( $statuses_mapping[$status], 'logestechs' ) : $status;
+                    $carry[$order_id] = $status;
                 }
 
                 return $carry;

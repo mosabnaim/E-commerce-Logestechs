@@ -165,6 +165,7 @@ if ( ! class_exists( 'Logestechs_Enqueue' ) ) {
                     'edit'   => logestechs_image( 'edit.svg' ),
                     'loader' => logestechs_image( 'logestechs-loader.riv' )
                 ],
+                'status_array' => Logestechs_Config::STATUS_ARRAY,
                 'completed_status_array' => Logestechs_Config::COMPLETED_STATUS,
                 'localization' => [
                     'transfer_order' => __( 'Transfer Order', 'logestechs' ),

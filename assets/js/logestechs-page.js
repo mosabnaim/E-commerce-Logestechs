@@ -298,9 +298,10 @@ jQuery(document).ready(function ($) {
                     var $statusCell = $row.find("span.js-logestechs-status-cell");
                     $statusCell.removeClass().addClass('js-logestechs-status-cell');
                     $statusCell.addClass("logestechs-" + newStatus.toLowerCase().replace(/_/g, '-'));
-                    $statusCell.text(newStatus);
-                    const completedStatusArray = logestechs_global_data?.completed_status_array;
-                    if (completedStatusArray?.includes(newStatus.toUpperCase())) {
+                    const statusObject = logestechs_global_data?.status_array;
+                    const completedStatusObject = logestechs_global_data?.completed_status_array;
+                    $statusCell.text(statusObject[newStatus]); // setting the text to the value that corresponds to the key 'newStatus'
+                    if (completedStatusObject?.includes(newStatus)) {
                         $row.addClass('js-logestechs-submittable');
                         $row.find('.js-normal-dropdown').addClass('hidden');
                         $row.find('.js-cancelled-dropdown').removeClass('hidden');
@@ -309,6 +310,7 @@ jQuery(document).ready(function ($) {
                         $row.find('.js-normal-dropdown').removeClass('hidden');
                         $row.find('.js-cancelled-dropdown').addClass('hidden');
                     }
+                    
                 });
             }
         );
@@ -319,12 +321,13 @@ jQuery(document).ready(function ($) {
 		$('.logestechs-village-results').hide();
         $('.js-logestechs-status-filter-dropdown').show();
     });
-    $(document).on('click', '.js-logestechs-status-filter-dropdown', function(e) {
-        e.stopPropagation();
-    });
 	$(document).on('click', function (e) {
 		$('.js-logestechs-status-filter-dropdown').hide();
 	});
+    // Hide the popup when the close button is clicked
+    $('.logestechs-cancel-button').click(function() {
+        $('.logestechs-overlaypanel').hide();
+    });
     // Listen for input in the search field
     $('#logestechs-status-search').on('input', function() {
         
@@ -345,6 +348,16 @@ jQuery(document).ready(function ($) {
             }
         });
     });
+
+    // Show the popup when the button is clicked
+    $('#manageAccountButton').click(function(e) {
+        e.stopPropagation();
+        $('.logestechs-overlaypanel').show();
+    });
+    $('.logestechs-overlaypanel').click(function(e) {
+        e.stopPropagation();
+    });
+    
     // Add a new event listener for when a status is clicked
     $('.logestechs-status-options div').on('click', function () {
         // Get the clicked status
