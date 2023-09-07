@@ -213,11 +213,19 @@
     background: #f3f3f3;
 }
 
-.logestechs-cancelled {
+.js-logestechs-status-cell[data-status] {
     border-radius: 4px;
+    padding: 8px 20px;
+}
+
+.js-logestechs-status-cell[data-status="CANCELLED"] {
     background: #B3404A;
-    padding: 5px 20px;
-    color: #fff;
+    color: #ffd9d9;
+}
+
+.js-logestechs-status-cell[data-status="PENDING_CUSTOMER_CARE_APPROVAL"] {
+    background: #ee7809;
+    color: #ffeed9;
 }
 
 .logestechs-dropdown img {

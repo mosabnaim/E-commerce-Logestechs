@@ -109,15 +109,19 @@ jQuery(document).ready(function ($) {
 
 		handle_transfer_order_popup();
 	});
-
 	function handle_transfer_order_popup() {
-		$transfer_popup.fadeIn();
-		$('.js-logestechs-assign-company').addClass('disabled').prop('disabled', true);
-		
-		fetch_companies();
+		if(logestechs_global_data.is_white_labeled) {
+			show_transfer_order_step_2();
+		}else {
+			$transfer_popup.fadeIn();
+			$('.js-logestechs-assign-company').addClass('disabled').prop('disabled', true);
+			
+			fetch_companies();
+		}
 		if (r) {
 			return;
 		}
+		
 		r = new rive.Rive({
 			src: logestechs_global_data.images.loader,
 			canvas: $('#logestechs-loader')[0],
@@ -135,6 +139,10 @@ jQuery(document).ready(function ($) {
 	}
 
 	$(document).on('click', '.js-logestechs-assign-company', function (e) {
+		show_transfer_order_step_2();
+	});
+
+	function show_transfer_order_step_2() {
 		if (is_sending_request) return;
 		is_sending_request = true;
 
@@ -177,7 +185,7 @@ jQuery(document).ready(function ($) {
 				}
 			}
 		);
-	});
+	}
 
 	$(document).on('submit', 'form.logestechs-order-settings-popup', function (e) {
 		e.preventDefault();

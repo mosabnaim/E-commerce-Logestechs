@@ -165,6 +165,7 @@ if ( ! class_exists( 'Logestechs_Enqueue' ) ) {
                     'edit'   => logestechs_image( 'edit.svg' ),
                     'loader' => logestechs_image( 'logestechs-loader.riv' )
                 ],
+                'is_white_labeled' => !empty(Logestechs_Config::COMPANY_DOMAIN),
                 'status_array' => Logestechs_Config::STATUS_ARRAY,
                 'completed_status_array' => Logestechs_Config::COMPLETED_STATUS,
                 'localization' => [

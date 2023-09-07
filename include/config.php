@@ -16,7 +16,11 @@ class Logestechs_Config {
     const PLUGIN_LOGO = LOGESTECHS_PLUGIN_URL . 'assets/img/logo.jpeg';
     const PLUGIN_ICON = LOGESTECHS_PLUGIN_URL . 'assets/img/logo.svg';
     // const COMPANY_DOMAIN   = null;
+    // const COMPANY_ID   = null;
+
     const COMPANY_DOMAIN   = 'ksademo.logestechs.com';
+    const COMPANY_ID   = 214;
+
     
     const PLUGIN_STYLES = [
         '--logestechs-primary-color'  => '#F97F35',
@@ -28,7 +32,7 @@ class Logestechs_Config {
 
     const STATUS_ARRAY = [
         'DRAFT'                                                => 'Draft',
-        'PENDING_CUSTOMER_CARE_APPROVAL'                       => 'Submitted',
+        'PENDING_CUSTOMER_CARE_APPROVAL'                       => 'Pending Acceptance',
         'APPROVED_BY_CUSTOMER_CARE_AND_WAITING_FOR_DISPATCHER' => 'Ready for dispatching',
         'CANCELLED'                                            => 'Cancelled',
         'ASSIGNED_TO_DRIVER_AND_PENDING_APPROVAL'              => 'Assigned to Drivers',

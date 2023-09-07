@@ -270,7 +270,8 @@ jQuery(document).ready(function ($) {
     load_orders();
 
     function syncLogestechsOrders() {
-        $('span.js-logestechs-status-cell').removeClass().addClass('js-logestechs-status-cell').html('<div class="logestechs-skeleton-loader"></div>');
+        $('span.js-logestechs-status-cell').removeClass().removeAttr('data-status').addClass('js-logestechs-status-cell').html('<div class="logestechs-skeleton-loader"></div>');
+        
         $('.logestechs-dropdown').hide();
         if (is_sending_request) {
             return;
@@ -301,6 +302,7 @@ jQuery(document).ready(function ($) {
                     const statusObject = logestechs_global_data?.status_array;
                     const completedStatusObject = logestechs_global_data?.completed_status_array;
                     $statusCell.text(statusObject[newStatus]); // setting the text to the value that corresponds to the key 'newStatus'
+                    $statusCell.attr('data-status', newStatus); // setting the text to the value that corresponds to the key 'newStatus'
                     if (completedStatusObject?.includes(newStatus)) {
                         $row.addClass('js-logestechs-submittable');
                         $row.find('.js-normal-dropdown').addClass('hidden');

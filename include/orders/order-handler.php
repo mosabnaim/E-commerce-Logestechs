@@ -266,7 +266,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                 $sanitized_data[$key] = $_POST[$key] ?? null;
             }
 
-            if ( ! $sanitized_data['company_id'] || ! $sanitized_data['destination'] ) {
+            if ( ( ! Logestechs_Config::COMPANY_ID && ! $sanitized_data['company_id']) || ! $sanitized_data['destination'] ) {
                 wp_send_json_error( __( 'Error while processing this action!', 'logestechs' ) );
                 wp_die();
             }
@@ -342,8 +342,17 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
             }
 
             $credentials_storage = Logestechs_Credentials_Storage::get_instance();
-            $company             = $credentials_storage->get_company( $sanitized_data['company_id'] );
+            if(Logestechs_Config::COMPANY_DOMAIN) {
+                $company = (object) $credentials_storage->get_first_record();
+            }else {
+                $company = $credentials_storage->get_company( $sanitized_data['company_id'] );
+            }
+            
 
+            if(!$company) {
+                wp_send_json_error( __( 'No company found to assign!', 'logestechs' ) );
+                wp_die();
+            }
             // Call your API handler to save the order
             $response = $this->api->transfer_order_to_logestechs( $company, $order_data );
 

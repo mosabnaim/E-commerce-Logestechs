@@ -183,7 +183,8 @@ if ( ! class_exists( 'Logestechs_Credentials_Storage' ) ) {
          * @return   object|NULL  Returns the first record or NULL if no records exist.
          */
         public function get_first_record() {
-            $query = $this->wpdb->prepare("SELECT * FROM {$this->table_name} WHERE 1=%d ORDER BY id ASC LIMIT 1", 1);
+            $domain = Logestechs_Config::COMPANY_DOMAIN;
+            $query = $this->wpdb->prepare("SELECT * FROM {$this->table_name} WHERE domain = %s ORDER BY id ASC LIMIT 1", $domain);
 
             return $this->wpdb->get_row($query);
         }

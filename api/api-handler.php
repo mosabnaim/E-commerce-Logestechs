@@ -74,6 +74,9 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
             if ( $company_id ) {
                 $args['headers']['company-id'] = $company_id;
             }
+            if(Logestechs_Config::COMPANY_ID) {
+                $args['headers']['company-id'] = Logestechs_Config::COMPANY_ID;
+            }
 
             // Handling request body:
             if ( ! empty( $body ) ) {
@@ -143,7 +146,12 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
 
             // Get the company details:
             $credentials_storage = Logestechs_Credentials_Storage::get_instance();
-            $company             = $credentials_storage->get_company( $local_company_id );
+            if(Logestechs_Config::COMPANY_DOMAIN) {
+                $company = (object) $credentials_storage->get_first_record();
+            }else {
+                $company = $credentials_storage->get_company( $local_company_id );
+            }
+
             if(empty($company)) {
                 return __( 'Error while processing this action!', 'logestechs' );
             }
@@ -273,6 +281,9 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
          * @since    1.0.0
          */
         public function check_credentials( $company_id, $email, $password ) {
+            if(Logestechs_Config::COMPANY_ID) {
+                $company_id = Logestechs_Config::COMPANY_ID;
+            }
             $response = $this->request( 'auth/customer/check', 'POST', [
                 'companyId' => $company_id,
                 'email'     => $email,
@@ -291,7 +302,12 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
          * @since    1.0.0
          */
         public function track_order( int $order_id ) {
-            $company_id          = get_post_meta( $order_id, '_logestechs_api_company_id', true );
+            if(Logestechs_Config::COMPANY_ID) {
+                $company_id = Logestechs_Config::COMPANY_ID;
+            }else {
+                $company_id = get_post_meta( $order_id, '_logestechs_api_company_id', true );
+            }
+
             $logestechs_order_id = get_post_meta( $order_id, '_logestechs_order_id', true );
 
             $response = $this->request( 'guests/' . $company_id . '/packages/tracking', 'GET', [
