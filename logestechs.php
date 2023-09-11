@@ -3,7 +3,7 @@
  * Plugin Name: Logestechs for WooCommerce
  * Plugin URI: https://yourwebsite.com/logestechs-enhancement
  * Description: This plugin enhances WooCommerce capabilities by interfacing with Logestechs multi-domain shipping platform.
- * Version: 1.0.5
+ * Version: 1.0.6
  * Author: Logestechs
  * Author URI: https://yourwebsite.com
  * License: GPL v2 or later
@@ -27,7 +27,6 @@ require_once LOGESTECHS_PLUGIN_PATH . 'utils/helper-functions.php';
 require_once LOGESTECHS_PLUGIN_PATH . 'autoloader.php';
 $autoloader = new Logestechs_Autoloader;
 $autoloader->init();
-
 
 $logestechs_core = new Logestechs_Plugin_Core();
 $logestechs_core->run();

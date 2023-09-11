@@ -26,6 +26,7 @@ if ( ! class_exists( 'Logestechs_Plugin_Core' ) ) {
          */
         public function run() {
             add_action( 'init', [$this, 'init'] );
+            add_action( 'rest_api_init', [ $this, 'register_route' ] );
         }
 
         /**
@@ -40,6 +41,11 @@ if ( ! class_exists( 'Logestechs_Plugin_Core' ) ) {
                 // Set locale for internationalization
                 $this->set_locale();
             }
+        }
+
+        public function register_route() {
+            $api = new Logestechs_Api_Handler();
+            $api->register_route();
         }
 
         /**

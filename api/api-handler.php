@@ -23,7 +23,10 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
          * @var      string    $api_base_url    Base URL for Logestechs API.
          */
         private $api_base_url = 'https://apisv2.logestechs.com/api/';
+
         private $api_key = '11af2b15-d10b-4c1d-8eb9-48d6505bf3fc';
+
+        
         /**
          * Instance to handle API errors.
          *
@@ -41,7 +44,6 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
         public function __construct() {
             // Initialize properties or dependencies if needed
             $this->api_error_handler = new Logestechs_Api_Error_Handler();
-            add_action( 'rest_api_init', array( $this, 'register_route' ) );
         }
 
         /**
@@ -406,13 +408,13 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
         }
     
         public function permissions_check( WP_REST_Request $request ) {
-            $headers = $request->get_headers();
-            
-            if ( isset( $headers['x-api-key'] ) && $headers['x-api-key'][0] === $this->api_key ) {
+            $api_key = $request->get_header('x-api-key');
+            if ( $api_key === $this->api_key ) {
                 return true;
             }
     
             return new WP_Error( 'rest_forbidden', 'You are not authorized to access this endpoint.', array( 'status' => 401 ) );
         }
+
     }
 }

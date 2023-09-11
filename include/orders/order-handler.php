@@ -617,7 +617,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                     unset($order_data['destinationAddress']);
                 }
             }
-            
+
             return $order_data;
         }
 
