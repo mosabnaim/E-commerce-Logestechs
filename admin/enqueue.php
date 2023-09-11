@@ -167,7 +167,9 @@ if ( ! class_exists( 'Logestechs_Enqueue' ) ) {
                 ],
                 'is_white_labeled' => !empty(Logestechs_Config::COMPANY_DOMAIN),
                 'status_array' => Logestechs_Config::STATUS_ARRAY,
-                'completed_status_array' => Logestechs_Config::COMPLETED_STATUS,
+                'acceptable_cancel_status' => Logestechs_Config::ACCEPTABLE_CANCEL_STATUS,
+                'acceptable_pickup_status' => Logestechs_Config::ACCEPTABLE_PICKUP_STATUS,
+                'acceptable_transfer_status' => Logestechs_Config::ACCEPTABLE_TRANSFER_STATUS,
                 'localization' => [
                     'transfer_order' => __( 'Transfer Order', 'logestechs' ),
                     'request_pickup' => __( 'Request Pickup', 'logestechs' ),
@@ -197,6 +199,7 @@ if ( ! class_exists( 'Logestechs_Enqueue' ) ) {
                     'print_invoice' => __( 'Print Invoice', 'logestechs' ),
                     'bulk_print_error' => __( 'All selected orders must belong to the same company to enable bulk printing.', 'logestechs' ),
                     'bulk_transfer_error' => __( 'All selected orders must be assignable to enable bulk transfer.', 'logestechs' ),
+                    'bulk_print_error' => __( 'All selected orders must not be assignable to enable bulk print.', 'logestechs' ),
                     'phone_error' => __( 'Invalid sender phone number. It must start with a "+" followed by 9 to 14 digits.', 'logestechs' ),
                     'invalid_destination' => __( 'Order ID %s: Destination village has invalid value.', 'logestechs' ),
                     'invalid_store_address' => __( 'Store village has invalid value.', 'logestechs' ),

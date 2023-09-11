@@ -100,7 +100,7 @@ if ( ! class_exists( 'Logestechs_Popup_Handler' ) ) {
                 wp_send_json_error( __('Error while deleting this item!', 'logestechs') );
                 wp_die();
             }
-            $completed_statuses = Logestechs_Config::COMPLETED_STATUS;
+            $acceptable_cancel_status = Logestechs_Config::ACCEPTABLE_CANCEL_STATUS;
 
             $credentials_manager = new Logestechs_Credentials_Manager();
             $args = [
@@ -113,8 +113,8 @@ if ( ! class_exists( 'Logestechs_Popup_Handler' ) ) {
                     ],
                     [
                         'key'     => '_logestechs_order_status',
-                        'value'   => $completed_statuses,
-                        'compare' => 'NOT IN'
+                        'value'   => $acceptable_cancel_status,
+                        'compare' => 'IN'
                     ]
                 ],
                 'post_status'    => 'any',

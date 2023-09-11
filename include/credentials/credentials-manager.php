@@ -110,7 +110,7 @@ if ( ! class_exists( 'Logestechs_Credentials_Manager' ) ) {
                     $db_response = $this->db->insert_credentials( $data, $format );
                     $id          = $db_response;
                 } else {
-                    $completed_statuses = Logestechs_Config::COMPLETED_STATUS;
+                    $acceptable_cancel_status = Logestechs_Config::ACCEPTABLE_CANCEL_STATUS;
                     // Check if there are any WooCommerce orders associated with this company before updating
                     $args = [
                         'post_type'      => 'shop_order',
@@ -122,8 +122,8 @@ if ( ! class_exists( 'Logestechs_Credentials_Manager' ) ) {
                             ],
                             [
                                 'key'     => '_logestechs_order_status',
-                                'value'   => $completed_statuses,
-                                'compare' => 'NOT IN'
+                                'value'   => $acceptable_cancel_status,
+                                'compare' => 'IN'
                             ]
                         ],
                         'post_status'    => 'any',

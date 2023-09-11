@@ -33,18 +33,18 @@
             $completed_statuses = Logestechs_Config::ACCEPTABLE_TRANSFER_STATUS;
             $acceptable_pickup_statuses = Logestechs_Config::ACCEPTABLE_PICKUP_STATUS;
 
-            $pickup_allowed = !( !empty($logestechs_order_id) &&  !in_array($this->order_details['status'], $acceptable_pickup_statuses) );
+            $pickup_allowed = !( !empty($logestechs_order_id) &&  !in_array($this->order_details['status'], $acceptable_pickup_statuses));
             $is_assignable = !( !empty($logestechs_order_id) &&  !in_array($this->order_details['status'], $completed_statuses) );
             $display_pickup_btn = $pickup_allowed ? 'block' : 'none';
             $display_details = $is_assignable ? 'none' : 'block';
             $display_assign_btn = $is_assignable ? 'block' : 'none';
             $details_to_display = [
-                'package_number' => __('Package Number', 'logestechs'),
+                'package_number' => __('Shipment Number', 'logestechs'),
                 'price' => __('Price', 'logestechs'),
                 'reservation_date' => __('Reservation Date', 'logestechs'),
                 'shipment_type' => __('Shipment Type', 'logestechs'),
                 'recipient' => __('Recipient', 'logestechs'),
-                'package_weight' => __('Package Weight', 'logestechs'),
+                'package_weight' => __('Shipment Weight', 'logestechs'),
                 'expected_delivery_date' => __('Expected Delivery Date', 'logestechs'),
                 'phone_number' => __('Phone Number', 'logestechs')
             ];
@@ -60,7 +60,9 @@
                 </div>
                 <div class="logestechs-flex">
                     <button data-order-id="<?php echo esc_attr($this->order_details['id']); ?>" class="js-open-pickup-popup logestechs-white-btn" style="display: <?php echo esc_attr($display_pickup_btn); ?>;"><?php esc_html_e('Request Pickup', 'logestechs'); ?></button>
-                    <button id="logestechs-transfer-order" data-order-id="<?php echo esc_attr($this->order_details['id']); ?>" class="js-open-transfer-popup logestechs-white-btn" style="display: <?php echo esc_attr($display_assign_btn); ?>;"><?php esc_html_e('Assign Company', 'logestechs'); ?></button>
+                    <button id="logestechs-transfer-order" data-order-id="<?php echo esc_attr($this->order_details['id']); ?>" class="js-open-transfer-popup logestechs-white-btn" style="display: <?php echo esc_attr($display_assign_btn); ?>;">
+                    <?php (Logestechs_Config::COMPANY_ID)? esc_html_e('Transfer Order', 'logestechs') :  esc_html_e( 'Assign Company', 'logestechs' ); ?>
+                </button>
                 </div>
             </div>
             <div class="logestechs-details" style="display: <?php echo esc_attr($display_details); ?>;">
@@ -79,7 +81,7 @@
                 <div class="logestechs-metabox-footer">
                     <button id="logestechs-cancel-order" data-order-id="<?php echo esc_attr($this->order_details['id']); ?>" class="js-logestechs-cancel logestechs-secondary-btn"><?php esc_html_e('Cancel Shipping', 'logestechs'); ?></button>
                     <button id="logestechs-print-invoice" data-order-id="<?php echo esc_attr($this->order_details['id']); ?>" class="js-logestechs-print logestechs-primary-btn"><?php esc_html_e('Print Invoice', 'logestechs'); ?></button>
-                    <button id="logestechs-show-tracking" data-order-id="<?php echo esc_attr($this->order_details['id']); ?>" class="js-open-details-popup logestechs-primary-btn"><?php esc_html_e('Track Package', 'logestechs'); ?></button>
+                    <button id="logestechs-show-tracking" data-order-id="<?php echo esc_attr($this->order_details['id']); ?>" class="js-open-details-popup logestechs-primary-btn"><?php esc_html_e('Track Shipment', 'logestechs'); ?></button>
                 </div>
             </div>
             <?php

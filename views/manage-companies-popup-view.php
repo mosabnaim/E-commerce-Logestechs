@@ -54,22 +54,53 @@ if ( ! class_exists( 'Logestechs_Manage_Companies_Popup_View' ) ) {
 
                         <!-- Order details for the popup -->
                         <div class="logestechs-popup-details">
-                            <p class="logestechs-destination-address-label"><?php _e('Destination Address:', 'logestechs'); ?></p>
-                            <div class="js-logestechs-addresses">
-                                <div class="js-logestechs-address-wrapper js-logestechs-address-block" style="display: none;">
-                                    <p class="logestechs-order-head"><?php esc_html_e( 'Order ID:', 'logestechs' )?> #<span></span></p>
+                            <div class="logestechs-section">
+                                <p class="logestechs-section-label"><?php esc_html_e( 'Shipment Details', 'logestechs' )?></p>
+                                <div class="logestechs-form-divider"></div>
+                                <div class="logestechs-pickup-details">
+                                    <div class="logestechs-field">
+                                        <input type="radio" id="collectFromReceiver" name="payment_type" class="logestechs-radio" checked value="collect_from_receiver">
+                                        <label for="collectFromReceiver">
+                                            <span class="logestechs-radio"></span>
+                                            Collect From Receiver
+                                        </label>
+                                        <input type="number" min="0" step="0.01" name="pickup_amount" class="logestechs-dropdown-input logestechs-number-input">
+                                    </div>
+                                    <div class="logestechs-field">
+                                        <input type="radio" id="payByReceiver" name="payment_type" class="logestechs-radio" value="pay_by_receiver">
+                                        <label for="payByReceiver">
+                                            <span class="logestechs-radio"></span>
+                                            Pay By Receiver
+                                        </label>
+                                        <input type="number" min="0" step="0.01" name="pickup_amount" class="logestechs-dropdown-input logestechs-number-input disabled" disabled>
+                                    </div>
+                                    <div class="logestechs-form-divider"></div>
+                                </div>
 
-                                    <p class="js-logestechs-order-address"></p>
-                                    <!-- Village search for destination -->
-                                    <div class="logestechs-search-wrapper">
-                                        <div class="logestechs-field">
-                                            <label><?php _e('Destination village', 'logestechs'); ?></label>
-                                            <input name="_search" type="text" class="logestechs-destination-village-search logestechs-dropdown-input" placeholder="<?php _e('Search for village...', 'logestechs'); ?>">
-                                            <input name="_village" type="hidden" class="js-logestechs-selected-village">
-                                            <input name="_city" type="hidden" class="js-logestechs-selected-city">
-                                            <input name="_region" type="hidden" class="js-logestechs-selected-region">
+                            </div>
+                            <div class="logestechs-section">
+                                <div class="logestechs-checkbox">
+                                    <input type="checkbox" name="logestechs_custom_village" id="logestechs-custom-village-checkbox" value="1" />
+                                    <label for="logestechs-custom-village-checkbox"><?php _e('Do you want to specify order village?', 'logestechs'); ?></label>
+                                </div>
+                                <div class="js-logestechs-village" style="display:none;">
+                                    <div class="js-logestechs-addresses">
+                                        <div class="js-logestechs-address-wrapper js-logestechs-address-block" style="display: none;">
+                                            <p class="logestechs-order-head"><?php esc_html_e( 'Order ID:', 'logestechs' )?> #<span></span></p>
+
+                                            <p class="js-logestechs-order-address"></p>
+                                            <!-- Village search for destination -->
+                                            <div class="logestechs-search-wrapper">
+                                                <div class="logestechs-field">
+                                                    <label><?php _e('Destination village', 'logestechs'); ?></label>
+                                                    <input name="_search" type="text" class="logestechs-destination-village-search logestechs-dropdown-input" placeholder="<?php _e('Search for village...', 'logestechs'); ?>">
+                                                    <input name="_village" type="hidden" class="js-logestechs-selected-village">
+                                                    <input name="_city" type="hidden" class="js-logestechs-selected-city">
+                                                    <input name="_region" type="hidden" class="js-logestechs-selected-region">
+                                                </div>
+                                                <div class="logestechs-destination-village-results logestechs-village-results" style="display: none;"></div>
+                                            </div>
                                         </div>
-                                        <div class="logestechs-destination-village-results logestechs-village-results" style="display: none;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -118,7 +149,7 @@ if ( ! class_exists( 'Logestechs_Manage_Companies_Popup_View' ) ) {
 
                             <!-- Popup footer with transfer order button -->
                             <div class="logestechs-popup-footer">
-                                <button class="js-logestechs-transfer-order logestechs-primary-btn disabled" disabled><?php _e('Transfer Order', 'logestechs'); ?></button>
+                                <button class="js-logestechs-transfer-order logestechs-primary-btn"><?php _e('Transfer Order', 'logestechs'); ?></button>
                             </div>
                         </div>
                     </div>

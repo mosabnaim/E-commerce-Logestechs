@@ -31,74 +31,50 @@ class Logestechs_Config {
     ];
 
     const STATUS_ARRAY = [
-        'DRAFT'                                                => 'Draft',
-        'PENDING_CUSTOMER_CARE_APPROVAL'                       => 'Pending Acceptance',
-        'APPROVED_BY_CUSTOMER_CARE_AND_WAITING_FOR_DISPATCHER' => 'Ready for dispatching',
-        'CANCELLED'                                            => 'Cancelled',
-        'ASSIGNED_TO_DRIVER_AND_PENDING_APPROVAL'              => 'Assigned to Drivers',
-        'REJECTED_BY_DRIVER_AND_PENDING_MANGEMENT'             => 'Rejected By Drivers',
-        'ACCEPTED_BY_DRIVER_AND_PENDING_PICKUP'                => 'Pending Pickup',
-        'SCANNED_BY_DRIVER_AND_IN_CAR'                         => 'Picked',
-        'SCANNED_BY_HANDLER_AND_UNLOADED'                      => 'Pending Sorting',
-        'MOVED_TO_SHELF_AND_OUT_OF_HANDLER_CUSTODY'            => 'Sorted on Shelves',
-        'OPENED_ISSUE_AND_WAITING_FOR_MANAGEMENT'              => 'Reported to Management',
-        'DELIVERED_TO_RECIPIENT'                               => 'Delivered',
-        'POSTPONED_DELIVERY'                                   => 'Postponed delivery',
-        'RETURNED_BY_RECIPIENT'                                => 'Returned by recipient',
-        'COMPLETED'                                            => 'Completed',
-        'FAILED'                                               => 'Failed',
-        'RESOLVED_FAILURE'                                     => 'Resolved Failure',
-        'UNRESOLVED_FAILURE'                                   => 'Unresolved Failure',
-        'TRANSFERRED_OUT'                                      => 'Transferred out',
-        'PARTIALLY_DELIVERED'                                  => 'Partially delivered',
-        'SWAPPED'                                              => 'Swapped',
-        'BROUGHT'                                              => 'Brought',
-        'DELIVERED_TO_SENDER'                                  => 'Delivered to sender'
+        'DRAFT'                                               => 'Draft',
+        'PENDING_CUSTOMER_CARE_APPROVAL'                      => 'Pending',
+        'APPROVED_BY_CUSTOMER_CARE_AND_WAITING_FOR_DISPATCHER'=> 'Being Processed',
+        'CANCELLED'                                           => 'Cancelled',
+        'ASSIGNED_TO_DRIVER_AND_PENDING_APPROVAL'             => 'Being Processed',
+        'REJECTED_BY_DRIVER_AND_PENDING_MANGEMENT'            => 'Being Processed',
+        'ACCEPTED_BY_DRIVER_AND_PENDING_PICKUP'               => 'Being Processed',
+        'SCANNED_BY_DRIVER_AND_IN_CAR'                        => 'In Progress',
+        'SCANNED_BY_HANDLER_AND_UNLOADED'                     => 'In Progress',
+        'MOVED_TO_SHELF_AND_OUT_OF_HANDLER_CUSTODY'           => 'In Progress',
+        'OPENED_ISSUE_AND_WAITING_FOR_MANAGEMENT'             => 'In Progress',
+        'DELIVERED_TO_RECIPIENT'                              => 'Delivered',
+        'POSTPONED_DELIVERY'                                  => 'Postponed',
+        'RETURNED_BY_RECIPIENT'                               => 'Returned',
+        'COMPLETED'                                           => 'Completed',
+        'FAILED'                                              => 'Failed',
+        'RESOLVED_FAILURE'                                    => 'Failed',
+        'UNRESOLVED_FAILURE'                                  => 'Failed',
+        'TRANSFERRED_OUT'                                     => 'In Progress',
+        'PARTIALLY_DELIVERED'                                 => 'Partially Delivered',
+        'SWAPPED'                                             => 'Swapped',
+        'BROUGHT'                                             => 'Brought',
+        'DELIVERED_TO_SENDER'                                 => 'Returned and received'
     ];
 
     // Can delete/edit the company if completed
-    const COMPLETED_STATUS = [
-        'CANCELLED',
-        'RETURNED_BY_RECIPIENT',
-        'COMPLETED',
-        'FAILED',
-        'RESOLVED_FAILURE',
-        'UNRESOLVED_FAILURE',
-        'TRANSFERRED_OUT',
-        'PARTIALLY_DELIVERED',
-        'SWAPPED',
-        'BROUGHT',
-        'DELIVERED_TO_SENDER'
+    const ACCEPTABLE_CANCEL_STATUS = [
+        'DRAFT',
+        'PENDING_CUSTOMER_CARE_APPROVAL',
+        'APPROVED_BY_CUSTOMER_CARE_AND_WAITING_FOR_DISPATCHER',
+        'ASSIGNED_TO_DRIVER_AND_PENDING_APPROVAL'
     ];
 
     // Can Assign the company if acceptable
     const ACCEPTABLE_TRANSFER_STATUS = [
         'CANCELLED',
-        'RETURNED_BY_RECIPIENT',
-        'COMPLETED',
-        'FAILED',
-        'RESOLVED_FAILURE',
-        'UNRESOLVED_FAILURE',
-        'TRANSFERRED_OUT',
-        'PARTIALLY_DELIVERED',
-        'SWAPPED',
-        'BROUGHT',
-        'DELIVERED_TO_SENDER'
+        null // null for new orders
     ];
 
     // Can Assign the company if acceptable
     const ACCEPTABLE_PICKUP_STATUS = [
-        'CANCELLED',
-        'RETURNED_BY_RECIPIENT',
         'COMPLETED',
-        'FAILED',
-        'RESOLVED_FAILURE',
-        'UNRESOLVED_FAILURE',
-        'TRANSFERRED_OUT',
-        'PARTIALLY_DELIVERED',
-        'SWAPPED',
-        'BROUGHT',
-        'DELIVERED_TO_SENDER'
+        'DELIVERED_TO_RECIPIENT',
+        null // null for new orders
     ];
 
     /**

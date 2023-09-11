@@ -20,9 +20,6 @@ class Logestechs_Debugger {
     public function __construct() {
         $date_today      = date( 'Y-m-d' );
         $this->file_path = LOGESTECHS_PLUGIN_PATH . 'logs/log-' . $date_today . '.json';
-        if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
-            $this->output_modal_code();
-        }
     }
     
     // Adds a log message
@@ -83,6 +80,10 @@ class Logestechs_Debugger {
         $errors      = $from_file ? $this->get_logs() : $this->log_data;
         $errors_json = json_encode( $errors, JSON_PRETTY_PRINT );
 
+        if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
+            $this->output_modal_code();
+        }
+        
         ob_start();
         ?>
         <script>

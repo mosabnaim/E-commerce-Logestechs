@@ -19,12 +19,12 @@ if (!class_exists('Logestechs_Tracking_Details_Popup_View')) {
         public function render() {
             // Fetch any necessary data using $order_id.
             $details_to_display = [
-                'package_number' => __('Package Number', 'logestechs'),
+                'package_number' => __('Shipment Number', 'logestechs'),
                 'price' => __('Price', 'logestechs'),
                 'reservation_date' => __('Reservation Date', 'logestechs'),
                 'shipment_type' => __('Shipment Type', 'logestechs'),
                 'recipient' => __('Recipient', 'logestechs'),
-                'package_weight' => __('Package Weight', 'logestechs'),
+                'package_weight' => __('Shipment Weight', 'logestechs'),
                 'expected_delivery_date' => __('Expected Delivery Date', 'logestechs'),
                 'phone_number' => __('Phone Number', 'logestechs')
             ];
@@ -40,7 +40,7 @@ if (!class_exists('Logestechs_Tracking_Details_Popup_View')) {
                             <div class="logestechs-box-wrapper">
                                 <img src="<?php echo esc_url(logestechs_image('box.svg')); ?>" alt="<?php esc_attr_e('Box Icon', 'logestechs'); ?>">
                             </div>
-                            <p class="logestechs-popup-label"><?php esc_html_e('Package Tracking And Details', 'logestechs'); ?></p>
+                            <p class="logestechs-popup-label"><?php esc_html_e('Shipment Tracking And Details', 'logestechs'); ?></p>
                         </div>
                         <div class="logestechs-close-btn-wrapper">
                             <button class="js-close-popup close-btn">

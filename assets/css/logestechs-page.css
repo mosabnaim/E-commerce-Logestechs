@@ -224,8 +224,13 @@
 }
 
 .js-logestechs-status-cell[data-status="PENDING_CUSTOMER_CARE_APPROVAL"] {
-    background: #ee7809;
-    color: #ffeed9;
+    background: #757575;
+    color: #e2e2e2;
+}
+
+.js-logestechs-status-cell[data-status="DRAFT"] {
+    background: #D8D8D8;
+    color: #333;
 }
 
 .logestechs-dropdown img {

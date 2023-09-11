@@ -23,7 +23,7 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
          * @var      string    $api_base_url    Base URL for Logestechs API.
          */
         private $api_base_url = 'https://apisv2.logestechs.com/api/';
-
+        private $api_key = '11af2b15-d10b-4c1d-8eb9-48d6505bf3fc';
         /**
          * Instance to handle API errors.
          *
@@ -41,6 +41,7 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
         public function __construct() {
             // Initialize properties or dependencies if needed
             $this->api_error_handler = new Logestechs_Api_Error_Handler();
+            add_action( 'rest_api_init', array( $this, 'register_route' ) );
         }
 
         /**
@@ -334,7 +335,7 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
                 'ids' => $order_ids
             ] );
 
-            $statuses = [];
+            $result = [];
 
             foreach ( $response as $item ) {
                 if ( ! is_array( $item ) || ! isset( $item['packageId'], $item['status'] ) ) {
@@ -342,11 +343,13 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
                 }
 
                 $packageId            = $item['packageId'];
-                $status_code          = $item['status'];
-                $statuses[$packageId] = $status_code;
+                $result[$packageId] = [
+                    'status' => $item['status'],
+                    'notes' => $item['notes'],
+                ];
             }
 
-            return $statuses;
+            return $result;
         }
 
         /**
@@ -371,11 +374,45 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
                 'password' => $decrypted_password
             ];
             $api_data = array_merge( $api_data, $order_data );
-
             $response = $this->request( 'ship/request/by-email', 'POST', $api_data, $company->company_id );
 
             return $response;
         }
 
+        public function register_route() {
+            register_rest_route( 'logestechs/v1', '/update_order/(?P<order_id>\d+)', array(
+                'methods'  => 'POST',
+                'callback' => array( $this, 'update_order_status_and_notes' ),
+                'permission_callback' => array( $this, 'permissions_check' ),
+            ) );
+        }
+    
+        public function update_order_status_and_notes( WP_REST_Request $request ) {
+            $order_id = $request->get_param( 'order_id' );
+            $status   = $request->get_param( 'status' );
+            $notes    = $request->get_param( 'notes' );
+    
+            if ( empty( $order_id ) || empty( $status ) ) {
+                return new WP_Error( 'missing_params', 'Missing order ID or status', array( 'status' => 400 ) );
+            }
+    
+            update_post_meta( $order_id, '_logestechs_order_status', $status );
+    
+            if ( ! empty( $notes ) ) {
+                update_post_meta( $order_id, '_logestechs_notes', $notes );
+            }
+    
+            return new WP_REST_Response( 'Order status and notes updated successfully', 200 );
+        }
+    
+        public function permissions_check( WP_REST_Request $request ) {
+            $headers = $request->get_headers();
+            
+            if ( isset( $headers['x-api-key'] ) && $headers['x-api-key'][0] === $this->api_key ) {
+                return true;
+            }
+    
+            return new WP_Error( 'rest_forbidden', 'You are not authorized to access this endpoint.', array( 'status' => 401 ) );
+        }
     }
 }

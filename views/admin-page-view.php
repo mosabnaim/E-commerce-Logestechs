@@ -112,7 +112,7 @@ if (!class_exists('Logestechs_Admin_Page_View')) {
                     <div class="logestechs-flex">
                         <h3><?php esc_html_e('Manage Shipments', 'logestechs'); ?></h3>
                         <div class="logestechs-divider"></div>
-                        <p class="logestechs-selected-text"><?php esc_html_e('You have selected', 'logestechs'); ?> <span class="js-logestechs-selection-count"></span> <?php esc_html_e('packages', 'logestechs'); ?></p>
+                        <p class="logestechs-selected-text"><?php esc_html_e('You have selected', 'logestechs'); ?> <span class="js-logestechs-selection-count"></span> <?php esc_html_e('shipments', 'logestechs'); ?></p>
                         <div class="js-logestechs-cancel-selection logestechs-action-btn">
                             <p><?php esc_html_e('Cancel', 'logestechs'); ?></p>
                         </div>
@@ -125,7 +125,7 @@ if (!class_exists('Logestechs_Admin_Page_View')) {
                         </div>
                         <div class="js-logestechs-bulk-transfer logestechs-action-btn">
                             <img src="<?php echo esc_url(logestechs_image('package.svg')); ?>" alt="<?php esc_attr_e('Transfer Icon', 'logestechs'); ?>">
-                            <p><?php esc_html_e('Transfer Packages', 'logestechs'); ?></p>
+                            <p><?php esc_html_e('Transfer Shipments', 'logestechs'); ?></p>
                         </div>
                     </div>
                 </div>
@@ -166,6 +166,7 @@ if (!class_exists('Logestechs_Admin_Page_View')) {
                                     </div>
                                 </div>
                             </th>
+                            <th><span><?php esc_html_e('Notes', 'logestechs'); ?></span></th>
                             <th><?php esc_html_e('Action', 'logestechs'); ?></th>
                         </tr>
                     </thead>

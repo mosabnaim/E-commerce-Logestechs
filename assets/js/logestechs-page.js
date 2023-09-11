@@ -271,6 +271,7 @@ jQuery(document).ready(function ($) {
 
     function syncLogestechsOrders() {
         $('span.js-logestechs-status-cell').removeClass().removeAttr('data-status').addClass('js-logestechs-status-cell').html('<div class="logestechs-skeleton-loader"></div>');
+        $('span.js-logestechs-notes-cell').removeClass().removeAttr('data-notes').addClass('js-logestechs-notes-cell').html('<div class="logestechs-skeleton-loader"></div>');
         
         $('.logestechs-dropdown').hide();
         if (is_sending_request) {
@@ -294,25 +295,39 @@ jQuery(document).ready(function ($) {
                 is_sending_request = false;
 
                 $('.logestechs-dropdown').show();
-                $.each(response, function (orderId, newStatus) {
-                    var $row = $(".js-logestechs-order[data-order-id='" + orderId + "']");
-                    var $statusCell = $row.find("span.js-logestechs-status-cell");
-                    $statusCell.removeClass().addClass('js-logestechs-status-cell');
-                    $statusCell.addClass("logestechs-" + newStatus.toLowerCase().replace(/_/g, '-'));
-                    const statusObject = logestechs_global_data?.status_array;
-                    const completedStatusObject = logestechs_global_data?.completed_status_array;
-                    $statusCell.text(statusObject[newStatus]); // setting the text to the value that corresponds to the key 'newStatus'
-                    $statusCell.attr('data-status', newStatus); // setting the text to the value that corresponds to the key 'newStatus'
-                    if (completedStatusObject?.includes(newStatus)) {
-                        $row.addClass('js-logestechs-submittable');
-                        $row.find('.js-normal-dropdown').addClass('hidden');
-                        $row.find('.js-cancelled-dropdown').removeClass('hidden');
-                    } else {
-                        $row.removeClass('js-logestechs-submittable');
-                        $row.find('.js-normal-dropdown').removeClass('hidden');
-                        $row.find('.js-cancelled-dropdown').addClass('hidden');
+                $.each(response, function (orderId, package) {
+                    let newStatus = package.status;
+                    let notes = package.notes; // Assuming that notes are returned from the server
+                    let $row = $(".js-logestechs-order[data-order-id='" + orderId + "']");
+                    let $statusCell = $row.find("span.js-logestechs-status-cell");
+                    let $notesCell = $row.find("span.js-logestechs-notes-cell"); // New notes cell
+    
+                    // Update status
+                    $statusCell.text(logestechs_global_data?.status_array[newStatus]);
+                    $statusCell.attr('data-status', newStatus);
+    
+                    // Update notes
+                    let displayNotes = notes ? notes : '-'; // Display '-' if notes are empty
+                    $notesCell.text(displayNotes); // Updating the notes cell with the new notes
+                    $notesCell.attr('data-notes', displayNotes); // Add data attribute if you need
+                    const dropdown = $row.find('.js-logestechs-dropdown');
+                    dropdown.find('.js-dynamic-option').remove();
+
+                    // Update dropdowns based on status
+                    const ACCEPTABLE_CANCEL_STATUS = logestechs_global_data?.acceptable_cancel_status;
+                    const ACCEPTABLE_PICKUP_STATUS = logestechs_global_data?.acceptable_pickup_status;
+                    const ACCEPTABLE_TRANSFER_STATUS = logestechs_global_data?.acceptable_transfer_status;
+
+                    // Dynamic dropdown logic
+                    if (ACCEPTABLE_CANCEL_STATUS.includes(newStatus)) {
+                        dropdown.append('<div class="js-logestechs-cancel js-dynamic-option" data-order-id="' + orderId + '">Cancel</div>');
                     }
-                    
+                    if (ACCEPTABLE_TRANSFER_STATUS.includes(newStatus)) {
+                        dropdown.append('<div class="js-open-transfer-popup logestechs-white-btn js-dynamic-option" data-order-id="' + orderId + '">Assign Order</div>');
+                    }
+                    if (ACCEPTABLE_PICKUP_STATUS.includes(newStatus)) {
+                        dropdown.append('<div class="js-open-pickup-popup js-logestechs-request-return logestechs-white-btn js-dynamic-option" data-order-id="' + orderId + '">Request Pickup</div>');
+                    }
                 });
             }
         );

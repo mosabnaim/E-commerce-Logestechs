@@ -54,84 +54,78 @@ if ( ! class_exists( 'Logestechs_Data_Validator' ) ) {
          * @param    object    $order   The order to validate.
          * @return array                An array of errors, empty if no errors found.
          */
-        public function validate_order( $order ) {
+        public function validate_order($order) {
             $errors = [];
         
             // Validate package data
-            if ( isset($order['pkg']) ) {
+            if (isset($order['pkg'])) {
                 $pkg = $order['pkg'];
-                if ( empty($pkg['receiverName']) ) {
-                    $errors[] = __('Receiver name is required.', 'logestechs');
-                }
-                if ( empty($pkg['cod']) || ! is_numeric($pkg['cod']) || $pkg['cod'] <= 0 ) {
+        
+                if (empty($pkg['cod']) || !is_numeric($pkg['cod']) || $pkg['cod'] <= 0) {
                     $errors[] = __('Invalid COD value for the package.', 'logestechs');
                 }
-                if ( empty($pkg['receiverPhone']) ) {
-                    $errors[] = __('Invalid receiver phone number.', 'logestechs');
-                }
-                if ( ! isset($pkg['packageItemsToDeliverList']) || ! is_array($pkg['packageItemsToDeliverList']) || empty($pkg['packageItemsToDeliverList']) ) {
+                
+                if (!isset($pkg['packageItemsToDeliverList']) || !is_array($pkg['packageItemsToDeliverList']) || empty($pkg['packageItemsToDeliverList'])) {
                     $errors[] = __('Package items to deliver list is required.', 'logestechs');
                 } else {
                     foreach ($pkg['packageItemsToDeliverList'] as $item) {
-                        if ( empty($item['name']) ) {
+                        if (empty($item['name'])) {
                             $errors[] = __('Item name is required.', 'logestechs');
                         }
-                        if ( empty($item['cod']) || ! is_numeric($item['cod']) || $item['cod'] <= 0 ) {
+                        if (empty($item['cod']) || !is_numeric($item['cod']) || $item['cod'] <= 0) {
                             $errors[] = __('Invalid COD value for an item.', 'logestechs');
                         }
+                    }
+                }
+        
+                if (isset($pkg['shipmentType']) && $pkg['shipmentType'] === 'BRING') {
+                    if (!isset($pkg['toCollectFromReceiver']) && !isset($pkg['toPayToReceiver'])) {
+                        $errors[] = __('Either toCollectFromReceiver or toPayToReceiver is required for pickup.', 'logestechs');
                     }
                 }
             }
         
             // Validate destination address data
-            if ( isset($order['destinationAddress']) ) {
-                $destinationAddress = $order['destinationAddress'];
-                if ( empty($destinationAddress['addressLine1']) ) {
-                    $errors[] = __('Destination address line 1 is required.', 'logestechs');
-                }
-                if ( empty($destinationAddress['cityId']) || ! is_numeric($destinationAddress['cityId']) ) {
-                    $errors[] = __('Invalid city ID for destination address.', 'logestechs');
-                }
-                if ( empty($destinationAddress['regionId']) || ! is_numeric($destinationAddress['regionId']) ) {
-                    $errors[] = __('Invalid region ID for destination address.', 'logestechs');
-                }
-                if ( empty($destinationAddress['villageId']) || ! is_numeric($destinationAddress['villageId']) ) {
-                    $errors[] = __('Invalid village ID for destination address.', 'logestechs');
-                }
+            if (isset($order['destinationAddress'])) {
+                $this->validate_address($order['destinationAddress'], 'Destination', $errors);
             }
         
             // Validate origin address data if present
-            if ( isset($order['originAddress']) ) {
-                $originAddress = $order['originAddress'];
-                if ( empty($originAddress['addressLine1']) ) {
-                    $errors[] = __('Origin address line 1 is required.', 'logestechs');
-                }
-                if ( empty($originAddress['cityId']) || ! is_numeric($originAddress['cityId']) ) {
-                    $errors[] = __('Invalid city ID for origin address.', 'logestechs');
-                }
-                if ( empty($originAddress['regionId']) || ! is_numeric($originAddress['regionId']) ) {
-                    $errors[] = __('Invalid region ID for origin address.', 'logestechs');
-                }
-                if ( empty($originAddress['villageId']) || ! is_numeric($originAddress['villageId']) ) {
-                    $errors[] = __('Invalid village ID for origin address.', 'logestechs');
-                }
-                // Validate phone number using regular expression
-                if ( !empty($originAddress['senderPhone']) && ! preg_match("/^\+[1-9]{1}[0-9]{9,14}$/", $originAddress['senderPhone']) ) {
-                    $errors[] = __('Invalid sender phone number. It must start with a "+" followed by digits.', 'logestechs');
-                }
-            } else {
-                // If origin address is not provided, all related fields should be optional
-                if (
-                    ! empty($order['originAddress']['addressLine2']) ||
-                    ! empty($order['originAddress']['cityId']) ||
-                    ! empty($order['originAddress']['regionId']) ||
-                    ! empty($order['originAddress']['villageId'])
-                ) {
-                    $errors[] = __('All origin address fields should be empty when origin address is not provided.', 'logestechs');
-                }
+            if (isset($order['originAddress'])) {
+                $this->validate_address($order['originAddress'], 'Origin', $errors);
             }
         
             return $errors;
+        }
+        
+        /**
+         * Validates the address.
+         *
+         * @param array $address The address to validate.
+         * @return bool|array False if validation fails, sanitized address otherwise.
+         */
+        public function validate_address($address) {
+            $sanitized_address = [];
+            
+            // Check for mandatory fields like addressLine1
+            if (empty($address['addressLine1'])) {
+                return false;
+            } else {
+                $sanitized_address['addressLine1'] = sanitize_text_field($address['addressLine1']);
+            }
+            
+            // Handle cityId, regionId, and villageId
+            if (isset($address['cityId']) && isset($address['regionId']) && isset($address['villageId'])) {
+                $sanitized_address['cityId'] = intval($address['cityId']);
+                $sanitized_address['regionId'] = intval($address['regionId']);
+                $sanitized_address['villageId'] = intval($address['villageId']);
+            } elseif (isset($address['village']) && is_string($address['village'])) {
+                $sanitized_address['village'] = sanitize_text_field($address['village']);
+            } else {
+                return false;
+            }
+
+            return $sanitized_address;
         }
         
     }

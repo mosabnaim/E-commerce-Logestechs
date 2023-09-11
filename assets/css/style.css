@@ -572,7 +572,7 @@ input[type=text].logestechs-dropdown-input {
 }
 
 .logestechs-destination-address-label {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 500;
 }
 
@@ -604,11 +604,56 @@ input[type=text].logestechs-dropdown-input {
     margin-top: 0;
 }
 
+.logestechs-section-label {
+    font-size: 16px;
+    font-weight: 500;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+.logestechs-checkbox {
+    padding: 10px 0;
+}
 .logestechs-card h2 {
     margin: 0;
     margin-bottom: 6px;
 }
+/* Hide the default radio button */
+input[type=radio].logestechs-radio {
+    display: none !important;
+}
 
+/* Create a custom radio button */
+.logestechs-radio {
+    height: 20px;
+    width: 20px !important;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+/* Style when checked */
+.logestechs-radio:checked + label > .logestechs-radio {
+    background-color: #2196F3;
+    border: 1px solid #2196F3;
+}
+.logestechs-field input.disabled {
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.02);
+    border: 1px solid #eeeeee;
+}
+/* Inner circle when checked */
+.logestechs-radio:checked + label > .logestechs-radio::after {
+    content: "";
+    display: block;
+    margin: 4px;
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-radius: 50%;
+}
 .logestechs-field {
     display: flex;
     flex-direction: column;
@@ -634,11 +679,11 @@ input[type=text].logestechs-dropdown-input {
 }
 
 .logestechs-popup-details {
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     max-height: 500px;
     padding: 0 33px;
 }
-
 
 .logestechs-skeleton-row {
     display: flex;
@@ -657,6 +702,8 @@ input[type=text].logestechs-dropdown-input {
 
 .logestechs-skeleton-loader {
     width: 100%;
+    max-width: 180px;
+    min-width: 40px;
     height: 18px;
     margin-inline: auto;
     background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
@@ -683,12 +730,27 @@ input[type=text].logestechs-dropdown-input {
     font-size: 16px;
     margin-bottom: 0;
 }
-.logestechs-addresses-divider {
-    width: 335px;
+.logestechs-form-divider {
+    width: calc(100% + 67px);
     height: 1px;
     background: #c5c5c5;
     position: relative;
     left: -34px;
     margin-top: 15px;
     margin-bottom: 15px;
+}
+
+.logestechs-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.logestechs-col-sm-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+}
+
+.logestechs-number-input {
+    width: 100%;
+    border: none;
 }
