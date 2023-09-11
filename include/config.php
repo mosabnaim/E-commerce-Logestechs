@@ -15,11 +15,11 @@ class Logestechs_Config {
     const MENU_SLUG   = 'logestechs';
     const PLUGIN_LOGO = LOGESTECHS_PLUGIN_URL . 'assets/img/logo.jpeg';
     const PLUGIN_ICON = LOGESTECHS_PLUGIN_URL . 'assets/img/logo.svg';
-    // const COMPANY_DOMAIN   = null;
-    // const COMPANY_ID   = null;
+    const COMPANY_DOMAIN   = null;
+    const COMPANY_ID   = null;
 
-    const COMPANY_DOMAIN   = 'ksademo.logestechs.com';
-    const COMPANY_ID   = 214;
+    // const COMPANY_DOMAIN   = 'ksademo.logestechs.com';
+    // const COMPANY_ID   = 214;
 
     
     const PLUGIN_STYLES = [
