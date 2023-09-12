@@ -30,31 +30,33 @@ class Logestechs_Config {
         '--logestechs-secondary-font' => 'roboto, sans-serif'
     ];
 
-    const STATUS_ARRAY = [
-        'DRAFT'                                               => 'Draft',
-        'PENDING_CUSTOMER_CARE_APPROVAL'                      => 'Pending',
-        'APPROVED_BY_CUSTOMER_CARE_AND_WAITING_FOR_DISPATCHER'=> 'Being Processed',
-        'CANCELLED'                                           => 'Cancelled',
-        'ASSIGNED_TO_DRIVER_AND_PENDING_APPROVAL'             => 'Being Processed',
-        'REJECTED_BY_DRIVER_AND_PENDING_MANGEMENT'            => 'Being Processed',
-        'ACCEPTED_BY_DRIVER_AND_PENDING_PICKUP'               => 'Being Processed',
-        'SCANNED_BY_DRIVER_AND_IN_CAR'                        => 'In Progress',
-        'SCANNED_BY_HANDLER_AND_UNLOADED'                     => 'In Progress',
-        'MOVED_TO_SHELF_AND_OUT_OF_HANDLER_CUSTODY'           => 'In Progress',
-        'OPENED_ISSUE_AND_WAITING_FOR_MANAGEMENT'             => 'In Progress',
-        'DELIVERED_TO_RECIPIENT'                              => 'Delivered',
-        'POSTPONED_DELIVERY'                                  => 'Postponed',
-        'RETURNED_BY_RECIPIENT'                               => 'Returned',
-        'COMPLETED'                                           => 'Completed',
-        'FAILED'                                              => 'Failed',
-        'RESOLVED_FAILURE'                                    => 'Failed',
-        'UNRESOLVED_FAILURE'                                  => 'Failed',
-        'TRANSFERRED_OUT'                                     => 'In Progress',
-        'PARTIALLY_DELIVERED'                                 => 'Partially Delivered',
-        'SWAPPED'                                             => 'Swapped',
-        'BROUGHT'                                             => 'Brought',
-        'DELIVERED_TO_SENDER'                                 => 'Returned and received'
-    ];
+    public static function get_status_array() {
+        return [
+            'DRAFT'                                               => __('Draft', 'logestechs'),
+            'PENDING_CUSTOMER_CARE_APPROVAL'                      => __('Pending', 'logestechs'),
+            'APPROVED_BY_CUSTOMER_CARE_AND_WAITING_FOR_DISPATCHER'=> __('Being Processed', 'logestechs'),
+            'CANCELLED'                                           => __('Cancelled', 'logestechs'),
+            'ASSIGNED_TO_DRIVER_AND_PENDING_APPROVAL'             => __('Being Processed', 'logestechs'),
+            'REJECTED_BY_DRIVER_AND_PENDING_MANGEMENT'            => __('Being Processed', 'logestechs'),
+            'ACCEPTED_BY_DRIVER_AND_PENDING_PICKUP'               => __('Being Processed', 'logestechs'),
+            'SCANNED_BY_DRIVER_AND_IN_CAR'                        => __('In Progress', 'logestechs'),
+            'SCANNED_BY_HANDLER_AND_UNLOADED'                     => __('In Progress', 'logestechs'),
+            'MOVED_TO_SHELF_AND_OUT_OF_HANDLER_CUSTODY'           => __('In Progress', 'logestechs'),
+            'OPENED_ISSUE_AND_WAITING_FOR_MANAGEMENT'             => __('In Progress', 'logestechs'),
+            'DELIVERED_TO_RECIPIENT'                              => __('Delivered', 'logestechs'),
+            'POSTPONED_DELIVERY'                                  => __('Postponed', 'logestechs'),
+            'RETURNED_BY_RECIPIENT'                               => __('Returned', 'logestechs'),
+            'COMPLETED'                                           => __('Completed', 'logestechs'),
+            'FAILED'                                              => __('Failed', 'logestechs'),
+            'RESOLVED_FAILURE'                                    => __('Failed', 'logestechs'),
+            'UNRESOLVED_FAILURE'                                  => __('Failed', 'logestechs'),
+            'TRANSFERRED_OUT'                                     => __('In Progress', 'logestechs'),
+            'PARTIALLY_DELIVERED'                                 => __('Partially Delivered', 'logestechs'),
+            'SWAPPED'                                             => __('Swapped', 'logestechs'),
+            'BROUGHT'                                             => __('Brought', 'logestechs'),
+            'DELIVERED_TO_SENDER'                                 => __('Returned and received', 'logestechs')
+        ];
+    }
 
     // Can delete/edit the company if completed
     const ACCEPTABLE_CANCEL_STATUS = [

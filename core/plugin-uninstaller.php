@@ -28,12 +28,6 @@ if ( ! class_exists( 'Logestechs_Plugin_Uninstaller' ) ) {
          */
         public static function uninstall() {
             require_once LOGESTECHS_PLUGIN_PATH . 'include/credentials/credentials-storage.php';
-
-            // $credentials_storage = Logestechs_Credentials_Storage::get_instance();
-            // $credentials_storage->drop_table();
-
-            // // Delete the encryption key option
-            // delete_option( 'logestechs_encryption_key' );
         }
     }
 

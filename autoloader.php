@@ -32,8 +32,7 @@ if ( ! class_exists( 'Logestechs_Autoloader' ) ) {
             'core' => [
                 'Logestechs_Plugin_Activator',
                 'Logestechs_Plugin_Core',
-                'Logestechs_Missing_Woocommerce',
-                'Logestechs_Plugin_Deactivator'
+                'Logestechs_Missing_Woocommerce'
             ],
             'include' => [
                 'Logestechs_Config',

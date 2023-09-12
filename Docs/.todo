@@ -4,6 +4,6 @@ In Progress:
     ✔ Add animations while downloading invoice, adding company, assinging company @done(23-08-17 14:28)
     ✔ add metabox only in edit @done(23-08-17 14:28)
     ✔ avoid spaming click @done(23-08-22 08:27)
-    ☐ make status and note in WooCommerce page dynamic from api
-    ☐ cancel order should not show success if order is not cancelled
-    ☐ single page should show the correct status
+    ✔ make status and note in WooCommerce page dynamic from api @done(23-09-11 15:06)
+    ✔ cancel order should not show success if order is not cancelled @done(23-09-11 15:06)
+    ✔ single page should show the correct status @done(23-09-11 15:06)

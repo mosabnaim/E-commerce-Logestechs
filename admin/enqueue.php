@@ -166,7 +166,7 @@ if ( ! class_exists( 'Logestechs_Enqueue' ) ) {
                     'loader' => logestechs_image( 'logestechs-loader.riv' )
                 ],
                 'is_white_labeled' => !empty(Logestechs_Config::COMPANY_DOMAIN),
-                'status_array' => Logestechs_Config::STATUS_ARRAY,
+                'status_array' => Logestechs_Config::get_status_array(),
                 'acceptable_cancel_status' => Logestechs_Config::ACCEPTABLE_CANCEL_STATUS,
                 'acceptable_pickup_status' => Logestechs_Config::ACCEPTABLE_PICKUP_STATUS,
                 'acceptable_transfer_status' => Logestechs_Config::ACCEPTABLE_TRANSFER_STATUS,

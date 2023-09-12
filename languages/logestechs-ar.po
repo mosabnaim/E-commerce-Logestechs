@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-08-27 15:26+0300\n"
-"PO-Revision-Date: 2023-08-27 15:27+0300\n"
+"POT-Creation-Date: 2023-09-12 13:50+0300\n"
+"PO-Revision-Date: 2023-09-12 13:52+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ar\n"
@@ -12,7 +12,7 @@ msgstr ""
 "X-Generator: Poedit 3.3.2\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;esc_html_e;_e;esc_url__;esc_html__;_n;_e;_x;_nx;_n;"
-"esc_html_x\n"
+"esc_html_x;esc_attr_e\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: assets\n"
 
@@ -20,189 +20,159 @@ msgstr ""
 msgid "You do not have sufficient permissions to access this page."
 msgstr "ليس لديك الصلاحيات الكافية للوصول إلى هذه الصفحة."
 
-#: admin/enqueue.php:169
+#: admin/enqueue.php:174 views/manage-companies-popup-view.php:152
+#: views/woocommerce-list-view.php:53 views/woocommerce-metabox-view.php:64
+msgid "Transfer Order"
+msgstr "نقل الطلب"
+
+#: admin/enqueue.php:175 views/woocommerce-metabox-view.php:62
+msgid "Request Pickup"
+msgstr "طلب إرجاع"
+
+#: admin/enqueue.php:176
 msgid "company logo"
 msgstr "شعار الشركة"
 
-#: admin/enqueue.php:170
+#: admin/enqueue.php:177
 msgid "Oops..."
 msgstr "عفوًا..."
 
-#: admin/enqueue.php:171
+#: admin/enqueue.php:178
 msgid "Something went wrong."
 msgstr "حدث خطأ ما."
 
-#: admin/enqueue.php:172
+#: admin/enqueue.php:179
 msgid "Please fill out all fields."
 msgstr "يرجى ملء جميع الحقول."
 
-#: admin/enqueue.php:173
+#: admin/enqueue.php:180
 msgid "Company updated successfully!"
 msgstr "تم تحديث الشركة بنجاح!"
 
-#: admin/enqueue.php:174
+#: admin/enqueue.php:181
 msgid "Company added successfully!"
 msgstr "تمت إضافة الشركة بنجاح!"
 
-#: admin/enqueue.php:175
+#: admin/enqueue.php:182
 msgid "Are you sure?"
 msgstr "هل أنت متأكد؟"
 
-#: admin/enqueue.php:176
+#: admin/enqueue.php:183
 msgid "You are about to delete this company. This action cannot be undone."
 msgstr "أنت على وشك حذف هذه الشركة. هذا الإجراء لا يمكن التراجع عنه."
 
-#: admin/enqueue.php:177
+#: admin/enqueue.php:184
 msgid "Yes, delete it!"
 msgstr "نعم، احذفها!"
 
-#: admin/enqueue.php:178
+#: admin/enqueue.php:185
 msgid "No, keep it!"
 msgstr "لا، احتفظ بها!"
 
-#: admin/enqueue.php:179
+#: admin/enqueue.php:186
 msgid "Deleted!"
 msgstr "تم الحذف!"
 
-#: admin/enqueue.php:180
+#: admin/enqueue.php:187
 msgid "The company has been deleted."
 msgstr "تم حذف الشركة."
 
-#: admin/enqueue.php:181
+#: admin/enqueue.php:188
 msgid "Kept"
 msgstr "تم الاحتفاظ"
 
-#: admin/enqueue.php:182
+#: admin/enqueue.php:189
 msgid "The order has not been cancelled."
 msgstr "لم يتم إلغاء الطلب."
 
-#: admin/enqueue.php:183
+#: admin/enqueue.php:190
 msgid "You are about to cancel the order. This action cannot be undone."
 msgstr "أنت على وشك إلغاء الطلب. هذا الإجراء لا يمكن التراجع عنه."
 
-#: admin/enqueue.php:184
+#: admin/enqueue.php:191
 msgid "Yes, cancel it!"
 msgstr "نعم، ألغِ ذلك!"
 
-#: admin/enqueue.php:185
+#: admin/enqueue.php:192
 msgid "Cancelled!"
 msgstr "تم الإلغاء!"
 
-#: admin/enqueue.php:186
+#: admin/enqueue.php:193
 msgid "The order has been cancelled."
 msgstr "تم إلغاء الطلب."
 
-#: admin/enqueue.php:187
+#: admin/enqueue.php:194
 msgid "Failed to download the PDF."
 msgstr "فشل تنزيل ملف PDF."
 
-#: admin/enqueue.php:188
+#: admin/enqueue.php:195
 msgid "Please write at least 2 characters."
 msgstr "يجب أن تكون كلمة المرور على الأقل حرفين."
 
-#: admin/enqueue.php:189
+#: admin/enqueue.php:196
 msgid "loading..."
 msgstr "جار التحميل..."
 
-#: admin/enqueue.php:190
+#: admin/enqueue.php:197
 msgid "No matches found."
 msgstr "لم يتم العثور على أي طلبات."
+
+#: admin/enqueue.php:198
+#, fuzzy
+#| msgid "loading..."
+msgid "Downloading..."
+msgstr "جار التحميل..."
+
+#: admin/enqueue.php:199 include/orders/order-handler.php:774
+#: views/admin-page-view.php:125 views/woocommerce-metabox-view.php:83
+msgid "Print Invoice"
+msgstr "طباعة الفاتورة"
+
+#: admin/enqueue.php:200
+msgid ""
+"All selected orders must belong to the same company to enable bulk printing."
+msgstr ""
+"يجب أن تنتمي جميع الطلبات المحددة إلى نفس الشركة لتمكين الطباعة بالجملة."
+
+#: admin/enqueue.php:201
+msgid "All selected orders must be assignable to enable bulk transfer."
+msgstr "يجب أن تكون جميع الطلبات المحددة قابلة للتخصيص لتمكين نقلها بالجملة."
+
+#: admin/enqueue.php:202
+msgid "All selected orders must not be assignable to enable bulk print."
+msgstr ""
+"يجب أن لا تكون جميع الطلبات المحددة قابلة للتخصيص لتمكين الطباعة بالجملة."
+
+#: admin/enqueue.php:203
+msgid ""
+"Invalid sender phone number. It must start with a \"+\" followed by 9 to 14 "
+"digits."
+msgstr ""
+"رقم الهاتف المرسل غير صالح. يجب أن يبدأ بعلامة '+' تتبعها من 9 إلى 14 رقمًا."
+
+#: admin/enqueue.php:204
+#, php-format
+msgid "Order ID %s: Destination village has invalid value."
+msgstr "معرف الطلب %s: قرية الوجهة لديها قيمة غير صالحة."
+
+#: admin/enqueue.php:205
+msgid "Store village has invalid value."
+msgstr "قرية المتجر لديها قيمة غير صالحة."
+
+#: admin/enqueue.php:206
+msgid "You cannot select more than 20 posts at a time."
+msgstr "لا يمكنك تحديد أكثر من 20 منشورًا في وقت واحد."
 
 #: api/api-error-handler.php:40
 msgid "Failed."
 msgstr "فشل."
 
-#: api/api-handler.php:299
-msgid "Draft"
-msgstr "مسودة"
-
-#: api/api-handler.php:300
-msgid "Submitted"
-msgstr "تم التقديم"
-
-#: api/api-handler.php:301
-msgid "Ready for dispatching"
-msgstr "جاهز للإرسال"
-
-#: api/api-handler.php:302
-msgid "Cancelled"
-msgstr "تم الإلغاء"
-
-#: api/api-handler.php:303
-msgid "Assigned to Drivers"
-msgstr "تم تعيينه للسائقين"
-
-#: api/api-handler.php:304
-msgid "Rejected By Drivers"
-msgstr "مرفوض من قبل السائقين"
-
-#: api/api-handler.php:305
-msgid "Pending Pickup"
-msgstr "بانتظار الاستلام"
-
-#: api/api-handler.php:306
-msgid "Picked"
-msgstr "تم الاستلام"
-
-#: api/api-handler.php:307
-msgid "Pending Sorting"
-msgstr "بانتظار الفرز"
-
-#: api/api-handler.php:308
-msgid "Sorted on Shelves"
-msgstr "تم الفرز على الرفوف"
-
-#: api/api-handler.php:309
-msgid "Reported to Management"
-msgstr "تم الإبلاغ إلى الإدارة"
-
-#: api/api-handler.php:310
-msgid "Delivered"
-msgstr "تم التوصيل"
-
-#: api/api-handler.php:311
-msgid "Postponed delivery"
-msgstr "تم تأجيل التوصيل"
-
-#: api/api-handler.php:312
-msgid "Returned by recipient"
-msgstr "تم إرجاعه من قبل المستلم"
-
-#: api/api-handler.php:313
-msgid "Completed"
-msgstr "اكتمل"
-
-#: api/api-handler.php:314
-msgid "Failed"
-msgstr "فشل"
-
-#: api/api-handler.php:315
-msgid "Resolved Failure"
-msgstr "تم حل الفشل"
-
-#: api/api-handler.php:316
-msgid "Unresolved Failure"
-msgstr "فشل غير محلول"
-
-#: api/api-handler.php:317
-msgid "Transferred out"
-msgstr "تم التحويل خارجًا"
-
-#: api/api-handler.php:318
-msgid "Partially delivered"
-msgstr "تم التسليم جزئيًا"
-
-#: api/api-handler.php:319
-msgid "Swapped"
-msgstr "تم الاستبدال"
-
-#: api/api-handler.php:320
-msgid "Brought"
-msgstr "تم إحضاره"
-
-#: api/api-handler.php:321
-msgid "Delivered to sender"
-msgstr "تم التسليم إلى المرسل"
+#: api/api-handler.php:159 include/orders/order-handler.php:198
+#: include/orders/order-handler.php:230 include/orders/order-handler.php:274
+#: include/orders/order-handler.php:361 include/orders/order-handler.php:406
+#: include/orders/order-handler.php:437
+msgid "Error while processing this action!"
+msgstr "حدث خطأ أثناء معالجة هذا الإجراء!"
 
 #: core/missing-woocommerce.php:48
 msgid ""
@@ -212,96 +182,154 @@ msgstr ""
 "الإضافة الخاصة بـ Logestechs تتطلب تفعيل WooCommerce. يرجى تفعيل WooCommerce "
 "لضمان عمل إضافة Logestechs بشكل صحيح."
 
-#: core/missing-woocommerce.php:77 include/orders/order-handler.php:157
-#: include/orders/order-handler.php:189 include/orders/order-handler.php:218
-#: include/orders/order-handler.php:329 include/orders/order-handler.php:355
-#: include/orders/order-handler.php:479 include/orders/order-handler.php:525
-#: include/orders/order-handler.php:622 include/orders/popup-handler.php:57
-#: include/orders/popup-handler.php:95 include/orders/popup-handler.php:148
+#: core/missing-woocommerce.php:77 include/orders/order-handler.php:194
+#: include/orders/order-handler.php:226 include/orders/order-handler.php:249
+#: include/orders/order-handler.php:400 include/orders/order-handler.php:430
+#: include/orders/order-handler.php:675 include/orders/order-handler.php:726
+#: include/orders/order-handler.php:826 include/orders/popup-handler.php:57
+#: include/orders/popup-handler.php:95 include/orders/popup-handler.php:149
 msgid "You do not have permission to perform this action."
 msgstr "ليس لديك الصلاحيات الكافية للوصول إلى هذه الصفحة."
 
-#: include/credentials/credentials-manager.php:61
+#: include/config.php:35
+msgid "Draft"
+msgstr "مسودة"
+
+#: include/config.php:36
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#: include/config.php:37 include/config.php:39 include/config.php:40
+#: include/config.php:41
+msgid "Being Processed"
+msgstr "تحت المعالجة"
+
+#: include/config.php:38
+msgid "Cancelled"
+msgstr "تم الإلغاء"
+
+#: include/config.php:42 include/config.php:43 include/config.php:44
+#: include/config.php:45 include/config.php:53
+msgid "In Progress"
+msgstr "قيد التنفيذ"
+
+#: include/config.php:46
+msgid "Delivered"
+msgstr "تم التوصيل"
+
+#: include/config.php:47
+#, fuzzy
+#| msgid "Postponed delivery"
+msgid "Postponed"
+msgstr "تم تأجيل التوصيل"
+
+#: include/config.php:48
+msgid "Returned"
+msgstr "مُرجع"
+
+#: include/config.php:49
+msgid "Completed"
+msgstr "اكتمل"
+
+#: include/config.php:50 include/config.php:51 include/config.php:52
+msgid "Failed"
+msgstr "فشل"
+
+#: include/config.php:54
+#, fuzzy
+#| msgid "Partially delivered"
+msgid "Partially Delivered"
+msgstr "تم التسليم جزئيًا"
+
+#: include/config.php:55
+msgid "Swapped"
+msgstr "تم الاستبدال"
+
+#: include/config.php:56
+msgid "Brought"
+msgstr "تم إحضاره"
+
+#: include/config.php:57
+#, fuzzy
+#| msgid "Returned by recipient"
+msgid "Returned and received"
+msgstr "تم إرجاعه من قبل المستلم"
+
+#: include/credentials/credentials-manager.php:66
 msgid "The credentials you have provided are not correct."
 msgstr "البيانات الاعتمادية التي قدمتها غير صحيحة."
 
-#: include/credentials/credentials-manager.php:74
+#: include/credentials/credentials-manager.php:79
 msgid "Failed to initialize encryption."
 msgstr "فشل في تهيئة التشفير."
 
-#: include/credentials/credentials-manager.php:94
+#: include/credentials/credentials-manager.php:108
 msgid "This company already exists!"
 msgstr "هذه الشركة موجودة بالفعل!"
 
-#: include/credentials/credentials-manager.php:133
+#: include/credentials/credentials-manager.php:149
 msgid "There was an error saving the credentials to the database."
 msgstr "حدث خطأ أثناء حفظ بيانات الاعتماد في قاعدة البيانات."
 
-#: include/orders/order-handler.php:143
+#: include/orders/order-handler.php:42
+#, php-format
+msgid "Bulk Transfer to %s"
+msgstr "نقل بالجملة إلى %s"
+
+#: include/orders/order-handler.php:43
+#, php-format
+msgid "Bulk Print from %s"
+msgstr "طباعة بالجملة من %s"
+
+#: include/orders/order-handler.php:180
 msgid "Cancel Order on Logestechs"
 msgstr "إلغاء الطلب على Logestechs"
 
-#: include/orders/order-handler.php:161 include/orders/order-handler.php:193
-#: include/orders/order-handler.php:239 include/orders/order-handler.php:296
-#: include/orders/order-handler.php:335 include/orders/order-handler.php:362
-msgid "Error while processing this action!"
-msgstr "حدث خطأ أثناء معالجة هذا الإجراء!"
+#: include/orders/order-handler.php:203
+#, fuzzy
+#| msgid "The order has not been cancelled."
+msgid "This order cannot be cancelled at the moment."
+msgstr "لم يتم إلغاء الطلب."
 
-#: include/orders/order-handler.php:166 include/orders/order-handler.php:198
-msgid "This order already cancelled"
-msgstr "تم إلغاء هذا الطلب بالفعل"
+#: include/orders/order-handler.php:279
+msgid "Maximum orders allowed to transfer at once is 20"
+msgstr "الحد الأقصى لعدد الطلبات المسموح نقلها في وقت واحد هو 20"
 
-#: include/orders/order-handler.php:245
-msgid "Missing required fields."
-msgstr "الحقول المطلوبة مفقودة."
-
-#: include/orders/order-handler.php:249 include/orders/order-handler.php:254
+#: include/orders/order-handler.php:296
 msgid "This order already transferred"
 msgstr "تم نقل هذا الطلب بالفعل"
 
-#: include/orders/order-handler.php:373
+#: include/orders/order-handler.php:354
+msgid "No company found to assign!"
+msgstr "لم يتم العثور على شركة للتعيين!"
+
+#: include/orders/order-handler.php:448
 msgid "Unable to retrieve order details from Logestechs."
 msgstr "غير قادر على استرداد تفاصيل الطلب من Logestechs."
 
-#: include/orders/order-handler.php:385 include/orders/order-handler.php:388
-#: include/orders/order-handler.php:389
+#: include/orders/order-handler.php:460 include/orders/order-handler.php:463
+#: include/orders/order-handler.php:464
 msgid "N/A"
 msgstr "N/A"
 
-#: include/orders/order-handler.php:542
+#: include/orders/order-handler.php:743
 msgid "No orders found."
 msgstr "لم يتم العثور على أي طلبات."
 
-#: include/orders/order-handler.php:565 views/woocommerce-metabox-view.php:73
-msgid "Print Invoice"
-msgstr "طباعة الفاتورة"
-
-#: include/orders/order-handler.php:566
-msgid "Track"
-msgstr "تتبع"
-
-#: include/orders/order-handler.php:567
-msgid "Cancel"
-msgstr "إلغاء"
-
-#: include/orders/order-handler.php:570
-msgid "Assign Order"
-msgstr "تعيين الطلب"
-
-#: include/orders/order-handler.php:587
+#: include/orders/order-handler.php:791
 msgid "&laquo;"
 msgstr "&laquo;"
 
-#: include/orders/order-handler.php:588
+#: include/orders/order-handler.php:792
 msgid "&raquo;"
 msgstr "&raquo;"
 
-#: include/orders/order-handler.php:595
+#: include/orders/order-handler.php:799
 #, php-format
 msgid "Page %1$s of %2$s"
 msgstr "الصفحة %1$s من %2$s"
 
-#: include/orders/order-handler.php:636
+#: include/orders/order-handler.php:840
 msgid "There was an error fetching the villages. Please try again."
 msgstr "حدث خطأ أثناء استرجاع القرى. يرجى المحاولة مرة أخرى."
 
@@ -309,11 +337,11 @@ msgstr "حدث خطأ أثناء استرجاع القرى. يرجى المحا�
 msgid "Logestechs Actions"
 msgstr "إجراءات Logestechs"
 
-#: include/orders/popup-handler.php:100 include/orders/popup-handler.php:131
+#: include/orders/popup-handler.php:100 include/orders/popup-handler.php:132
 msgid "Error while deleting this item!"
 msgstr "حدث خطأ أثناء حذف هذا العنصر!"
 
-#: include/orders/popup-handler.php:124
+#: include/orders/popup-handler.php:125
 msgid "Cannot delete this company as it is associated with existing orders!"
 msgstr "لا يمكن حذف هذه الشركة لأنها مرتبطة بطلبات موجودة!"
 
@@ -337,172 +365,356 @@ msgstr "يجب أن تكون كلمة المرور على الأقل 3 أحرف.
 msgid "Invalid company ID."
 msgstr "معرف الشركة غير صالح."
 
-#: security/data-validator.php:58
-msgid "The Order ID is missing. Please ensure the order is valid."
-msgstr "معرف الطلب مفقود. يرجى التأكد من صحة الطلب."
+#: security/data-validator.php:65
+msgid "Invalid COD value for the package."
+msgstr "قيمة COD غير صالحة للحزمة."
 
-#: views/admin-page-view.php:41 views/manage-companies-popup-view.php:137
-msgid "Manage Companies"
+#: security/data-validator.php:69
+msgid "Package items to deliver list is required."
+msgstr "قائمة العناصر لتسليمها مطلوبة."
+
+#: security/data-validator.php:73
+#, fuzzy
+#| msgid "Email is required."
+msgid "Item name is required."
+msgstr "البريد الإلكتروني مطلوب."
+
+#: security/data-validator.php:76
+msgid "Invalid COD value for an item."
+msgstr "قيمة COD غير صالحة للعنصر."
+
+#: security/data-validator.php:83
+msgid "Either toCollectFromReceiver or toPayToReceiver is required for pickup."
+msgstr "إما أن يكون toCollectFromReceiver أو toPayToReceiver مطلوبًا للتسليم."
+
+#: views/admin-page-view.php:31 views/admin-page-view.php:159
+msgid "All"
+msgstr "الكل"
+
+#: views/admin-page-view.php:42
+#, fuzzy
+#| msgid "Logestechs"
+msgid "Logestechs Logo"
+msgstr "Logestechs"
+
+#: views/admin-page-view.php:50
+#, fuzzy
+#| msgid "Manage Companies"
+msgid "Manage Account"
 msgstr "إدارة الشركات"
 
-#: views/admin-page-view.php:48
-msgid "Manage Shipments"
-msgstr "إدارة الشحنات"
+#: views/admin-page-view.php:56
+#, php-format
+msgid "You are logged in using %s"
+msgstr "أنت مسجل الدخول باستخدام %s"
 
-#: views/admin-page-view.php:54
-msgid "Sync Status"
-msgstr "حالة المزامنة"
+#: views/admin-page-view.php:58
+msgid "Please add your account credentials"
+msgstr "الرجاء إضافة بيانات اعتماد حسابك"
 
-#: views/admin-page-view.php:70
-msgid "Order No."
-msgstr "رقم الطلب"
-
-#: views/admin-page-view.php:71
-msgid "Date"
-msgstr "التاريخ"
-
-#: views/admin-page-view.php:72
-msgid "AWB No."
-msgstr "رقم AWB"
-
-#: views/admin-page-view.php:73
-msgid "Shipping Company"
-msgstr "شركة الشحن"
-
-#: views/admin-page-view.php:74
-msgid "Status"
-msgstr "الحالة"
-
-#: views/admin-page-view.php:75
-msgid "Action"
-msgstr "الإجراء"
-
-#: views/manage-companies-popup-view.php:57
-msgid "Destination Address:"
-msgstr "عنوان الوجهة:"
-
-#: views/manage-companies-popup-view.php:63
-msgid "Destination village"
-msgstr "قرية الوجهة"
-
-#: views/manage-companies-popup-view.php:64
-msgid "Search for village..."
-msgstr "البحث عن قرية..."
-
-#: views/manage-companies-popup-view.php:73
-msgid "Do you want to use different store?"
-msgstr "هل ترغب في استخدام متجر مختلف؟"
-
-#: views/manage-companies-popup-view.php:77
-msgid "Business Name"
-msgstr "اسم العمل"
-
-#: views/manage-companies-popup-view.php:82
-msgid "Store Owner"
-msgstr "مالك المتجر"
-
-#: views/manage-companies-popup-view.php:87
-msgid "Store Phone Number"
-msgstr "رقم هاتف المتجر"
-
-#: views/manage-companies-popup-view.php:92
-msgid "Store village"
-msgstr "قرية المتجر"
-
-#: views/manage-companies-popup-view.php:102
-msgid "Store Address Line 1"
-msgstr "عنوان المتجر السطر 1"
-
-#: views/manage-companies-popup-view.php:108
-msgid "Store Address Line 2"
-msgstr "عنوان المتجر السطر 2"
-
-#: views/manage-companies-popup-view.php:116
-msgid "Transfer Order"
-msgstr "نقل الطلب"
-
-#: views/manage-companies-popup-view.php:148
-msgid "Domain"
-msgstr "النطاق"
-
-#: views/manage-companies-popup-view.php:152
+#: views/admin-page-view.php:64 views/manage-companies-popup-view.php:188
 msgid "Email"
 msgstr "البريد الإلكتروني"
 
-#: views/manage-companies-popup-view.php:156
+#: views/admin-page-view.php:69 views/manage-companies-popup-view.php:192
 msgid "Password"
 msgstr "كلمة المرور"
 
-#: views/manage-companies-popup-view.php:159
+#: views/admin-page-view.php:73
+#, fuzzy
+#| msgid "Update Company"
+msgid "Update Account"
+msgstr "تحديث الشركة"
+
+#: views/admin-page-view.php:73
+msgid "Save Account"
+msgstr "حفظ الحساب"
+
+#: views/admin-page-view.php:76
+msgid "Close"
+msgstr "إغلاق"
+
+#: views/admin-page-view.php:84 views/manage-companies-popup-view.php:173
+msgid "Manage Companies"
+msgstr "إدارة الشركات"
+
+#: views/admin-page-view.php:94 views/admin-page-view.php:114
+msgid "Manage Shipments"
+msgstr "إدارة الشحنات"
+
+#: views/admin-page-view.php:99
+msgid "Sync Icon"
+msgstr "ايكون تزامن"
+
+#: views/admin-page-view.php:100
+msgid "Sync Status"
+msgstr "تحديث الحالة"
+
+#: views/admin-page-view.php:103 views/admin-page-view.php:142
+msgid "Date"
+msgstr "التاريخ"
+
+#: views/admin-page-view.php:104 views/admin-page-view.php:108
+msgid "Search Icon"
+msgstr "ايكون بحث"
+
+#: views/admin-page-view.php:107
+msgid "Search..."
+msgstr "البحث..."
+
+#: views/admin-page-view.php:116
+msgid "You have selected"
+msgstr "لقد قمت باختيار"
+
+#: views/admin-page-view.php:116
+#, fuzzy
+#| msgid "Manage Shipments"
+msgid "shipments"
+msgstr "إدارة الشحنات"
+
+#: views/admin-page-view.php:118
+msgid "Cancel"
+msgstr "إلغاء"
+
+#: views/admin-page-view.php:121
+msgid "Select All"
+msgstr "تحديد الكل"
+
+#: views/admin-page-view.php:124
+#, fuzzy
+#| msgid "Print Invoice"
+msgid "Print Icon"
+msgstr "طباعة الفاتورة"
+
+#: views/admin-page-view.php:128
+#, fuzzy
+#| msgid "Transferred out"
+msgid "Transfer Icon"
+msgstr "تم التحويل خارجًا"
+
+#: views/admin-page-view.php:129
+#, fuzzy
+#| msgid "Manage Shipments"
+msgid "Transfer Shipments"
+msgstr "إدارة الشحنات"
+
+#: views/admin-page-view.php:141
+msgid "Order No."
+msgstr "رقم الطلب"
+
+#: views/admin-page-view.php:143
+msgid "AWB No."
+msgstr "رقم AWB"
+
+#: views/admin-page-view.php:144
+msgid "Shipping Company"
+msgstr "شركة الشحن"
+
+#: views/admin-page-view.php:147
+msgid "Status"
+msgstr "الحالة"
+
+#: views/admin-page-view.php:155
+msgid "Filter by status..."
+msgstr "تصفية حسب الحالة..."
+
+#: views/admin-page-view.php:170 views/woocommerce-list-view.php:29
+msgid "Notes"
+msgstr "ملاحظات"
+
+#: views/admin-page-view.php:171
+msgid "Action"
+msgstr "الإجراء"
+
+#: views/manage-companies-popup-view.php:58
+#, fuzzy
+#| msgid "Shipment Type"
+msgid "Shipment Details"
+msgstr "نوع الشحنة"
+
+#: views/manage-companies-popup-view.php:84
+#, fuzzy
+#| msgid "Do you want to use different store?"
+msgid "Do you want to specify order village?"
+msgstr "هل ترغب في استخدام متجر مختلف؟"
+
+#: views/manage-companies-popup-view.php:89
+msgid "Order ID:"
+msgstr "رقم الطلب:"
+
+#: views/manage-companies-popup-view.php:95
+msgid "Destination village"
+msgstr "قرية الوجهة"
+
+#: views/manage-companies-popup-view.php:96
+msgid "Search for village..."
+msgstr "البحث عن قرية..."
+
+#: views/manage-companies-popup-view.php:109
+msgid "Do you want to use different store?"
+msgstr "هل ترغب في استخدام متجر مختلف؟"
+
+#: views/manage-companies-popup-view.php:113
+msgid "Business Name"
+msgstr "اسم العمل"
+
+#: views/manage-companies-popup-view.php:118
+msgid "Store Owner"
+msgstr "مالك المتجر"
+
+#: views/manage-companies-popup-view.php:123
+msgid "Store Phone Number"
+msgstr "رقم هاتف المتجر"
+
+#: views/manage-companies-popup-view.php:128
+msgid "Store village"
+msgstr "قرية المتجر"
+
+#: views/manage-companies-popup-view.php:138
+msgid "Store Address Line 1"
+msgstr "عنوان المتجر السطر 1"
+
+#: views/manage-companies-popup-view.php:144
+msgid "Store Address Line 2"
+msgstr "عنوان المتجر السطر 2"
+
+#: views/manage-companies-popup-view.php:184
+msgid "Domain"
+msgstr "النطاق"
+
+#: views/manage-companies-popup-view.php:195
 msgid "Add Company"
 msgstr "إضافة شركة"
 
-#: views/manage-companies-popup-view.php:162
+#: views/manage-companies-popup-view.php:198
 msgid "Update Company"
 msgstr "تحديث الشركة"
 
-#: views/manage-companies-popup-view.php:183 views/woocommerce-list-view.php:53
-#: views/woocommerce-metabox-view.php:56
+#: views/manage-companies-popup-view.php:219 views/woocommerce-list-view.php:63
+#: views/woocommerce-metabox-view.php:64
 msgid "Assign Company"
 msgstr "تعيين الشركة"
 
 #: views/tracking-details-popup-view.php:22
-#: views/woocommerce-metabox-view.php:37
-msgid "Package Number"
-msgstr "رقم الشحنة"
+#: views/woocommerce-metabox-view.php:42
+#, fuzzy
+#| msgid "Shipment Type"
+msgid "Shipment Number"
+msgstr "نوع الشحنة"
 
 #: views/tracking-details-popup-view.php:23
-#: views/woocommerce-metabox-view.php:38
+#: views/woocommerce-metabox-view.php:43
 msgid "Price"
 msgstr "السعر"
 
 #: views/tracking-details-popup-view.php:24
-#: views/woocommerce-metabox-view.php:39
+#: views/woocommerce-metabox-view.php:44
 msgid "Reservation Date"
 msgstr "تاريخ التسجيل"
 
 #: views/tracking-details-popup-view.php:25
-#: views/woocommerce-metabox-view.php:40
+#: views/woocommerce-metabox-view.php:45
 msgid "Shipment Type"
 msgstr "نوع الشحنة"
 
 #: views/tracking-details-popup-view.php:26
-#: views/woocommerce-metabox-view.php:41
+#: views/woocommerce-metabox-view.php:46
 msgid "Recipient"
 msgstr "تم إرجاعه من قبل المستلم"
 
 #: views/tracking-details-popup-view.php:27
-#: views/woocommerce-metabox-view.php:42
-msgid "Package Weight"
-msgstr "وزن الشحنة"
+#: views/woocommerce-metabox-view.php:47
+#, fuzzy
+#| msgid "Shipment Type"
+msgid "Shipment Weight"
+msgstr "نوع الشحنة"
 
 #: views/tracking-details-popup-view.php:28
-#: views/woocommerce-metabox-view.php:43
+#: views/woocommerce-metabox-view.php:48
 msgid "Expected Delivery Date"
 msgstr "تاريخ الإستلام"
 
 #: views/tracking-details-popup-view.php:29
-#: views/woocommerce-metabox-view.php:44
+#: views/woocommerce-metabox-view.php:49
 msgid "Phone Number"
 msgstr "رقم هاتف المتجر"
 
+#: views/tracking-details-popup-view.php:41
+msgid "Box Icon"
+msgstr "ايكون صندوق"
+
 #: views/tracking-details-popup-view.php:43
-msgid "Package Tracking And Details"
+#, fuzzy
+#| msgid "Package Tracking And Details"
+msgid "Shipment Tracking And Details"
 msgstr "تتبع وتفاصيل الطرد"
 
-#: views/woocommerce-list-view.php:28
-msgid "Logestechs"
-msgstr "Logestechs"
-
-#: views/woocommerce-metabox-view.php:72
+#: views/woocommerce-metabox-view.php:82
 msgid "Cancel Shipping"
 msgstr "إلغاء الشحنة"
 
-#: views/woocommerce-metabox-view.php:74
-msgid "Track Package"
-msgstr "تتبع الشحنة"
-
+#: views/woocommerce-metabox-view.php:84
 #, fuzzy
-#~| msgid "Order No."
-#~ msgid "Order ID"
-#~ msgstr "رقم الطلب"
+#| msgid "Manage Shipments"
+msgid "Track Shipment"
+msgstr "إدارة الشحنات"
+
+#~ msgid "Submitted"
+#~ msgstr "تم التقديم"
+
+#~ msgid "Ready for dispatching"
+#~ msgstr "جاهز للإرسال"
+
+#~ msgid "Assigned to Drivers"
+#~ msgstr "تم تعيينه للسائقين"
+
+#~ msgid "Rejected By Drivers"
+#~ msgstr "مرفوض من قبل السائقين"
+
+#~ msgid "Picked"
+#~ msgstr "تم الاستلام"
+
+#~ msgid "Pending Sorting"
+#~ msgstr "بانتظار الفرز"
+
+#~ msgid "Sorted on Shelves"
+#~ msgstr "تم الفرز على الرفوف"
+
+#~ msgid "Reported to Management"
+#~ msgstr "تم الإبلاغ إلى الإدارة"
+
+#~ msgid "Resolved Failure"
+#~ msgstr "تم حل الفشل"
+
+#~ msgid "Unresolved Failure"
+#~ msgstr "فشل غير محلول"
+
+#~ msgid "Delivered to sender"
+#~ msgstr "تم التسليم إلى المرسل"
+
+#~ msgid "This order already cancelled"
+#~ msgstr "تم إلغاء هذا الطلب بالفعل"
+
+#~ msgid "Missing required fields."
+#~ msgstr "الحقول المطلوبة مفقودة."
+
+#~ msgid "Track"
+#~ msgstr "تتبع"
+
+#~ msgid "Assign Order"
+#~ msgstr "تعيين الطلب"
+
+#~ msgid "The Order ID is missing. Please ensure the order is valid."
+#~ msgstr "معرف الطلب مفقود. يرجى التأكد من صحة الطلب."
+
+#~ msgid "Destination Address:"
+#~ msgstr "عنوان الوجهة:"
+
+#~ msgid "Package Number"
+#~ msgstr "رقم الشحنة"
+
+#~ msgid "Package Weight"
+#~ msgstr "وزن الشحنة"
+
+#~ msgid "Track Package"
+#~ msgstr "تتبع الشحنة"

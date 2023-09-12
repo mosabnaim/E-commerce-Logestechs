@@ -27,7 +27,8 @@ if (!class_exists('Logestechs_Admin_Page_View')) {
             $status_filter = $_GET['status_filter'] ?? '';
             $is_logged_in = $args['is_logged_in'] ?? false;
             $email = $args['email'] ?? '';
-            $display_status = Logestechs_Config::STATUS_ARRAY[$status_filter] ?? esc_html__('All', 'logestechs');
+            $status_array = Logestechs_Config::get_status_array();
+            $display_status = $status_array[$status_filter] ?? esc_html__('All', 'logestechs');
             // Start the output buffer.
             ob_start();
             ?>
@@ -159,7 +160,7 @@ if (!class_exists('Logestechs_Admin_Page_View')) {
                                         <?php
                                         foreach ($statuses as $status) {
                                             ?>
-                                            <div data-value="<?php echo $status; ?>"><?php echo Logestechs_Config::STATUS_ARRAY[$status] ?? 'N/A' ?></div>
+                                            <div data-value="<?php echo $status; ?>"><?php echo $status_array[$status] ?? 'N/A' ?></div>
                                             <?php
                                         }
                                         ?>
