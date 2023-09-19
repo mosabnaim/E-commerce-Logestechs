@@ -191,6 +191,7 @@ if ( ! class_exists( 'Logestechs_Enqueue' ) ) {
                     'yes_cancel_it' => __( 'Yes, cancel it!', 'logestechs' ),
                     'cancelled' => __( 'Cancelled!', 'logestechs' ),
                     'order_cancelled' => __( 'The order has been cancelled.', 'logestechs' ),
+                    'order_cancelled' => __( 'The order has been cancelled.', 'logestechs' ),
                     'failed_to_download_pdf' => __( 'Failed to download the PDF.', 'logestechs' ),
                     'length_error' => __( 'Please write at least 2 characters.', 'logestechs' ),
                     'loading' => __( 'loading...', 'logestechs' ),
@@ -204,6 +205,8 @@ if ( ! class_exists( 'Logestechs_Enqueue' ) ) {
                     'invalid_destination' => __( 'Order ID %s: Destination village has invalid value.', 'logestechs' ),
                     'invalid_store_address' => __( 'Store village has invalid value.', 'logestechs' ),
                     'bulk_transfer_length_error' => __( 'You cannot select more than 20 posts at a time.', 'logestechs' ),
+                    'cancel' => __( 'Cancel', 'logestechs' ),
+                    'track' => __( 'Track Shipment', 'logestechs' ),
                 ]
             ];
         }

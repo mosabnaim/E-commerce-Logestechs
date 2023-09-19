@@ -1,32 +1,55 @@
-# LogesTechs_Shipping_Manager_for_WooCommerce
+=== Logestechs ===
 
-LogesTechs Shipping Manager for WooCommerce is a proprietary plugin designed to integrate WooCommerce with the LogesTechs delivery management platform. This plugin aids in simplifying operations like shipment creation, cancellation, AWB printing, and shipment tracking from within the WooCommerce platform.
+Contributors: aymanmafarja
+Tags: woocommerce, shipping, logestechs, order management
+Requires at least: 4.0
+Tested up to: 6.8
+Stable tag: 1.0.0
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-## About LogesTechs
+Logestechs aids delivery, e-commerce, and merchants in order management, tracking, delivery, and COD
 
-LogesTechs provides a comprehensive logistics platform offering a full suite of delivery management services. From managing shipments, customers, vehicles, finances, to real-time tracking, LogesTechs provides the right tools for robust and efficient delivery operations.
+== Description ==
 
-## Plugin Features
+Experience the sophistication of Logestechs: an all-encompassing application suite meticulously designed to revolutionize order and delivery management. With proficiency in both Arabic and English, our system optimizes utility and elevates communication. Enjoy an array of integrations spanning communication, transportation, omnichannels, 3PL, and more. Discover unparalleled convenience – your ultimate operational destination!
 
-- **Create Shipments**: The plugin interfaces with LogesTechs' API to facilitate shipment creation from within the WooCommerce dashboard.
-- **Cancel Shipments**: Provides the ability to cancel shipments via the WooCommerce platform, eliminating the need to switch contexts to manage logistical operations.
-- **Print AWB**: Allows the generation of Air Waybill (AWB) in a PDF format. This feature utilizes LogesTechs' API to retrieve a link that opens the AWB PDF in a new tab.
-- **Track Shipments**: This feature integrates with LogesTechs' tracking services, providing real-time tracking of shipments directly within WooCommerce.
+= About LogesTechs =
 
-## Installation
+LogesTechs offers tailored solutions to meet the needs of every company and Industry with logistics needs.
 
-1. Clone the private repository from GitHub.
-2. Upload the plugin files to the `wp-content/plugins/` directory, or install the plugin through the WordPress plugins screen directly.
-3. Activate the plugin through the 'Plugins' screen in WordPress.
+= Features =
 
-## Usage
+* **Create Shipments**: Seamlessly interfaces with LogesTechs' API for creating shipments.
+* **Cancel Shipments**: Conveniently cancel shipments directly from WooCommerce.
+* **Print AWB**: Generate Air Waybill (AWB) documents in PDF format.
+* **Track Shipments**: Integrate with LogesTechs' tracking services for real-time shipment tracking.
+* **Bilingual Support**: Fully localized for both English and Arabic languages.
 
-Upon activation, the plugin adds a new section within your WooCommerce settings. Here, you'll find the tools to manage all shipment-related tasks, all interfacing with the LogesTechs platform. Ensure to configure the plugin with the appropriate API keys and other required settings as per the internal documentation.
+== Frequently Asked Questions ==
 
-## Support
+= How do I set up my account credentials? =
+In manage companies page, add the domain (url), username and password.
 
-For technical support or if you encounter any issues, please visit the [LogesTechs Contact Us Page](https://logestechs.com/en/%d8%a7%d8%aa%d8%b5%d9%84-%d8%a8%d9%86%d8%a7/).
+= Is the plugin compatible with the latest version of WooCommerce? =
+Yes, our plugin is continually updated to ensure compatibility with the latest WooCommerce versions.
 
-## License
+== Screenshots ==
 
-This project is licensed under the GPLv2 (or later). Please see the [LICENSE](./LICENSE) file for more information.
+1. Logestechs settings page.
+2. WooCommerce orders list with custom column.
+3. Logestechs managing company.
+
+== Changelog ==
+
+= 1.0.0 =
+* Initial release
+
+== Upgrade Notice ==
+
+= 1.0.0 =
+Initial version, no upgrade notice.
+
+== Support ==
+
+For technical assistance or other queries, please contact us through this email ayman@logestechs.com.

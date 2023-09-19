@@ -67,6 +67,7 @@ if ( ! class_exists( 'Logestechs_Api_Handler' ) ) {
             // Arguments setup for wp_remote_request():
             $args = [
                 'method'  => $method,
+                'timeout' => 15,
                 'headers' => [
                     'Content-Type' => 'application/json',
                     'LanguageCode' => logestechs_get_current_language()

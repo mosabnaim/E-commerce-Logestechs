@@ -317,16 +317,17 @@ jQuery(document).ready(function ($) {
                     const ACCEPTABLE_CANCEL_STATUS = logestechs_global_data?.acceptable_cancel_status;
                     const ACCEPTABLE_PICKUP_STATUS = logestechs_global_data?.acceptable_pickup_status;
                     const ACCEPTABLE_TRANSFER_STATUS = logestechs_global_data?.acceptable_transfer_status;
+                    dropdown.append('<div class="js-open-details-popup js-dynamic-option" data-order-id="' + orderId + '">'+logestechs_global_data.localization.track+'</div>');
 
                     // Dynamic dropdown logic
                     if (ACCEPTABLE_CANCEL_STATUS.includes(newStatus)) {
-                        dropdown.append('<div class="js-logestechs-cancel js-dynamic-option" data-order-id="' + orderId + '">Cancel</div>');
+                        dropdown.append('<div class="js-logestechs-cancel js-dynamic-option" data-order-id="' + orderId + '">'+logestechs_global_data.localization.cancel+'</div>');
                     }
                     if (ACCEPTABLE_TRANSFER_STATUS.includes(newStatus)) {
-                        dropdown.append('<div class="js-open-transfer-popup logestechs-white-btn js-dynamic-option" data-order-id="' + orderId + '">Assign Order</div>');
+                        dropdown.append('<div class="js-open-transfer-popup logestechs-white-btn js-dynamic-option" data-order-id="' + orderId + '">'+logestechs_global_data.localization.transfer_order+'</div>');
                     }
                     if (ACCEPTABLE_PICKUP_STATUS.includes(newStatus)) {
-                        dropdown.append('<div class="js-open-pickup-popup js-logestechs-request-return logestechs-white-btn js-dynamic-option" data-order-id="' + orderId + '">Request Pickup</div>');
+                        dropdown.append('<div class="js-open-pickup-popup js-logestechs-request-return logestechs-white-btn js-dynamic-option" data-order-id="' + orderId + '">'+logestechs_global_data.localization.request_pickup+'</div>');
                     }
                 });
             }

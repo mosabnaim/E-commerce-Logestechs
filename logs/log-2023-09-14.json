@@ -1,0 +1,36 @@
+[
+    {
+        "Timestamp": "14-09-2023 12:29:42pm",
+        "Type": "Log",
+        "File": "<a href=\"vscode:\/\/file\/C:\/xampp\/htdocs\/logestechs\/wp-content\/plugins\/logestechs\/include\/orders\/order-handler.php:626\">order-handler.php ( line: 626 )<\/a>",
+        "0": {
+            "pkg": {
+                "receiverName": "Omar Sakr",
+                "cod": "21398.00",
+                "notes": "",
+                "packageItemsToDeliverList": [
+                    {
+                        "name": "Lenovo Ideapad 3",
+                        "cod": "10699",
+                        "weight": "10",
+                        "quantity": 2
+                    }
+                ],
+                "receiverPhone": "0538454248",
+                "receiverPhone2": "",
+                "serviceType": "STANDARD",
+                "shipmentType": "COD",
+                "quantity": 2,
+                "description": "Order ID: 16",
+                "integrationSource": "WOOCOMMERCE",
+                "supplierInvoice": 16,
+                "updateStatusUrl": "http:\/\/logestechs.test\/wp-json\/logestechs\/v1\/update_order\/16"
+            },
+            "pkgUnitType": "METRIC",
+            "destinationAddress": {
+                "addressLine1": "342 sk, A2 D32, Esenyurt, 17542, \u0130stanbul, Turkey",
+                "village": "Esenyurt"
+            }
+        }
+    }
+]

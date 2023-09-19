@@ -231,7 +231,9 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                 wp_die();
             }
             $response = $this->api->print_order( $order_ids );
-            if ( $response ) {
+            if(isset($response['error'])) {
+                wp_send_json_error( $response );
+            } else if ( $response ) {
                 wp_send_json_success( $response );
             }
             die();
@@ -536,8 +538,10 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                 $product = $item->get_product();
 
                 return [
-                    'name' => $item->get_quantity() . 'x ' .$product->get_name(),
-                    'cod'  => $product->get_price() * $item->get_quantity()
+                    'name' => $product->get_name(),
+                    'cod'  => $product->get_price(),
+                    'weight' => $product->get_weight(),
+                    'quantity' => $item->get_quantity()
                 ];
             }, $order->get_items() );
 
@@ -556,7 +560,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                     'description'               => "Order ID: {$order_id}",
                     'integrationSource'         => 'WOOCOMMERCE',
                     'supplierInvoice'           => $order_id,
-                    'updateStatusUrl'           => $this->get_logestechs_update_status_url($order_id)
+                    'updateStatusUrl'           => $this->get_logestechs_update_status_url($order_id),
                 ],
                 'pkgUnitType'   => 'METRIC',
             ];

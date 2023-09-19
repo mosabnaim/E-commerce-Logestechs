@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Logestechs for WooCommerce
- * Plugin URI: https://yourwebsite.com/logestechs-enhancement
- * Description: This plugin enhances WooCommerce capabilities by interfacing with Logestechs multi-domain shipping platform.
- * Version: 1.0.7
- * Author: Logestechs
- * Author URI: https://yourwebsite.com
+ * Plugin URI: https://logestechs.com/en/
+ * Description: Logestechs is an advanced application suite for order and delivery management. It supports Arabic and English, integrates with various services, and offers convenience for your operations.
+ * Version: 1.0.0
+ * Author: Eleven Stars
+ * Author URI: https://logestechs.com
  * License: GPL v2 or later
  * Text Domain: logestechs-enhancement
  * Domain Path: /languages
@@ -20,7 +20,6 @@ define( 'LOGESTECHS_PLUGIN_BASENAME', plugin_basename( dirname( __FILE__ ) ) ); 
 
 // Plugin activation and deactivation.
 register_activation_hook( __FILE__, [ 'Logestechs_Plugin_Activator', 'activate' ] );
-register_deactivation_hook( __FILE__, [ 'Logestechs_Plugin_Deactivator', 'deactivate' ] );
 
 // Require plugin classes using autoloader
 require_once LOGESTECHS_PLUGIN_PATH . 'utils/helper-functions.php';

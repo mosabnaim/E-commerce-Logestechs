@@ -179,7 +179,7 @@ if ( ! class_exists( 'Logestechs_Credentials_Storage' ) ) {
         /**
          * Get the first Logestechs record.
          *
-         * @since    1.0.5
+         * @since    1.0.0
          * @return   object|NULL  Returns the first record or NULL if no records exist.
          */
         public function get_first_record() {

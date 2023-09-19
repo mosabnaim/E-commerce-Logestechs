@@ -39,14 +39,14 @@
             $display_details = $is_assignable ? 'none' : 'block';
             $display_assign_btn = $is_assignable ? 'block' : 'none';
             $details_to_display = [
-                'package_number' => __('Shipment Number', 'logestechs'),
-                'price' => __('Price', 'logestechs'),
-                'reservation_date' => __('Reservation Date', 'logestechs'),
-                'shipment_type' => __('Shipment Type', 'logestechs'),
-                'recipient' => __('Recipient', 'logestechs'),
-                'package_weight' => __('Shipment Weight', 'logestechs'),
+                'package_number'         => __('Shipment Number', 'logestechs'),
+                'price'                  => __('Price', 'logestechs'),
+                'reservation_date'       => __('Reservation Date', 'logestechs'),
+                'shipment_type'          => __('Shipment Type', 'logestechs'),
+                'recipient'              => __('Recipient', 'logestechs'),
+                'package_weight'         => __('Shipment Weight', 'logestechs'),
                 'expected_delivery_date' => __('Expected Delivery Date', 'logestechs'),
-                'phone_number' => __('Phone Number', 'logestechs')
+                'phone_number'           => __('Phone Number', 'logestechs')
             ];
             
             ob_start();
