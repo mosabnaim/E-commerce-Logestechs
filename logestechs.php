@@ -18,7 +18,7 @@ define( 'LOGESTECHS_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'LOGESTECHS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'LOGESTECHS_PLUGIN_BASENAME', plugin_basename( dirname( __FILE__ ) ) ); // Basename
 
-// Plugin activation and deactivation.
+// Plugin activation.
 register_activation_hook( __FILE__, [ 'Logestechs_Plugin_Activator', 'activate' ] );
 
 // Require plugin classes using autoloader

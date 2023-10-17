@@ -541,7 +541,8 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                     'name' => $product->get_name(),
                     'cod'  => $product->get_price(),
                     'weight' => $product->get_weight(),
-                    'quantity' => $item->get_quantity()
+                    'quantity' => $item->get_quantity(),
+                    'sku' => $product->get_sku()
                 ];
             }, $order->get_items() );
 
@@ -560,7 +561,7 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                     'description'               => "Order ID: {$order_id}",
                     'integrationSource'         => 'WOOCOMMERCE',
                     'supplierInvoice'           => $order_id,
-                    'updateStatusUrl'           => $this->get_logestechs_update_status_url($order_id),
+                    'updateStatusUrl'           => $this->get_logestechs_update_status_url($order_id)
                 ],
                 'pkgUnitType'   => 'METRIC',
             ];
@@ -621,7 +622,6 @@ if ( ! class_exists( 'Logestechs_Order_Handler' ) ) {
                     unset($order_data['destinationAddress']);
                 }
             }
-
             return $order_data;
         }
 
