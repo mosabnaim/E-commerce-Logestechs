@@ -110,6 +110,8 @@ class Logestechs_Debugger {
 
         <?php
         echo ob_get_clean();
+
+        return $this;
     }
 
     public function output_modal_code() {

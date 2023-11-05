@@ -3,7 +3,7 @@
  * Plugin Name: Logestechs for WooCommerce
  * Plugin URI: https://logestechs.com/en/
  * Description: Logestechs is an advanced application suite for order and delivery management. It supports Arabic and English, integrates with various services, and offers convenience for your operations.
- * Version: 1.0.0
+ * Version: 1.1.1
  * Author: Eleven Stars
  * Author URI: https://logestechs.com
  * License: GPL v2 or later

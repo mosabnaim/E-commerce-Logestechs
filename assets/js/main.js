@@ -38,7 +38,7 @@ jQuery(document).ready(function ($) {
 				return;
 			};
 
-			var company_id = $('.logestechs-order-settings-popup').find('[name="company_id"]').val();
+			var company_id = $('.js-logestechs-company.selected').attr('data-logestechs-id');
 			resultsDiv.html('<p class="js-logestechs-loading">' + logestechs_global_data.localization.loading + '</p>').show();
 
 			if (is_sending_request) return;
