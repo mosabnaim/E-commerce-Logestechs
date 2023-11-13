@@ -225,14 +225,42 @@ class Logestechs_Debugger {
     }
 
     // Logs HTTP requests and responses
-    public function log_http( $request, $response ) {
-        $this->log( [
-            'HTTP Request'  => $request,
-            'HTTP Response' => $response
-        ], 'HTTP' );
-
-        return $this;
-    }
+    public function log_http( $url, $args = [] ) {
+        // Default arguments for the request
+        $default_args = [
+            'method'  => 'GET',
+            'headers' => ['Content-Type' => 'application/json'],
+            'body'    => null,
+            'timeout' => 30,
+        ];
+    
+        // Merge passed arguments with defaults
+        $args = array_merge( $default_args, $args );
+    
+        // Perform the HTTP request
+        $response = wp_remote_request( $url, $args );
+    
+        // Check for WP_Error
+        if ( is_wp_error( $response ) ) {
+            $error_message = $response->get_error_message();
+            $this->log( [
+                'Request URL'    => $url,
+                'Request Args'   => $args,
+                'Error'          => $error_message
+            ], 'HTTP Error' );
+        } else {
+            // Log the request and the response
+            $this->log( [
+                'Request URL'    => $url,
+                'Request Args'   => $args,
+                'Response Code'  => wp_remote_retrieve_response_code( $response ),
+                'Response Body'  => wp_remote_retrieve_body( $response ),
+                'Response Headers' => wp_remote_retrieve_headers( $response )->getAll()
+            ], 'HTTP' );
+        }
+    
+        return $this->write();
+    }    
 
     // Logs key environment details
     public function log_env_info() {
